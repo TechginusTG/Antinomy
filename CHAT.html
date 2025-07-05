@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>계획 도우미</title>
+  <style>
+    /* 기존 스타일 유지 */
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      background-color: #f3f4f6;
+      overflow: hidden;
+    }
+    #chat {
+      width: 40%; max-width: 400px; min-width: 280px;
+      transition: all 0.3s ease;
+      border-right: 1px solid #ccc;
+      display: flex; flex-direction: column;
+      background-color: #ffffff;
+      position: relative; z-index: 2;
+      border-radius: 0 20px 20px 0;
+    }
+    #chat.collapsed {
+      width: 0;
+      min-width: 0;
+      overflow: hidden;
+      border: none;
+    }
+    #chat.collapsed + #openChatButton { display: block; }
+    #chat h2 { color: #333; margin: 16px; }
+    #chatLog { flex: 1; overflow-y: auto; margin: 0 16px 8px 16px; }
+    #chatInputArea {
+      display: flex; align-items: center;
+      padding: 12px 16px;
+      border-top: 1px solid #ddd;
+      background-color: #f9fafb;
+    }
+    #userInput {
+      flex: 1; resize: none; padding: 10px 12px;
+      font-size: 14px; border: 1px solid #ccc;
+      border-radius: 10px; height: 40px;
+      overflow-y: hidden;
+    }
+    #sendBtn {
+      margin-left: 8px; padding: 10px 16px;
+      background-color: #2563eb; color: white;
+      border: none; border-radius: 10px;
+      cursor: pointer;
+    }
+    #toggleChat {
+      position: absolute; top: 16px; left: 100%;
+      transform: translateX(-100%);
+      background-color: #2563eb; color: white;
+      border: none; padding: 6px 12px;
+      cursor: pointer; border-radius: 0 10px 10px 0;
+    }
+    #openChatButton {
+      display: none; position: absolute; top: 20px; left: 10px; z-index: 3;
+      background-color: #2563eb; color: white;
+      padding: 8px 14px; border: none; border-radius: 10px;
+      cursor: pointer;
+    }
+    #diagram {
+      flex-grow: 1;
+      transition: all 0.3s ease;
+      position: relative;
+      background-color: #fafafa;
+      overflow: auto; padding: 20px;
+      border-radius: 20px 0 0 0;
+    }
+    #diagramContent {
+      border: 2px dashed #bbb;
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      font-size: 18px;
+      color: #555;
+      margin-top: 60px;
+      white-space: pre-wrap;
+    }
+    .response-box {
+      background-color: #e0e7ff;
+      border: 2px solid #4f46e5;
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 16px;
+      max-width: 70%; word-wrap: break-word;
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+    }
+    .response-box.user {
+      background-color: #fef3c7;
+      border: 2px solid #f59e0b;
+      margin-left: auto;
+    }
+    .response-box.gpt {
+      background-color: #e0e7ff;
+      border: 2px solid #4f46e5;
+      margin-right: auto;
+    }
+    #goalBox {
+      position: absolute; top: 16px; right: 16px;
+      background-color: #2563eb; color: white;
+      padding: 10px 16px;
+      border-radius: 20px; cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      z-index: 1;
+    }
+    #goalModal {
+      position: absolute; top: 60px; right: 16px;
+      background-color: white;
+      border: 1px solid #ccc; border-radius: 16px;
+      padding: 16px; width: 300px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display: none; z-index: 10;
+      color: #333;
+    }
+    #goalModal ul { padding-left: 20px; }
+    #goalModal ul li { margin-bottom: 6px; }
+    #summarizedGoalContent {
+        margin-top: 15px;
+        padding-top: 10px;
+        border-top: 1px dashed #eee;
+        font-size: 0.95em;
+        color: #555;
+        white-space: pre-wrap;
+    }
+    #exportBtn {
+      position: absolute; right: 20px; bottom: 20px;
+      background-color: #10b981; color: white;
+      padding: 10px 16px; border: none;
+      border-radius: 12px; cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* 팝업 스타일 조정 */
+    #gptResponsePopup {
+      display: none;
+      position: absolute;
+      background-color: #ffffff;
+      border: 3px solid #2563eb;
+      border-radius: 15px;
+      padding: 10px; /* 팝업창 전체의 내부 여백 유지 */
+      max-width: calc(100% / 3 * 2);
+      width: fit-content;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+      text-align: left;
+      font-size: 1.1em;
+      color: #333;
+      cursor: grab;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    }
+
+    #gptResponsePopup .popup-header {
+      font-weight: bold;
+      margin-bottom: 5px; /* 헤더와 내용 사이 간격 유지 */
+      color: #2563eb;
+      font-size: 1.2em;
+      cursor: grab;
+    }
+
+    #gptResponsePopup .popup-content {
+      margin-top: 0; 
+      line-height: 1.3; 
+      max-height: 75px; /* 팝업 내용 영역의 최대 높이를 75px로 줄임 */
+      overflow-y: auto;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translate(-50%, -60%); }
+      to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+  </style>
+</head>
+<body>
+  <div id="chat">
+    <button id="toggleChat" onclick="toggleChat()">◀</button>
+    <h2>ChatGPT 대화창</h2>
+    <div id="chatLog">
+      <div class="response-box user">
+        <strong>사용자:</strong> 일본 여행을 가기 위한 순서도를 만들고 싶어요. 어떤 단계부터 시작해야 할까요?
+      </div>
+      <div class="response-box gpt">
+        <strong>ChatGPT:</strong> 일본 여행 순서도를 만들려면 먼저 **'여행 목표 및 예산 설정'**부터 시작하는 것이 좋습니다. 이를 통해 여행의 큰 그림을 그릴 수 있어요.
+      </div>
+      <div class="response-box user">
+        <strong>사용자:</strong> 좋습니다! 여행 목표와 예산을 설정한 후에는 어떤 단계를 고려해야 할까요?
+      </div>
+      <div class="response-box gpt">
+        <strong>ChatGPT:</strong> 다음으로는 **'항공권 및 숙소 예약'** 단계를 진행해야 합니다. 여행 날짜와 체류 기간을 확정하고, 이에 맞춰 항공권과 숙소를 미리 예약하는 것이 중요해요.
+      </div>
+      <div class="response-box user">
+        <strong>사용자:</strong> 항공권, 숙소 예약까지 완료했다면 그다음은 무엇을 해야 할까요?
+      </div>
+      <div class="response-box gpt" id="lastResponse">
+        <strong>ChatGPT:</strong> 이제 여행의 구체적인 계획을 세울 차례입니다. **'세부 일정 계획 및 현지 정보 조사'** 단계를 시작하세요. 방문할 장소, 교통편, 맛집 등을 상세히 조사하고 일정을 확정하는 것이 좋습니다.
+      </div>
+    </div>
+    <div id="chatInputArea">
+      <textarea id="userInput" placeholder="계획이나 목표에 대해 입력하세요..."></textarea>
+      <button id="sendBtn" onclick="sendChatMessage()">입력</button>
+    </div>
+  </div>
+
+  <button id="openChatButton" onclick="toggleChat()">GPT 열기</button>
+
+  <div id="diagram">
+    <div id="goalBox" onclick="toggleGoalModal()">🎯 목표 보기</div>
+    <div id="goalModal">
+      <h3>내 목표</h3>
+      <p><strong>예시:</strong> "7월 내 사이드 프로젝트 완성"</p>
+      <ul>
+        <li>1단계: 아이디어 구상</li>
+        <li>2단계: 기능 목록 작성</li>
+        <li>3단계: 디자인 및 개발</li>
+        <li>4단계: 테스트 및 배포</li>
+      </ul>
+      <div id="summarizedGoalContent">
+        </div>
+    </div>
+    <div id="diagramContent">
+      drawio파일을 띄우기위한 화면
+    </div>
+
+    <div id="gptResponsePopup">
+      <div class="popup-header">ChatGPT 답변</div>
+      <div class="popup-content" id="popupResponseContent"></div>
+    </div>
+
+    <button id="exportBtn" onclick="exportToXML()">XML 파일로 내보내기</button>
+  </div>
+
+  <script>
+    const gptResponsePopup = document.getElementById('gptResponsePopup');
+    let isDragging = false;
+    let offsetX, offsetY;
+
+    function toggleGoalModal() {
+      const goalModal = document.getElementById('goalModal');
+      goalModal.style.display = goalModal.style.display === 'block' ? 'none' : 'block';
+      if (goalModal.style.display === 'block') {
+        updateGoalSummary();
+      }
+    }
+
+    function toggleChat() {
+      const chat = document.getElementById('chat');
+      const openBtn = document.getElementById('openChatButton');
+      const diagram = document.getElementById('diagram');
+      const lastResponseElement = document.getElementById('lastResponse');
+      const popupResponseContent = document.getElementById('popupResponseContent');
+
+      const isCollapsed = chat.classList.toggle('collapsed');
+      
+      openBtn.style.display = isCollapsed ? 'block' : 'none';
+      diagram.style.flexGrow = isCollapsed ? 2 : 1;
+
+      if (isCollapsed) {
+        if (lastResponseElement) {
+          const lastGptText = lastResponseElement.textContent.replace('ChatGPT:', '').trim();
+          
+          // 공백 처리 로직 (옵션 1)
+          const cleanedGptText = lastGptText.trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' ');
+
+          popupResponseContent.textContent = cleanedGptText; 
+          gptResponsePopup.style.display = 'block';
+          gptResponsePopup.style.top = '50%';
+          gptResponsePopup.style.left = '50%';
+          gptResponsePopup.style.transform = 'translate(-50%, -50%)';
+        } else {
+          popupResponseContent.textContent = "마지막 ChatGPT 답변이 없습니다.";
+          gptResponsePopup.style.display = 'block';
+        }
+      } else {
+        gptResponsePopup.style.display = 'none';
+      }
+    }
+
+    function autoResizeTextarea() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    }
+
+    document.getElementById('userInput').addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.preventDefault();
+            sendChatMessage();
+            this.style.height = '40px';
+        }
+    });
+    document.getElementById('userInput').addEventListener('input', autoResizeTextarea);
+
+    document.getElementById('sendBtn').addEventListener('click', sendChatMessage);
+
+    function sendChatMessage() {
+      const userInputElement = document.getElementById('userInput');
+      const input = userInputElement.value;
+      if (!input.trim()) return;
+
+      const chatLog = document.getElementById('chatLog');
+
+      const userMessageDiv = document.createElement('div');
+      userMessageDiv.classList.add('response-box', 'user');
+      userMessageDiv.innerHTML = `<strong>사용자:</strong> ${input}`;
+      chatLog.appendChild(userMessageDiv);
+
+      let gptResponseContent = "";
+      if (input.includes("일본 여행 순서도") || input.includes("단계") || input.includes("시작")) {
+        gptResponseContent = "네, 일본 여행 순서도는 크게 '여행 목표 및 예산 설정 → 항공권 및 숙소 예약 → 세부 일정 계획 및 현지 정보 조사 → 여행 준비물 확인 및 환전' 등의 단계로 진행됩니다.";
+      } else if (input.includes("목표") || input.includes("예산")) {
+        gptResponseContent = "여행 목표와 예산 설정은 여행의 목적(휴식, 관광 등)과 예상 지출 금액을 정하는 단계입니다. 이 정보가 구체적일수록 다음 단계가 수월해집니다.";
+      } else if (input.includes("항공권") || input.includes("숙소")) {
+        gptResponseContent = "항공권과 숙소 예약 시에는 여권 유효기간 확인, 항공권 최저가 비교, 숙소 위치 및 편의시설 고려가 중요합니다.";
+      } else if (input.includes("일정") || input.includes("현지 정보")) {
+        gptResponseContent = "세부 일정 계획은 방문할 장소, 교통편, 식사 계획을 구체화하는 것이고, 현지 정보 조사는 날씨, 비상 연락처, 문화 등을 파악하는 것입니다.";
+      } else if (input.includes("준비물") || input.includes("환전")) {
+        gptResponseContent = "여행 준비물 확인은 개인 물품, 의류, 상비약 등을 점검하고, 환전은 일본 엔화로 미리 준비하는 단계를 의미합니다.";
+      } else {
+        gptResponseContent = `'${input}'에 대한 답변입니다.`;
+      }
+
+      const cleanedGptResponseContent = gptResponseContent.trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' ');
+
+      const existingLastResponse = document.getElementById('lastResponse');
+      if (existingLastResponse) {
+        existingLastResponse.removeAttribute('id');
+      }
+
+      const gptMessageDiv = document.createElement('div');
+      gptMessageDiv.classList.add('response-box', 'gpt');
+      gptMessageDiv.id = 'lastResponse';
+      gptMessageDiv.innerHTML = `<strong>ChatGPT:</strong> ${cleanedGptResponseContent}`; 
+      chatLog.appendChild(gptMessageDiv);
+
+      chatLog.scrollTop = chatLog.scrollHeight;
+      
+      userInputElement.value = '';
+      userInputElement.style.height = '40px';
+
+      if (gptResponsePopup.style.display === 'block') {
+          document.getElementById('popupResponseContent').textContent = cleanedGptResponseContent; 
+      }
+
+      updateGoalSummary();
+    }
+
+    function updateGoalSummary() {
+        const chatLog = document.getElementById('chatLog');
+        const gptResponses = chatLog.querySelectorAll('.response-box.gpt');
+        let summaryText = "아직 요약된 목표가 없습니다.";
+
+        if (gptResponses.length > 0) {
+            summaryText = "--- 대화 요약된 목표 ---\n";
+            let stepCounter = 1;
+            gptResponses.forEach((responseDiv, index) => {
+                const text = responseDiv.textContent.replace('ChatGPT:', '').trim();
+                const cleanedText = text.trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' ');
+
+                if (cleanedText.includes("단계") || cleanedText.includes("시작") || cleanedText.includes("다음으로") || cleanedText.includes("중요")) {
+                    summaryText += `${stepCounter}. ${cleanedText}\n`;
+                    stepCounter++;
+                } else if (index === gptResponses.length -1 && stepCounter === 1) { 
+                    summaryText += `${stepCounter}. ${cleanedText}\n`;
+                }
+            });
+            if (stepCounter === 1 && gptResponses.length > 0) {
+                const lastCleanedText = gptResponses[gptResponses.length -1].textContent.replace('ChatGPT:', '').trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' ');
+                summaryText += `1. ${lastCleanedText}\n`;
+            }
+        }
+        document.getElementById('summarizedGoalContent').textContent = summaryText;
+    }
+
+
+    function exportToXML() {
+      let textToExport = "";
+      const lastResponseElement = document.getElementById('lastResponse');
+      if (lastResponseElement) {
+          textToExport = lastResponseElement.textContent.replace('ChatGPT:', '').trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' ');
+      } else {
+          textToExport = document.getElementById('diagramContent').textContent;
+      }
+      
+      const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>\n<response>\n  <text>${textToExport}</text>\n</response>`;
+      const blob = new Blob([xmlContent], { type: 'text/xml' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'diagram_response.xml';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // --- 팝업 드래그 기능 ---
+    gptResponsePopup.addEventListener('mousedown', (e) => {
+      if (e.target.closest('.popup-header') || e.target === gptResponsePopup || e.target.closest('.popup-content')) {
+        isDragging = true;
+        gptResponsePopup.style.zIndex = '101'; 
+        offsetX = e.clientX - gptResponsePopup.getBoundingClientRect().left;
+        offsetY = e.clientY - gptResponsePopup.getBoundingClientRect().top;
+        gptResponsePopup.style.cursor = 'grabbing';
+      }
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      const diagramRect = document.getElementById('diagram').getBoundingClientRect();
+      let newLeft = e.clientX - offsetX;
+      let newTop = e.clientY - offsetY;
+
+      if (newLeft < diagramRect.left) newLeft = diagramRect.left;
+      if (newLeft + gptResponsePopup.offsetWidth > diagramRect.right) {
+          newLeft = diagramRect.right - gptResponsePopup.offsetWidth;
+      }
+      if (newTop < diagramRect.top) newTop = diagramRect.top;
+      if (newTop + gptResponsePopup.offsetHeight > diagramRect.bottom) {
+          newTop = diagramRect.bottom - gptResponsePopup.offsetHeight;
+      }
+
+      gptResponsePopup.style.left = `${newLeft}px`;
+      gptResponsePopup.style.top = `${newTop}px`;
+      gptResponsePopup.style.transform = 'none';
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+      gptResponsePopup.style.cursor = 'grab';
+      gptResponsePopup.style.zIndex = '100'; 
+    });
+    // --- 팝업 드래그 기능 끝 ---
+
+    document.addEventListener('DOMContentLoaded', updateGoalSummary);
+  </script>
+</body>
+</html>
