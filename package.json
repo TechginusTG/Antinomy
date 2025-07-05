@@ -16,5 +16,14 @@
     "url": "https://github.com/TechginusTG/Antinomy/issues"
   },
   "homepage": "https://github.com/TechginusTG/Antinomy#readme",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.28.0",
+    "@babel/core": "^7.28.0",
+    "@babel/preset-env": "^7.28.0"
+  }
 }
