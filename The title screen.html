@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>배경 슬라이드 블러 UI</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .background-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+
+    .background-image {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      filter: blur(8px) brightness(0.7);
+      opacity: 0;
+      transition: opacity 2s ease-in-out;
+    }
+
+    .background-image.active {
+      opacity: 1;
+    }
+
+    .wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+
+    .container {
+      position: relative;
+      background-color: rgba(255, 255, 255, 0.95);
+      border: 2px solid #e0e0ff;
+      border-radius: 20px;
+      padding: 40px 30px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+      transition: box-shadow 0.3s ease;
+    }
+
+    .container:hover {
+      box-shadow: 0 15px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    h1 {
+      color: #7c3aed;
+      margin-bottom: 20px;
+    }
+
+    p {
+      color: #555;
+      margin-bottom: 30px;
+    }
+
+    button {
+      background-color: #8b5cf6;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #7c3aed;
+    }
+  </style>
+</head>
+<body>
+  <!-- 배경 이미지들 -->
+  <div class="background-container">
+    <div class="background-image active" style="background-image: url('https://cdn.discordapp.com/attachments/1380427231507124234/1391420712975073421/pexels-hao-chen-394286-32881646_1.jpg?ex=686bd505&is=686a8385&hm=5dfcae99abaa62fbd09742d83f36689e53dc5693499ead272287ea6563f0d6b6');"></div>
+    <div class="background-image" style="background-image: url('https://cdn.discordapp.com/attachments/1380427231507124234/1391421313213665310/003b84b0ab6b2729bd302a4f0bfdf152.png?ex=686bd594&is=686a8414&hm=91b86caf33047306d4895c9c331055ef8864f228018fdfb9fb165a38ac9e69f4');"></div>
+    <div class="background-image" style="background-image: url('https://cdn.discordapp.com/attachments/1380427231507124234/1391422400884641832/5bdeeb95919d9f8a9949097f97cdabc3.png?ex=686bd697&is=686a8517&hm=3c4d4f62c920c55ddf1866fe21646b9c263fbe15ce3f2290e941041714f45244');"></div>
+    <div class="background-image" style="background-image: url('https://cdn.discordapp.com/attachments/1380427231507124234/1391423095197401230/photo-1618766494374-2d27737bb239.png?ex=686bd73d&is=686a85bd&hm=d123041ff1cb201239970fd881a9b156fabc862d91fedaeb707be7bfbc1c66ee');"></div>
+  </div>
+
+  <!-- 중앙 카드 -->
+  <div class="wrapper">
+    <div class="container">
+      <h1>계획 도우미에 오신 것을 환영합니다</h1>
+      <p>여기에서 당신의 목표를 시각적으로 정리해 보세요.</p>
+      <button onclick="alert('계획 시작!')">계획 시작하기</button>
+    </div>
+  </div>
+
+  <!-- JavaScript: 이미지 전환 -->
+  <script>
+    const images = document.querySelectorAll(".background-image");
+    let current = 0;
+
+    setInterval(() => {
+      images[current].classList.remove("active");
+      current = (current + 1) % images.length;
+      images[current].classList.add("active");
+    }, 5000); // 5초 간격으로 변경
+  </script>
+</body>
+</html>
