@@ -89,26 +89,29 @@
       cursor: pointer;
     }
     #diagram {
+      display: flex;
+      flex-direction: column;
       flex-grow: 1;
       transition: all 0.3s ease;
       position: relative;
       background-color: #fafafa;
-      overflow: auto; padding: 20px;
+      overflow: auto;
+      padding: 20px;
       border-radius: 20px 0 0 0;
     }
     #diagramContent {
-    flex-grow: 1; /* 남은 수직 공간을 모두 차지 */
-     border: 2px dashed #bbb;
-     border-radius: 12px;
-     padding: 40px; /* 내부 패딩은 유지 */
-     text-align: center;
-     font-size: 18px;
-     color: #555;
-     /* 아래 두 속성을 제거하거나 0으로 설정하여 상하 여백 제거 */
-     margin-top: 0px; /* 기존 60px에서 0으로 변경 */
-     margin-bottom: 0px; /* 기존 20px에서 0으로 변경 */
-     white-space: pre-wrap;
-}
+      flex: 1 1 auto;
+      border: 2px dashed #bbb;
+      border-radius: 12px;
+      padding: 40px;
+      text-align: center;
+      font-size: 18px;
+      color: #555;
+      margin-top: 0px;
+      margin-bottom: 70px; /* exportBtn 높이만큼 여유 */
+      white-space: pre-wrap;
+      min-height: 0;
+    }
     .response-box {
       background-color: #e0e7ff;
       border: 2px solid #4f46e5;
