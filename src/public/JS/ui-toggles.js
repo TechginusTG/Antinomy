@@ -15,6 +15,7 @@ export function toggleGoalModal() {
 // 채팅 창 표시/숨김 및 팝업 동기화
 export function toggleChat() {
     const chat = document.getElementById('chat');
+    const chatInputArea = document.getElementById('chatInputArea').classList.toggle('collapsed'); // 'collapsed' 클래스 토글
     const openBtn = document.getElementById('openChatButton');
     const diagram = document.getElementById('diagram');
     const lastResponseElement = document.getElementById('lastResponse');
