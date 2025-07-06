@@ -1,4 +1,4 @@
-// main.js
+// src/public/JS/main.js (수정된 코드)
 
 import { autoResizeTextarea, sendChatMessage } from './chat-management.js';
 import { toggleGoalModal, toggleChat } from './ui-toggles.js';
@@ -23,20 +23,25 @@ document.addEventListener('DOMContentLoaded', () => {
         sendBtn.addEventListener('click', sendChatMessage);
     }
 
-    // 목표 모달 버튼 이벤트 리스너 (HTML에 해당 버튼이 있다고 가정)
-    const toggleGoalModalBtn = document.getElementById('toggleGoalModalBtn'); // 가정: 목표 모달을 여는 버튼 ID
-    if (toggleGoalModalBtn) {
-        toggleGoalModalBtn.addEventListener('click', toggleGoalModal);
+    // 목표 모달 버튼 이벤트 리스너 (HTML의 'goalBox' ID 사용)
+    const goalBox = document.getElementById('goalBox'); // HTML의 <div id="goalBox">와 일치
+    if (goalBox) {
+        goalBox.addEventListener('click', toggleGoalModal);
     }
 
-    // 채팅 토글 버튼 이벤트 리스너 (HTML에 해당 버튼이 있다고 가정)
-    const toggleChatBtn = document.getElementById('toggleChatBtn'); // 가정: 채팅을 토글하는 버튼 ID
-    if (toggleChatBtn) {
-        toggleChatBtn.addEventListener('click', toggleChat);
+    // 채팅 토글 버튼 이벤트 리스너 (HTML의 'toggleChat' 및 'openChatButton' ID 사용)
+    const toggleChatBtn1 = document.getElementById('toggleChat'); // HTML의 <button id="toggleChat">와 일치
+    const toggleChatBtn2 = document.getElementById('openChatButton'); // HTML의 <button id="openChatButton">와 일치
+
+    if (toggleChatBtn1) {
+        toggleChatBtn1.addEventListener('click', toggleChat);
+    }
+    if (toggleChatBtn2) {
+        toggleChatBtn2.addEventListener('click', toggleChat);
     }
 
-    // XML 내보내기 버튼 이벤트 리스너 (HTML에 해당 버튼이 있다고 가정)
-    const exportXmlBtn = document.getElementById('exportXmlBtn'); // 가정: XML 내보내기 버튼 ID
+    // XML 내보내기 버튼 이벤트 리스너 (HTML의 'exportBtn' ID 사용)
+    const exportXmlBtn = document.getElementById('exportBtn'); // HTML의 <button id="exportBtn">와 일치
     if (exportXmlBtn) {
         exportXmlBtn.addEventListener('click', exportToXML);
     }

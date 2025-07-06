@@ -8,7 +8,7 @@
 </head>
 <body>
   <div id="chat">
-    <button id="toggleChat" onclick="toggleChat()">◀</button>
+    <button id="toggleChat">◀</button>
     <h2>ChatGPT 대화창</h2>
     <div id="chatLog">
       <div class="response-box user">
@@ -36,10 +36,10 @@
     </div>
   </div>
 
-  <button id="openChatButton" onclick="toggleChat()">GPT 열기</button>
+  <button id="openChatButton">GPT 열기</button>
 
   <div id="diagram">
-    <div id="goalBox" onclick="toggleGoalModal()">🎯 목표 보기</div>
+    <div id="goalBox">🎯 목표 보기</div>
     <div id="goalModal">
       <h3>내 목표</h3>
       <p><strong>예시:</strong> "7월 내 사이드 프로젝트 완성"</p>
@@ -61,209 +61,9 @@
       <div class="popup-content" id="popupResponseContent"></div>
     </div>
 
-    <button id="exportBtn" onclick="exportToXML()">XML 파일로 내보내기</button>
+    <button id="exportBtn">XML 파일로 내보내기</button>
   </div>
 
-  <script>
-    const gptResponsePopup = document.getElementById('gptResponsePopup');
-    let isDragging = false;
-    let offsetX, offsetY;
-
-    function toggleGoalModal() {
-      const goalModal = document.getElementById('goalModal');
-      goalModal.style.display = goalModal.style.display === 'block' ? 'none' : 'block';
-      if (goalModal.style.display === 'block') {
-        updateGoalSummary();
-      }
-    }
-
-    function toggleChat() {
-      const chat = document.getElementById('chat');
-      const openBtn = document.getElementById('openChatButton');
-      const diagram = document.getElementById('diagram');
-      const lastResponseElement = document.getElementById('lastResponse');
-      const popupResponseContent = document.getElementById('popupResponseContent');
-
-      const isCollapsed = chat.classList.toggle('collapsed');
-      
-      openBtn.style.display = isCollapsed ? 'block' : 'none';
-      diagram.style.flexGrow = isCollapsed ? 2 : 1;
-
-      if (isCollapsed) {
-        if (lastResponseElement) {
-          const lastGptText = lastResponseElement.textContent.replace('ChatGPT:', '').trim();
-          
-          // 공백 처리 로직 (옵션 1)
-          const cleanedGptText = lastGptText.trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' ');
-
-          popupResponseContent.textContent = cleanedGptText; 
-          gptResponsePopup.style.display = 'block';
-          gptResponsePopup.style.top = '50%';
-          gptResponsePopup.style.left = '50%';
-          gptResponsePopup.style.transform = 'translate(-50%, -50%)';
-        } else {
-          popupResponseContent.textContent = "마지막 ChatGPT 답변이 없습니다.";
-          gptResponsePopup.style.display = 'block';
-        }
-      } else {
-        gptResponsePopup.style.display = 'none';
-      }
-    }
-
-    function autoResizeTextarea() {
-        this.style.height = 'auto';
-        this.style.height = (this.scrollHeight) + 'px';
-    }
-
-    document.getElementById('userInput').addEventListener('keydown', function(event) {
-        if (event.key === 'Enter' && !event.shiftKey) {
-            event.preventDefault();
-            sendChatMessage();
-            this.style.height = '40px';
-        }
-    });
-    document.getElementById('userInput').addEventListener('input', autoResizeTextarea);
-
-    document.getElementById('sendBtn').addEventListener('click', sendChatMessage);
-
-    function sendChatMessage() {
-      const userInputElement = document.getElementById('userInput');
-      const input = userInputElement.value;
-      if (!input.trim()) return;
-
-      const chatLog = document.getElementById('chatLog');
-
-      const userMessageDiv = document.createElement('div');
-      userMessageDiv.classList.add('response-box', 'user');
-      userMessageDiv.innerHTML = `<strong>사용자:</strong> ${input}`;
-      chatLog.appendChild(userMessageDiv);
-
-      let gptResponseContent = "";
-      if (input.includes("일본 여행 순서도") || input.includes("단계") || input.includes("시작")) {
-        gptResponseContent = "네, 일본 여행 순서도는 크게 '여행 목표 및 예산 설정 → 항공권 및 숙소 예약 → 세부 일정 계획 및 현지 정보 조사 → 여행 준비물 확인 및 환전' 등의 단계로 진행됩니다.";
-      } else if (input.includes("목표") || input.includes("예산")) {
-        gptResponseContent = "여행 목표와 예산 설정은 여행의 목적(휴식, 관광 등)과 예상 지출 금액을 정하는 단계입니다. 이 정보가 구체적일수록 다음 단계가 수월해집니다.";
-      } else if (input.includes("항공권") || input.includes("숙소")) {
-        gptResponseContent = "항공권과 숙소 예약 시에는 여권 유효기간 확인, 항공권 최저가 비교, 숙소 위치 및 편의시설 고려가 중요합니다.";
-      } else if (input.includes("일정") || input.includes("현지 정보")) {
-        gptResponseContent = "세부 일정 계획은 방문할 장소, 교통편, 식사 계획을 구체화하는 것이고, 현지 정보 조사는 날씨, 비상 연락처, 문화 등을 파악하는 것입니다.";
-      } else if (input.includes("준비물") || input.includes("환전")) {
-        gptResponseContent = "여행 준비물 확인은 개인 물품, 의류, 상비약 등을 점검하고, 환전은 일본 엔화로 미리 준비하는 단계를 의미합니다.";
-      } else {
-        gptResponseContent = `'${input}'에 대한 답변입니다.`;
-      }
-
-      const cleanedGptResponseContent = gptResponseContent.trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' ');
-
-      const existingLastResponse = document.getElementById('lastResponse');
-      if (existingLastResponse) {
-        existingLastResponse.removeAttribute('id');
-      }
-
-      const gptMessageDiv = document.createElement('div');
-      gptMessageDiv.classList.add('response-box', 'gpt');
-      gptMessageDiv.id = 'lastResponse';
-      gptMessageDiv.innerHTML = `<strong>ChatGPT:</strong> ${cleanedGptResponseContent}`; 
-      chatLog.appendChild(gptMessageDiv);
-
-      chatLog.scrollTop = chatLog.scrollHeight;
-      
-      userInputElement.value = '';
-      userInputElement.style.height = '40px';
-
-      if (gptResponsePopup.style.display === 'block') {
-          document.getElementById('popupResponseContent').textContent = cleanedGptResponseContent; 
-      }
-
-      updateGoalSummary();
-    }
-
-    function updateGoalSummary() {
-        const chatLog = document.getElementById('chatLog');
-        const gptResponses = chatLog.querySelectorAll('.response-box.gpt');
-        let summaryText = "아직 요약된 목표가 없습니다.";
-
-        if (gptResponses.length > 0) {
-            summaryText = "--- 대화 요약된 목표 ---\n";
-            let stepCounter = 1;
-            gptResponses.forEach((responseDiv, index) => {
-                const text = responseDiv.textContent.replace('ChatGPT:', '').trim();
-                const cleanedText = text.trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' ');
-
-                if (cleanedText.includes("단계") || cleanedText.includes("시작") || cleanedText.includes("다음으로") || cleanedText.includes("중요")) {
-                    summaryText += `${stepCounter}. ${cleanedText}\n`;
-                    stepCounter++;
-                } else if (index === gptResponses.length -1 && stepCounter === 1) { 
-                    summaryText += `${stepCounter}. ${cleanedText}\n`;
-                }
-            });
-            if (stepCounter === 1 && gptResponses.length > 0) {
-                const lastCleanedText = gptResponses[gptResponses.length -1].textContent.replace('ChatGPT:', '').trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' ');
-                summaryText += `1. ${lastCleanedText}\n`;
-            }
-        }
-        document.getElementById('summarizedGoalContent').textContent = summaryText;
-    }
-
-
-    function exportToXML() {
-      let textToExport = "";
-      const lastResponseElement = document.getElementById('lastResponse');
-      if (lastResponseElement) {
-          textToExport = lastResponseElement.textContent.replace('ChatGPT:', '').trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' ');
-      } else {
-          textToExport = document.getElementById('diagramContent').textContent;
-      }
-      
-      const xmlContent = `<?xml version="1.0" encoding="UTF-8"?>\n<response>\n  <text>${textToExport}</text>\n</response>`;
-      const blob = new Blob([xmlContent], { type: 'text/xml' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'diagram_response.xml';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    // --- 팝업 드래그 기능 ---
-    gptResponsePopup.addEventListener('mousedown', (e) => {
-      if (e.target.closest('.popup-header') || e.target === gptResponsePopup || e.target.closest('.popup-content')) {
-        isDragging = true;
-        gptResponsePopup.style.zIndex = '101'; 
-        offsetX = e.clientX - gptResponsePopup.getBoundingClientRect().left;
-        offsetY = e.clientY - gptResponsePopup.getBoundingClientRect().top;
-        gptResponsePopup.style.cursor = 'grabbing';
-      }
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (!isDragging) return;
-      const diagramRect = document.getElementById('diagram').getBoundingClientRect();
-      let newLeft = e.clientX - offsetX;
-      let newTop = e.clientY - offsetY;
-
-      if (newLeft < diagramRect.left) newLeft = diagramRect.left;
-      if (newLeft + gptResponsePopup.offsetWidth > diagramRect.right) {
-          newLeft = diagramRect.right - gptResponsePopup.offsetWidth;
-      }
-      if (newTop < diagramRect.top) newTop = diagramRect.top;
-      if (newTop + gptResponsePopup.offsetHeight > diagramRect.bottom) {
-          newTop = diagramRect.bottom - gptResponsePopup.offsetHeight;
-      }
-
-      gptResponsePopup.style.left = `${newLeft}px`;
-      gptResponsePopup.style.top = `${newTop}px`;
-      gptResponsePopup.style.transform = 'none';
-    });
-
-    document.addEventListener('mouseup', () => {
-      isDragging = false;
-      gptResponsePopup.style.cursor = 'grab';
-      gptResponsePopup.style.zIndex = '100'; 
-    });
-    // --- 팝업 드래그 기능 끝 ---
-
-    document.addEventListener('DOMContentLoaded', updateGoalSummary);
-  </script>
+  <script type="module" src="/JS/main.js"></script>
 </body>
 </html>
