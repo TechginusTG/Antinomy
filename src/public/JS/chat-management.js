@@ -44,7 +44,7 @@ export function sendChatMessage() {
         existingLastResponse.removeAttribute('id');
     }
 
-    const gptMessageDiv = document.createElement('div');
+    const gptMessageDiv = document.createElement('li');
     gptMessageDiv.classList.add('response-box', 'gpt');
     gptMessageDiv.id = 'lastResponse'; // 마지막 응답으로 설정
     gptMessageDiv.innerHTML = `<strong>ChatGPT:</strong> ${cleanedGptResponseContent}`;
