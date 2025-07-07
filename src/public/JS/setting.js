@@ -55,7 +55,9 @@ document.querySelectorAll('input[name="theme"]').forEach(radio => {
 
 // 언어 선택 시 라벨 변경
 document.getElementById('language').addEventListener('change', (e) => {
+  
   const selectedLang = e.target.value;
+  window.localStorage.setItem('lang',selectedLang);
   updateLabels(selectedLang);
 });
 
@@ -88,7 +90,7 @@ function applySettings() {
 window.localStorage.setItem('thema','fuyu');
  }
 
-  alert(translations[language].alert(language === 'ko' ? '한국어' : 'English', theme));
+  window.location.href = "/visited";
 }
 
 // 초기 라벨 설정
