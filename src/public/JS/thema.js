@@ -26,4 +26,18 @@ const thema = {
         btn: '#006400',
         text: '#FFFFFF'
     }
+
+
+
 }
+
+const bg=document.getElementById('diagram');
+const chat =document.getElementById('chat');
+const body =document.querySelector('body');
+
+
+
+function applyThema(t){
+    
+}
+
