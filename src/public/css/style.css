@@ -38,7 +38,7 @@
     #chatLog {
       flex: 1;
       overflow-y:auto;
-      margin: 0 16px 8px 16px; }
+      margin: 0 16px 100px 16px; }
     #chatInputArea {
       position:fixed;
       left:0;
