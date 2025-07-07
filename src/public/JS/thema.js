@@ -34,10 +34,17 @@ const thema = {
 const bg=document.getElementById('diagram');
 const chat =document.getElementById('chat');
 const body =document.querySelector('body');
+const text =document.querySelector('html').style.color;
 
 
 
 function applyThema(t){
+    body.style.backgroundColor =thema.t.bg; 
+    bg.style.backgroundColor =thema.t.bg; 
+    chat.style.backgroundColor =thema.t.chat; 
+    text=thema.t.text;
     
 }
+
+
 
