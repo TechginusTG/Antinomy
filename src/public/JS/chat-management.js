@@ -14,10 +14,10 @@ export function sendChatMessage() {
 
     const chatLog = document.getElementById('chatLog');
 
-    const userMessageLi = document.createElement('li');
-    userMessageLi.classList.add('response-box', 'user');
-    userMessageLi.innerHTML = `<strong>사용자:</strong> ${input}`;
-    chatLog.appendChild(userMessageLi);
+    const userMessageDiv = document.createElement('li');
+    userMessageDiv.classList.add('response-box', 'user');
+    userMessageDiv.innerHTML = `<strong>사용자:</strong> ${input}`;
+    chatLog.appendChild(userMessageDiv);
 
     let gptResponseContent = "";
     // 사용자 입력에 따른 ChatGPT 응답 로직
@@ -36,7 +36,7 @@ export function sendChatMessage() {
     }
 
     // 줄바꿈, 탭 등은 건드리지 않고 원본 그대로 사용
-    const cleanedGptResponseContent = gptResponseContent);
+    const cleanedGptResponseContent = gptResponseContent.trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' ');
 
     // 기존 마지막 응답 ID 제거 및 새 응답에 ID 부여
     const existingLastResponse = document.getElementById('lastResponse');
@@ -44,11 +44,11 @@ export function sendChatMessage() {
         existingLastResponse.removeAttribute('id');
     }
 
-    const gptMessageLi = document.createElement('li');
-    gptMessageLi.classList.add('response-box', 'gpt');
-    gptMessageLi.id = 'lastResponse'; // 마지막 응답으로 설정
-    gptMessageLi.innerHTML = `<strong>ChatGPT:</strong> ${cleanedGptResponseContent}`;
-    chatLog.appendChild(gptMessageLi);
+    const gptMessageDiv = document.createElement('li');
+    gptMessageDiv.classList.add('response-box', 'gpt');
+    gptMessageDiv.id = 'lastResponse'; // 마지막 응답으로 설정
+    gptMessageDiv.innerHTML = `<strong>ChatGPT:</strong> ${cleanedGptResponseContent}`;
+    chatLog.appendChild(gptMessageDiv);
 
     chatLog.scrollTop = chatLog.scrollHeight; // 스크롤을 최하단으로 이동
 
@@ -60,7 +60,7 @@ export function sendChatMessage() {
     const popupResponseContent = document.getElementById('popupResponseContent');
     if (gptResponsePopup && popupResponseContent && gptResponsePopup.style.display === 'block') {
         // 팝업에만 줄바꿈을 없애고 한 줄로 표시 + 앞뒤 줄바꿈 완전 제거
-        popupResponseContent.textContent = cleanedGptResponseContent;
+        popupResponseContent.textContent = cleanedGptResponseContent.replace(/^[\n\s]+|[\n\s]+$/g, '').replace(/\n+/g, ' ').replace(/\t+/g, ' ').replace(/\s{2,}/g, ' ');
     }
 
     // 목표 요약 업데이트 (goal-summary.js에서 import 해야 함)
