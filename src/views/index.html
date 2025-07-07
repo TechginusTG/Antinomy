@@ -10,13 +10,9 @@
 		<div id="chat">
 			<button id="toggleChat">◀</button>
 			<h2>ChatGPT 대화창</h2>
-			<ul id="chatLog">
-			</ul>
+			<ul id="chatLog"></ul>
 			<div id="chatInputArea">
-				<textarea
-					id="userInput"
-					placeholder="입력하세요..."
-				></textarea>
+				<textarea id="userInput" placeholder="입력하세요..."></textarea>
 				<button id="sendBtn" onclick="sendChatMessage()">보내기</button>
 			</div>
 		</div>
@@ -37,10 +33,11 @@
 				<div id="summarizedGoalContent"></div>
 			</div>
 			<iframe
+				src="https://tldraw.com"
+				width="800"
+				height="600"
+				frameborder="0"
 				id="diagramContent"
-				src="https://mermaid.live"
-				style="border: none; outline: none;"
-				allowfullscreen
 			></iframe>
 
 			<div id="gptResponsePopup">
@@ -51,7 +48,7 @@
 			<button id="exportBtn">XML 파일로 내보내기</button>
 			<button id="setting">설정</button>
 		</div>
-		<script> 
+		<script>
 			const settingButton = document.getElementById("setting");
 
 			settingButton.addEventListener("click", () => {
