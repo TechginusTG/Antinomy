@@ -42,7 +42,7 @@ function applyThema(t){
     body.style.backgroundColor =thema[t].bg; 
     bg.style.backgroundColor =thema[t].bg; 
     chat.style.backgroundColor =thema[t].chat; 
-    text=thema.t.text;
+    text=thema[t].text;
     
 }
 
