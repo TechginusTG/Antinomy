@@ -14,7 +14,7 @@ export function sendChatMessage() {
 
     const chatLog = document.getElementById('chatLog');
 
-    const userMessageDiv = document.createElement('div');
+    const userMessageDiv = document.createElement('li');
     userMessageDiv.classList.add('response-box', 'user');
     userMessageDiv.innerHTML = `<strong>사용자:</strong> ${input}`;
     chatLog.appendChild(userMessageDiv);
