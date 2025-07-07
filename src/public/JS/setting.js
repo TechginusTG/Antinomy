@@ -67,27 +67,26 @@ function applySettings() {
   const settingsBox = document.getElementById('settingsBox');
 
   if (theme === 'light') {
-    body.className = '';
-    body.style.backgroundColor = '#ffffff';
-    body.style.color = '#000000';
-    document.documentElement.style.setProperty('--btn-color', '#4CAF50');
-  } else if (theme === 'dark') {
-    body.className = '';
-    body.style.backgroundColor = '#1a1a1a';
-    body.style.color = '#f0f0f0';
-    document.documentElement.style.setProperty('--btn-color', '#008cba');
-  } else if (theme === 'custom') {
-    const bg = document.getElementById('bgColor').value;
-    const text = document.getElementById('textColor').value;
-    const btn = document.getElementById('btnColor').value;
+    window.localStorage.setItem('thema','light');
+  } 
+  else if (theme === 'dark') {
+    window.localStorage.setItem('thema','dark');
 
-    body.className = 'custom-theme';
-    settingsBox.className = 'settings-box custom-theme';
+  } 
+  else if (theme === 'haru') {
+    window.localStorage.setItem('thema','haru');
+ }
+ else if(theme === 'natsu'){
+  window.localStorage.setItem('thema','natsu');
+ }
 
-    document.documentElement.style.setProperty('--bg-color', bg);
-    document.documentElement.style.setProperty('--text-color', text);
-    document.documentElement.style.setProperty('--btn-color', btn);
-  }
+ else if(theme === 'aki'){
+  window.localStorage.setItem('thema','aki');
+ }
+
+ else if(theme === 'fuyu'){
+window.localStorage.setItem('thema','fuyu');
+ }
 
   alert(translations[language].alert(language === 'ko' ? '한국어' : 'English', theme));
 }
