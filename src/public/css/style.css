@@ -237,3 +237,39 @@
         transform: translate(-50%, -50%);
       }
   }
+
+
+/* 모바일 환경에 대한 스타일 (화면 너비 768px 이하) */
+@media (max-width: 768px) {
+    /* goalBox가 모바일에서 잘리지 않도록 위치 및 크기 조정 */
+    #goalBox {
+        top: 10px;        /* 상단에서 여백을 줄여 공간 확보 */
+        right: 10px;      /* 오른쪽에서 여백을 줄여 공간 확보 */
+        padding: 8px 12px; /* 버튼의 내부 여백을 줄여 전체 크기 조절 */
+        font-size: 0.9em;  /* 텍스트 크기를 작게 조절 */
+        border-radius: 15px; /* 모바일에서 더 부드러운 모서리 */
+        z-index: 100;     /* 다른 요소 위에 표시되도록 충분히 높은 z-index */
+    }
+
+    /* openChatButton (채팅 열기 버튼) 위치 조정 및 z-index 설정 */
+    #openChatButton {
+        top: 10px;        /* 상단 여백을 줄여 goalBox와 동일 선상에 놓되 */
+        left: 10px;       /* 좌측에 배치하여 goalBox와 겹치지 않게 함 */
+        padding: 6px 10px; /* 버튼의 내부 여백 조절 */
+        font-size: 0.85em; /* 텍스트 크기 조절 */
+        border-radius: 10px;
+        z-index: 101;     /* goalBox (z-index: 100) 보다 높아 가려지지 않게 함 */
+    }
+
+    /* toggleChat (채팅 닫기 버튼) 위치 조정 */
+    #toggleChat {
+        top: 10px;        /* 채팅창 내 상단 여백을 줄여 공간 확보 */
+        right: 10px;      /* 채팅창 내 우측에 배치 */
+        left: auto;       /* 기존 left 속성 제거 */
+        transform: none;  /* 기존 transform 속성 제거 */
+        padding: 6px 10px; /* 버튼의 내부 여백 조절 */
+        font-size: 0.85em; /* 텍스트 크기 조절 */
+        border-radius: 10px;
+        z-index: 102;     /* openChatButton보다 높아 최상단에 표시되도록 함 */
+    }
+}
