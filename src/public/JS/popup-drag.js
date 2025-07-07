@@ -51,6 +51,32 @@ if (gptResponsePopup) {
         if (gptResponsePopup) {
             gptResponsePopup.style.cursor = 'grab'; // 커서 원래대로
             gptResponsePopup.style.zIndex = '100'; // z-index 원래대로
+            // 구석(오른쪽 하단) 근처면 최소화
+            const diagram = document.getElementById('diagram');
+            if (diagram && !isPopupMinimized) {
+                const popupRect = gptResponsePopup.getBoundingClientRect();
+                const diagramRect = diagram.getBoundingClientRect();
+                if (
+                    popupRect.right > diagramRect.right - MINIMIZE_MARGIN &&
+                    popupRect.bottom > diagramRect.bottom - MINIMIZE_MARGIN
+                ) {
+                    minimizePopup();
+                }
+            }
         }
     });
+}
+
+// 팝업 내용 설정 함수
+function setPopupContent(content) {
+    const popupResponseContent = gptResponsePopup.querySelector('.popup-response-content');
+    if (popupResponseContent) {
+        // HTML 태그 제거 및 줄바꿈 처리
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
+        const cleanedGptResponseContent = tempDiv.textContent || tempDiv.innerText || '';
+
+        // 원래대로: 줄바꿈 등은 한 줄로 치환하지 않고 cleanedGptResponseContent 그대로 사용
+        popupResponseContent.textContent = cleanedGptResponseContent;
+    }
 }
