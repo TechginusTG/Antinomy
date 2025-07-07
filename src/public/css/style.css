@@ -51,7 +51,7 @@ body {
 #chatLog {
   flex: 1;
   overflow-y: auto;
-  margin: 0 16px 160px 16px;
+  margin: 0 16px 100px 16px;
 }
 
 #chatInputArea {
