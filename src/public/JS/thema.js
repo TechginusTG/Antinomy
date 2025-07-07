@@ -34,7 +34,7 @@ const thema = {
 const bg=document.getElementById('diagram');
 const chat =document.getElementById('chat');
 const body =document.querySelector('body');
-const text =document.querySelector('html').style.color;
+let text =document.querySelector('html').style.color;
 
 
 
