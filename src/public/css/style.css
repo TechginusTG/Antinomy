@@ -12,6 +12,10 @@ body {
   overflow: hidden;
 }
 
+.response-box {
+  list-style: none;
+}
+
 #chat {
   width: 40%;
   max-width: 400px;
