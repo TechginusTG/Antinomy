@@ -109,8 +109,6 @@
     }
     #diagramContent {
       flex: 1 1 auto;
-      border: 2px dashed #bbb;
-      border-radius: 12px;
       padding: 40px;
       text-align: center;
       font-size: 18px;
@@ -141,7 +139,7 @@
       margin-right: auto;
     }
     #goalBox {
-      position: absolute;
+      position: fixed;
       top: 16px;
       right: 16px;
       background-color: #2563eb;
@@ -150,7 +148,7 @@
       border-radius: 20px;
       cursor: pointer;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      z-index: 1;
+      z-index: 2;
     }
     #goalModal {
       position: absolute;
