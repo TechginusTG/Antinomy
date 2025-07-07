@@ -59,8 +59,8 @@ export function sendChatMessage() {
     const gptResponsePopup = document.getElementById('gptResponsePopup');
     const popupResponseContent = document.getElementById('popupResponseContent');
     if (gptResponsePopup && popupResponseContent && gptResponsePopup.style.display === 'block') {
-        // 팝업에만 줄바꿈을 없애고 한 줄로 표시
-        popupResponseContent.textContent = cleanedGptResponseContent.replace(/\n+/g, ' ').replace(/\t+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+        // 팝업에만 줄바꿈을 없애고 한 줄로 표시 + 앞뒤 줄바꿈 완전 제거
+        popupResponseContent.textContent = cleanedGptResponseContent.replace(/^[\n\s]+|[\n\s]+$/g, '').replace(/\n+/g, ' ').replace(/\t+/g, ' ').replace(/\s{2,}/g, ' ');
     }
 
     // 목표 요약 업데이트 (goal-summary.js에서 import 해야 함)

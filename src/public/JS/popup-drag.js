@@ -51,6 +51,64 @@ if (gptResponsePopup) {
         if (gptResponsePopup) {
             gptResponsePopup.style.cursor = 'grab'; // 커서 원래대로
             gptResponsePopup.style.zIndex = '100'; // z-index 원래대로
+            // 구석(오른쪽 하단) 근처면 최소화
+            const diagram = document.getElementById('diagram');
+            if (diagram && !isPopupMinimized) {
+                const popupRect = gptResponsePopup.getBoundingClientRect();
+                const diagramRect = diagram.getBoundingClientRect();
+                if (
+                    popupRect.right > diagramRect.right - MINIMIZE_MARGIN &&
+                    popupRect.bottom > diagramRect.bottom - MINIMIZE_MARGIN
+                ) {
+                    minimizePopup();
+                }
+            }
         }
     });
 }
+
+// 팝업 최소화/복원 상태 관리
+let isPopupMinimized = false;
+
+// 최소화 버튼 생성 및 삽입
+const minimizeBtn = document.createElement('button');
+minimizeBtn.id = 'popupMinimizeBtn';
+minimizeBtn.innerHTML = '&#x25C0;'; // < 모양
+minimizeBtn.style.position = 'absolute';
+minimizeBtn.style.right = '-18px';
+minimizeBtn.style.top = '10px';
+minimizeBtn.style.zIndex = '200';
+minimizeBtn.style.display = 'none';
+minimizeBtn.style.background = '#2563eb';
+minimizeBtn.style.color = 'white';
+minimizeBtn.style.border = 'none';
+minimizeBtn.style.borderRadius = '10px 0 0 10px';
+minimizeBtn.style.width = '28px';
+minimizeBtn.style.height = '40px';
+minimizeBtn.style.cursor = 'pointer';
+gptResponsePopup.appendChild(minimizeBtn);
+
+// 팝업 최소화 함수
+function minimizePopup() {
+    gptResponsePopup.style.width = '40px';
+    gptResponsePopup.style.height = '40px';
+    gptResponsePopup.style.overflow = 'hidden';
+    gptResponsePopup.querySelector('.popup-header').style.display = 'none';
+    gptResponsePopup.querySelector('.popup-content').style.display = 'none';
+    minimizeBtn.style.display = 'block';
+    isPopupMinimized = true;
+}
+
+// 팝업 복원 함수
+function restorePopup() {
+    gptResponsePopup.style.width = '';
+    gptResponsePopup.style.height = '';
+    gptResponsePopup.style.overflow = '';
+    gptResponsePopup.querySelector('.popup-header').style.display = '';
+    gptResponsePopup.querySelector('.popup-content').style.display = '';
+    minimizeBtn.style.display = 'none';
+    isPopupMinimized = false;
+}
+
+// 최소화 버튼 클릭 시 복원
+minimizeBtn.addEventListener('click', restorePopup);
