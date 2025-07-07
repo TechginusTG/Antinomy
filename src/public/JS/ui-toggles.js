@@ -31,7 +31,7 @@ export function toggleChat() {
         if (lastResponseElement) {
             const lastGptText = lastResponseElement.textContent.replace('ChatGPT:', '').trim();
             const cleanedGptText = lastGptText.trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' '); // 텍스트 정리
-
+            
             if (popupResponseContent && gptResponsePopup) {
                 popupResponseContent.textContent = cleanedGptText;
                 gptResponsePopup.style.display = 'block'; // 팝업 표시
