@@ -75,8 +75,15 @@
 			</div>
 
 			<button id="exportBtn">XML 파일로 내보내기</button>
+			<button id="setting">설정</button>
 		</div>
+		<script> 
+			const settingButton = document.getElementById("setting");
 
+			settingButton.addEventListener("click", () => {
+				window.location.href = "/settings";
+			});
+		</script>
 		<script type="module" src="/JS/main.js"></script>
 	</body>
 </html>
