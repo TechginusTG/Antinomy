@@ -42,7 +42,7 @@
       overflow-y:auto;
       margin: 0 16px 160px 16px; }
     #chatInputArea {
-      position:fixed;
+      position: relative;
       left:0;
       bottom:0;
       width:100%;
