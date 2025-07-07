@@ -22,11 +22,9 @@
       border-radius: 0 20px 20px 0;
     }
     #chat.collapsed,
-    #chatInputArea.collapsed,
-    #chatInputArea.collapsed textArea{
+    #chatInputArea.collapsed{
       width: 0;
       min-width: 0;
-      padding: 0;
       overflow: hidden;
       border: none;
     }
@@ -40,7 +38,7 @@
     #chatLog {
       flex: 1;
       overflow-y:auto;
-      margin: 0 16px 160px 16px; }
+      margin: 0 16px 8px 16px; }
     #chatInputArea {
       position:fixed;
       left:0;
@@ -91,7 +89,7 @@
       position: absolute;
       top: 20px;
       left:10px;
-      z-index: 20;
+      z-index: 3;
       background-color: #2563eb;
       color: white;
       padding: 8px 14px; 
@@ -111,6 +109,8 @@
     }
     #diagramContent {
       flex: 1 1 auto;
+      border: 2px dashed #bbb;
+      border-radius: 12px;
       padding: 40px;
       text-align: center;
       font-size: 18px;
@@ -141,7 +141,7 @@
       margin-right: auto;
     }
     #goalBox {
-      position: fixed;
+      position: absolute;
       top: 16px;
       right: 16px;
       background-color: #2563eb;
@@ -150,7 +150,7 @@
       border-radius: 20px;
       cursor: pointer;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      z-index: 10;
+      z-index: 1;
     }
     #goalModal {
       position: absolute;
