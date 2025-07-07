@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>설정 창</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="settings-box" id="settingsBox">
+    <h2 id="title">설정</h2>
+
+    <div class="setting-group">
+      <label for="language" id="label-language">언어 설정</label>
+      <select id="language">
+        <option value="ko">한국어</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+
+    <div class="setting-group">
+      <label id="label-theme">테마 선택</label>
+      <label><input type="radio" name="theme" value="light" checked> <span id="label-light">라이트</span></label>
+      <label><input type="radio" name="theme" value="dark"> <span id="label-dark">다크</span></label>
+      <label><input type="radio" name="theme" value="custom"> <span id="label-custom">사용자 정의</span></label>
+    </div>
+
+    <div class="setting-group" id="customThemeInputs" style="display:none;">
+      <label id="label-bg">배경 색상</label>
+      <input type="color" id="bgColor" value="#ffffff">
+      <label id="label-text">텍스트 색상</label>
+      <input type="color" id="textColor" value="#000000">
+      <label id="label-btn">버튼 색상</label>
+      <input type="color" id="btnColor" value="#4CAF50">
+    </div>
+
+    <button class="btn" id="saveBtn" onclick="applySettings()">저장</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
