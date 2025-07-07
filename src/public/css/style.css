@@ -213,6 +213,18 @@ body {
 
 #exportBtn {
   position: fixed;
+  right: 80px;
+  bottom: 20px;
+  background-color: #10b981;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+#setting {
+  position: fixed;
   right: 20px;
   bottom: 20px;
   background-color: #10b981;
@@ -223,7 +235,6 @@ body {
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
 /* 팝업 스타일 조정 */
 #gptResponsePopup {
   display: none;
