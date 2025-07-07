@@ -142,6 +142,7 @@
     }
     #goalBox {
       position: fixed;
+      display:block;
       top: 16px;
       right: 16px;
       background-color: #2563eb;
