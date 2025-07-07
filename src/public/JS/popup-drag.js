@@ -67,48 +67,16 @@ if (gptResponsePopup) {
     });
 }
 
-// 팝업 최소화/복원 상태 관리
-let isPopupMinimized = false;
+// 팝업 내용 설정 함수
+function setPopupContent(content) {
+    const popupResponseContent = gptResponsePopup.querySelector('.popup-response-content');
+    if (popupResponseContent) {
+        // HTML 태그 제거 및 줄바꿈 처리
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
+        const cleanedGptResponseContent = tempDiv.textContent || tempDiv.innerText || '';
 
-// 최소화 버튼 생성 및 삽입
-const minimizeBtn = document.createElement('button');
-minimizeBtn.id = 'popupMinimizeBtn';
-minimizeBtn.innerHTML = '&#x25C0;'; // < 모양
-minimizeBtn.style.position = 'absolute';
-minimizeBtn.style.right = '-18px';
-minimizeBtn.style.top = '10px';
-minimizeBtn.style.zIndex = '200';
-minimizeBtn.style.display = 'none';
-minimizeBtn.style.background = '#2563eb';
-minimizeBtn.style.color = 'white';
-minimizeBtn.style.border = 'none';
-minimizeBtn.style.borderRadius = '10px 0 0 10px';
-minimizeBtn.style.width = '28px';
-minimizeBtn.style.height = '40px';
-minimizeBtn.style.cursor = 'pointer';
-gptResponsePopup.appendChild(minimizeBtn);
-
-// 팝업 최소화 함수
-function minimizePopup() {
-    gptResponsePopup.style.width = '40px';
-    gptResponsePopup.style.height = '40px';
-    gptResponsePopup.style.overflow = 'hidden';
-    gptResponsePopup.querySelector('.popup-header').style.display = 'none';
-    gptResponsePopup.querySelector('.popup-content').style.display = 'none';
-    minimizeBtn.style.display = 'block';
-    isPopupMinimized = true;
+        // 원래대로: 줄바꿈 등은 한 줄로 치환하지 않고 cleanedGptResponseContent 그대로 사용
+        popupResponseContent.textContent = cleanedGptResponseContent;
+    }
 }
-
-// 팝업 복원 함수
-function restorePopup() {
-    gptResponsePopup.style.width = '';
-    gptResponsePopup.style.height = '';
-    gptResponsePopup.style.overflow = '';
-    gptResponsePopup.querySelector('.popup-header').style.display = '';
-    gptResponsePopup.querySelector('.popup-content').style.display = '';
-    minimizeBtn.style.display = 'none';
-    isPopupMinimized = false;
-}
-
-// 최소화 버튼 클릭 시 복원
-minimizeBtn.addEventListener('click', restorePopup);
