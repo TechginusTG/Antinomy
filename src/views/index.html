@@ -78,16 +78,5 @@
 		</div>
 
 		<script type="module" src="/JS/main.js"></script>
-		<script>
-			// 첫 방문 여부 확인
-			if (window.localStorage.getItem("isFirtstVisit") === null) {
-				// 첫 방문인 경우
-				window.localStorage.setItem("isFirtstVisit", "false");
-				window.location.href = "/isvisited";
-			} else {
-				// 첫 방문이 아닌 경우
-				console.log("you visited this site");
-			}
-		</script>
 	</body>
 </html>
