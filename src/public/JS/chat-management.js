@@ -36,7 +36,7 @@ export function sendChatMessage() {
     }
 
     // 줄바꿈, 탭 등은 건드리지 않고 원본 그대로 사용
-    const cleanedGptResponseContent = gptResponseContent.trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' ');
+    const cleanedGptResponseContent = gptResponseContent;
 
     // 기존 마지막 응답 ID 제거 및 새 응답에 ID 부여
     const existingLastResponse = document.getElementById('lastResponse');
@@ -60,7 +60,7 @@ export function sendChatMessage() {
     const popupResponseContent = document.getElementById('popupResponseContent');
     if (gptResponsePopup && popupResponseContent && gptResponsePopup.style.display === 'block') {
         // 팝업에만 줄바꿈을 없애고 한 줄로 표시 + 앞뒤 줄바꿈 완전 제거
-        popupResponseContent.textContent = cleanedGptResponseContent.replace(/^[\n\s]+|[\n\s]+$/g, '').replace(/\n+/g, ' ').replace(/\t+/g, ' ').replace(/\s{2,}/g, ' ');
+        popupResponseContent.textContent = cleanedGptResponseContent;
     }
 
     // 목표 요약 업데이트 (goal-summary.js에서 import 해야 함)
