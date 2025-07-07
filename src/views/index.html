@@ -83,6 +83,7 @@
 			if (window.localStorage.getItem("isFirtstVisit") === null) {
 				// 첫 방문인 경우
 				window.localStorage.setItem("isFirtstVisit", "false");
+				window.location.href = "/isvisited";
 			} else {
 				// 첫 방문이 아닌 경우
 				alert("you visited this site");
