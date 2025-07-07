@@ -23,7 +23,8 @@
     }
     #chat.collapsed,
     #chatInputArea.collapsed,
-    #chatInputArea.collapsed + textArea{
+    #chatInputArea.collapsed textArea{
+      display: none;
       width: 0;
       min-width: 0;
       overflow: hidden;
@@ -37,6 +38,7 @@
       margin: 16px; 
 }
     #chatLog {
+      display: block;
       flex: 1;
       overflow-y:auto;
       margin: 0 16px 160px 16px; }
