@@ -34,6 +34,7 @@ const thema = {
 const bg=document.getElementById('diagram');
 const chat =document.getElementById('chat');
 const body =document.querySelector('body');
+const btn =document.querySelectorAll('.btn');
 let text =document.querySelector('html').style.color;
 
 
@@ -41,9 +42,11 @@ let text =document.querySelector('html').style.color;
 function applyThema(t){
     body.style.backgroundColor =thema[t].bg; 
     bg.style.backgroundColor =thema[t].bg; 
-    chat.style.backgroundColor =thema[t].chat; 
+    chat.style.backgroundColor =thema[t].chat;
+    btn.forEach((button) => {
+        button.style.backgroundColor =thema[t].btn;
+    }); 
     text=thema[t].text;
-    
 }
 
 
