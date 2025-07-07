@@ -35,7 +35,8 @@ export function sendChatMessage() {
         gptResponseContent = `'${input}'에 대한 답변입니다.`;
     }
 
-    const cleanedGptResponseContent = gptResponseContent.trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' ');
+    // 줄바꿈, 탭 모두 제거 (한 줄로)
+    const cleanedGptResponseContent = gptResponseContent.replace(/\n+/g, ' ').replace(/\t+/g, ' ').replace(/\s{2,}/g, ' ').trim();
 
     // 기존 마지막 응답 ID 제거 및 새 응답에 ID 부여
     const existingLastResponse = document.getElementById('lastResponse');
