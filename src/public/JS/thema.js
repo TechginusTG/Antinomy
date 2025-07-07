@@ -50,4 +50,4 @@ function applyThema(t){
 }
 
 
-
+applyThema(window.localStorage.getItem('thema'));
