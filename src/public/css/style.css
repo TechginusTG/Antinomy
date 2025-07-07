@@ -213,7 +213,7 @@ body {
 
 #exportBtn {
   position: fixed;
-  right: 20px;
+  right: 80px;
   bottom: 20px;
   background-color: #10b981;
   color: white;
@@ -225,7 +225,7 @@ body {
 }
 #setting {
   position: fixed;
-  right: 50px;
+  right: 20px;
   bottom: 20px;
   background-color: #10b981;
   color: white;
