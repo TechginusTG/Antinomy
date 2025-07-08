@@ -81,7 +81,7 @@ function applySettings() {
 		window.localStorage.setItem("thema", "fuyu");
 	}
 
-	window.location.href =window.opener.location.reload("http://localhost:3000/visited");
+	window.location.href =window.opener.location.reload("/");
 window.close("/settings");
 	
 }
