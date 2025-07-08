@@ -33,6 +33,13 @@ const thema = {
 		btn: "#90A4AE",
 		text: "#f1f1f1",
 	},
+
+    light: {
+		bg: "#white",
+		chat: "#f9fafb",
+		btn: "#2563eb",
+		text: "#FFFFFF",
+	},
 };
 
 const bg = document.getElementById("diagram");
