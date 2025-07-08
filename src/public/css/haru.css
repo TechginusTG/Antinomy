@@ -20,7 +20,7 @@
 
 
 .user {
-  background-color: #d1f0c3; /* 봄 느낌 연연두 */
+  background-color: #d1f0c3 !important; /* 봄 느낌 연연두 */
   align-self: flex-end;
 }
 
