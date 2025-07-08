@@ -16,7 +16,7 @@ export function sendChatMessage() {
 
 	const userMessageDiv = document.createElement("li");
 	userMessageDiv.classList.add("response-box", "user");
-	userMessageDiv.innerHTML = `<strong>사용자:</strong> ${input}`;
+	userMessageDiv.innerHTML = `<strong>${input}</strong>`;
 	chatLog.appendChild(userMessageDiv);
 
 	let gptResponseContent = "";
@@ -47,7 +47,7 @@ export function sendChatMessage() {
 	const gptMessageDiv = document.createElement("li");
 	gptMessageDiv.classList.add("response-box", "gpt");
 	gptMessageDiv.id = "lastResponse"; // 마지막 응답으로 설정
-	gptMessageDiv.innerHTML = `<strong>ChatGPT: ${cleanedGptResponseContent}</strong>`;
+	gptMessageDiv.innerHTML = `<strong>${cleanedGptResponseContent}</strong>`;
 	chatLog.appendChild(gptMessageDiv);
 
 	chatLog.scrollTop = chatLog.scrollHeight; // 스크롤을 최하단으로 이동
