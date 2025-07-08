@@ -64,8 +64,7 @@ function getCookie(name) {
 }
 
 function applyThema(t) {
-    if (!t || !thema[t]) t = 'light';
-    setCookie('thema', t, 365); // 테마를 쿠키에 저장
+    if (!t || !thema[t]) t = 'dark'; // 존재하는 테마로 기본값 변경
     body.style.backgroundColor = thema[t].bg;
     body.style.color = thema[t].text;
     const chatHeaders = chat.querySelectorAll('h2, h3, h4, h5, h6');
@@ -80,8 +79,14 @@ function applyThema(t) {
 }
 
 // 페이지 로드 시 쿠키에서 테마 읽기
-const savedThema = getCookie('thema') || 'light';
+const savedThema = getCookie('thema') || 'dark';
 applyThema(savedThema);
+
+// 테마 변경 함수 예시 (이벤트 핸들러에서 호출)
+function changeThema(t) {
+    setCookie('thema', t, 365); // 테마 변경 시에만 쿠키 저장
+    applyThema(t);
+}
 
 function setTheme(theme) {
 	currentTheme = theme;
