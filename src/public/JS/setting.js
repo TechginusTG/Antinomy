@@ -50,8 +50,7 @@ document.querySelectorAll('input[name="theme"]').forEach((radio) => {
 
 
 function applySettings() {
-	const language = document.getElementById("language").value;
-	const theme = document.querySelector('input[name="theme"]:checked').value;
+const theme = document.querySelector('input[name="theme"]:checked').value;
 
 	const body = document.body;
 	const settingsBox = document.getElementById("settingsBox");
@@ -74,9 +73,6 @@ function applySettings() {
 window.close("/settings");
 	
 }
-// 초기 라벨 설정
-updateLabels(document.getElementById("language").value);
-
 // 현재 선택된 테마를 radio에 반영
 let savedTheme = window.localStorage.getItem("thema") || "light";
 document.querySelectorAll('input[name="theme"]').forEach((radio) => {
