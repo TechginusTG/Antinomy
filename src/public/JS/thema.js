@@ -25,7 +25,17 @@ const thema = {
         chat: '#8B0000',
         btn: '#006400',
         text: '#FFFFFF'
+    },
+
+ dark:{
+        bg: '#273238',
+        chat: '#394A54',
+        btn: '#90A4AE',
+        text: '#1E2D36',
     }
+
+
+
 
 
 
