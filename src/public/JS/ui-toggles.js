@@ -25,13 +25,24 @@ export function toggleChat() {
     const isCollapsed = chat.classList.toggle('collapsed'); // 'collapsed' 클래스 토글
 
     openBtn.style.display = isCollapsed ? 'block' : 'none'; // 버튼 표시/숨김
-    // 채팅창 열릴 때 팝업창과 버튼도 숨김
+    // 채팅창 열릴 때 팝업창과 버튼도 숨김, 닫힐 때는 원래 위치로 복원
+    const minimizeBtn = document.getElementById('popupMinimizeBtn');
+    const restoreBtn = document.getElementById('popupRestoreBtn');
     if (!isCollapsed) {
         if (gptResponsePopup) gptResponsePopup.style.display = 'none';
-        const minimizeBtn = document.getElementById('popupMinimizeBtn');
-        const restoreBtn = document.getElementById('popupRestoreBtn');
-        if (minimizeBtn) minimizeBtn.style.display = 'none';
-        if (restoreBtn) restoreBtn.style.display = 'none';
+        if (minimizeBtn) {
+            minimizeBtn.style.display = 'block';
+            minimizeBtn.style.position = 'absolute';
+            minimizeBtn.style.right = '10px';
+            minimizeBtn.style.top = '10px';
+        }
+        if (restoreBtn) {
+            restoreBtn.style.display = 'none';
+            restoreBtn.style.position = 'fixed';
+            restoreBtn.style.left = '0';
+            restoreBtn.style.top = '50%';
+            restoreBtn.style.transform = 'translateY(-50%)';
+        }
     }
     diagram.style.flexGrow = isCollapsed ? 2 : 1; // 다이어그램 영역 크기 조절
 
