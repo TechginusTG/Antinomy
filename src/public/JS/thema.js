@@ -56,6 +56,8 @@ function applyThema(t) {
 
 applyThema(window.localStorage.getItem("thema"));
 
+const cssL=document.querySelector('.cssT');
+
 function setTheme(theme) {
 	currentTheme = theme;
 
@@ -69,6 +71,7 @@ function setTheme(theme) {
 			break;
 		case "haru":
 			goalIcon.textContent = "🌸";
+			cssL.href=`/css/${theme}`;
 			break;
 		case "natsu":
 			goalIcon.textContent = "🌊";

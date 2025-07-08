@@ -16,7 +16,7 @@ function gotAnyResponse(content) {
 		existingLastResponse.removeAttribute("id");
 	}
 	const gptMessageLi = document.createElement("li");
-	gptMessageLi.classList.add("response-box", "gpt");
+	gptMessageLi.classList.add("response-box", "gpt","ai","bubble");
 	gptMessageLi.id = "lastResponse";
 	gptMessageLi.innerHTML = `<strong>${content}</strong>`;
 	chatLog.appendChild(gptMessageLi);
@@ -44,7 +44,7 @@ export function sendChatMessage() {
 	const chatLog = document.getElementById("chatLog");
 
 	const userMessageLi = document.createElement("li");
-	userMessageLi.classList.add("response-box", "user");
+	userMessageLi.classList.add("response-box", "user",'bubble');
 	userMessageLi.innerHTML = `<strong>${input}</strong>`;
 	chatLog.appendChild(userMessageLi);
 
