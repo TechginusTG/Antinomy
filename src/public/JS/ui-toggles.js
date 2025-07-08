@@ -12,62 +12,51 @@ export function toggleGoalModal() {
     }
 }
 
-// 채팅 창 표시/숨김
+// 채팅 창 표시/숨김 및 팝업 동기화
 export function toggleChat() {
     const chat = document.getElementById('chat');
+    const chatInputArea = document.getElementById('chatInputArea').classList.toggle('collapsed'); // 'collapsed' 클래스 토글
     const openBtn = document.getElementById('openChatButton');
     const diagram = document.getElementById('diagram');
-    const isCollapsed = chat.classList.toggle('collapsed');
-    openBtn.style.display = isCollapsed ? 'block' : 'none';
-    diagram.style.flexGrow = isCollapsed ? 2 : 1;
+    const lastResponseElement = document.getElementById('lastResponse');
+    const popupResponseContent = document.getElementById('popupResponseContent');
+    const gptResponsePopup = document.getElementById('gptResponsePopup');
 
-    // 채팅창이 거대화(펼쳐질 때) 팝업/버튼 상태 초기화
+    const isCollapsed = chat.classList.toggle('collapsed'); // 'collapsed' 클래스 토글
+
+    openBtn.style.display = isCollapsed ? 'block' : 'none'; // 버튼 표시/숨김
+    // 채팅창 열릴 때 팝업창과 버튼도 숨김
     if (!isCollapsed) {
-        const popup = document.getElementById('gptResponsePopup');
+        if (gptResponsePopup) gptResponsePopup.style.display = 'none';
         const minimizeBtn = document.getElementById('popupMinimizeBtn');
-        if (popup && minimizeBtn) {
-            popup.classList.remove('popup-minimized');
-            popup.style.width = '';
-            popup.style.height = '';
-            popup.style.top = '50%';
-            popup.style.left = '50%';
-            popup.style.transform = 'translate(-50%, -50%)';
-            minimizeBtn.textContent = '축소';
-            minimizeBtn.style.position = 'absolute';
-            minimizeBtn.style.right = '10px';
-            minimizeBtn.style.top = '10px';
-            minimizeBtn.style.left = '';
-            minimizeBtn.style.transform = '';
-            minimizeBtn.style.display = 'block';
-        }
+        const restoreBtn = document.getElementById('popupRestoreBtn');
+        if (minimizeBtn) minimizeBtn.style.display = 'none';
+        if (restoreBtn) restoreBtn.style.display = 'none';
     }
-}
+    diagram.style.flexGrow = isCollapsed ? 2 : 1; // 다이어그램 영역 크기 조절
 
-// 팝업 최소화/복원 함수
-// (채팅창 거대화와 팝업 최소화 연동 기능 제거, 팝업 자체 토글만 남김)
-export function togglePopup() {
-    const popup = document.getElementById('gptResponsePopup');
-    const minimizeBtn = document.getElementById('popupMinimizeBtn');
-    if (!popup || !minimizeBtn) return;
-
-    // 버튼을 팝업 내부 오른쪽 상단에 고정
-    minimizeBtn.style.position = 'absolute';
-    minimizeBtn.style.right = '10px';
-    minimizeBtn.style.top = '10px';
-    minimizeBtn.style.left = '';
-    minimizeBtn.style.transform = '';
-    minimizeBtn.style.display = 'block';
-
-    const isMinimized = popup.classList.toggle('popup-minimized');
-    if (isMinimized) {
-        minimizeBtn.textContent = '복원';
-        // 팝업을 축소 스타일로
-        popup.style.width = '120px';
-        popup.style.height = '60px';
-    } else {
-        minimizeBtn.textContent = '축소';
-        // 팝업을 원래 크기로
-        popup.style.width = '';
-        popup.style.height = '';
+    if (isCollapsed) { // 채팅이 접힐 때
+        if (lastResponseElement) {
+            const lastGptText = lastResponseElement.textContent.replace('ChatGPT:', '').trim();
+            const cleanedGptText = lastGptText.trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' '); // 텍스트 정리
+            
+            if (popupResponseContent && gptResponsePopup) {
+                popupResponseContent.textContent = cleanedGptText;
+                gptResponsePopup.style.display = 'block'; // 팝업 표시
+                // 팝업 중앙 정렬 (초기 위치)
+                gptResponsePopup.style.top = '50%';
+                gptResponsePopup.style.left = '50%';
+                gptResponsePopup.style.transform = 'translate(-50%, -50%)';
+            }
+        } else {
+            if (popupResponseContent && gptResponsePopup) {
+                popupResponseContent.textContent = "마지막 ChatGPT 답변이 없습니다.";
+                gptResponsePopup.style.display = 'block';
+            }
+        }
+    } else { // 채팅이 펼쳐질 때
+        if (gptResponsePopup) {
+            gptResponsePopup.style.display = 'none'; // 팝업 숨김
+        }
     }
 }
