@@ -89,45 +89,34 @@ minimizeBtn.style.cursor = 'pointer';
 minimizeBtn.style.display = 'block';
 gptResponsePopup.appendChild(minimizeBtn);
 
-// 복원 버튼 생성 및 삽입 (최소화 상태에서 < 버튼)
-const restoreBtn = document.createElement('button');
-restoreBtn.id = 'popupRestoreBtn';
-restoreBtn.innerHTML = '&#x2039;'; // < 모양
-restoreBtn.title = '복원';
-restoreBtn.style.position = 'fixed';
-restoreBtn.style.right = '20px';
-restoreBtn.style.bottom = '80px';
-restoreBtn.style.zIndex = '201';
-restoreBtn.style.background = '#2563eb';
-restoreBtn.style.color = 'white';
-restoreBtn.style.border = 'none';
-restoreBtn.style.borderRadius = '10px 0 0 10px';
-restoreBtn.style.width = '28px';
-restoreBtn.style.height = '40px';
-restoreBtn.style.cursor = 'pointer';
-restoreBtn.style.display = 'none';
-document.body.appendChild(restoreBtn);
-
 // 팝업 최소화 함수
 function minimizePopup() {
-    gptResponsePopup.style.display = 'none'; // 팝업 전체 숨김
-    minimizeBtn.style.display = 'none';
-    restoreBtn.style.display = 'block'; // 복원 버튼만 보이게
+    if (isPopupMinimized) return;
+    gptResponsePopup.classList.add('minimized-popup');
     isPopupMinimized = true;
 }
 
 // 팝업 복원 함수
 function restorePopup() {
-    gptResponsePopup.style.display = 'block'; // 팝업 다시 보이기
-    minimizeBtn.style.display = 'block';
-    restoreBtn.style.display = 'none';
+    if (!isPopupMinimized) return;
+    gptResponsePopup.classList.remove('minimized-popup');
     isPopupMinimized = false;
 }
 
 // > 버튼 클릭 시 최소화
-minimizeBtn.addEventListener('click', minimizePopup);
-// < 버튼 클릭 시 복원
-restoreBtn.addEventListener('click', restorePopup);
+minimizeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    minimizePopup();
+});
+
+// 최소화된 팝업 클릭 시 복원
+if (gptResponsePopup) {
+    gptResponsePopup.addEventListener('click', function (e) {
+        if (isPopupMinimized) {
+            restorePopup();
+        }
+    });
+}
 
 // 팝업 내용 설정 함수
 function setPopupContent(content) {

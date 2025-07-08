@@ -277,8 +277,6 @@ strong {
 #gptResponsePopup .popup-content {
 	margin-top: 0;
 	line-height: 1.3;
-	/* max-height: 75px; */
-	/* 팝업 내용 영역의 최대 높이 제한 해제 */
 	overflow-y: auto;
 }
 
