@@ -70,10 +70,10 @@ if (gptResponsePopup) {
 // 최소화 상태 관리 변수
 let isPopupMinimized = false;
 
-// 최소화 버튼 생성 및 삽입 (오른쪽 상단에 > 버튼)
+// 최소화 버튼 생성 및 삽입 (오른쪽 상단에 > 또는 + 버튼)
 const minimizeBtn = document.createElement('button');
 minimizeBtn.id = 'popupMinimizeBtn';
-minimizeBtn.innerHTML = '&#x203A;'; // > 모양
+minimizeBtn.innerHTML = '&#x203A;'; // > 모양(기본)
 minimizeBtn.title = '최소화';
 minimizeBtn.style.position = 'absolute';
 minimizeBtn.style.right = '10px';
@@ -89,45 +89,58 @@ minimizeBtn.style.cursor = 'pointer';
 minimizeBtn.style.display = 'block';
 gptResponsePopup.appendChild(minimizeBtn);
 
-// 복원 버튼 생성 및 삽입 (최소화 상태에서 < 버튼)
-const restoreBtn = document.createElement('button');
-restoreBtn.id = 'popupRestoreBtn';
-restoreBtn.innerHTML = '&#x2039;'; // < 모양
-restoreBtn.title = '복원';
-restoreBtn.style.position = 'fixed';
-restoreBtn.style.right = '20px';
-restoreBtn.style.bottom = '80px';
-restoreBtn.style.zIndex = '201';
-restoreBtn.style.background = '#2563eb';
-restoreBtn.style.color = 'white';
-restoreBtn.style.border = 'none';
-restoreBtn.style.borderRadius = '10px 0 0 10px';
-restoreBtn.style.width = '28px';
-restoreBtn.style.height = '40px';
-restoreBtn.style.cursor = 'pointer';
-restoreBtn.style.display = 'none';
-document.body.appendChild(restoreBtn);
-
 // 팝업 최소화 함수
 function minimizePopup() {
-    gptResponsePopup.style.display = 'none'; // 팝업 전체 숨김
-    minimizeBtn.style.display = 'none';
-    restoreBtn.style.display = 'block'; // 복원 버튼만 보이게
+    if (isPopupMinimized) return;
+    gptResponsePopup.classList.add('minimized-popup');
     isPopupMinimized = true;
+    // 버튼을 +로 변경
+    minimizeBtn.innerHTML = '+';
+    minimizeBtn.title = '복원';
+    // 버튼 위치 중앙으로 이동 (정사각형 중앙)
+    minimizeBtn.style.position = 'static';
+    minimizeBtn.style.margin = 'auto';
+    minimizeBtn.style.display = 'flex';
+    minimizeBtn.style.alignItems = 'center';
+    minimizeBtn.style.justifyContent = 'center';
 }
 
 // 팝업 복원 함수
 function restorePopup() {
-    gptResponsePopup.style.display = 'block'; // 팝업 다시 보이기
-    minimizeBtn.style.display = 'block';
-    restoreBtn.style.display = 'none';
+    if (!isPopupMinimized) return;
+    gptResponsePopup.classList.remove('minimized-popup');
     isPopupMinimized = false;
+    // 버튼을 >로 변경
+    minimizeBtn.innerHTML = '&#x203A;';
+    minimizeBtn.title = '최소화';
+    // 버튼 위치 원래대로(우상단)
+    minimizeBtn.style.position = 'absolute';
+    minimizeBtn.style.right = '10px';
+    minimizeBtn.style.top = '10px';
+    minimizeBtn.style.margin = '0';
+    minimizeBtn.style.display = 'block';
+    minimizeBtn.style.alignItems = '';
+    minimizeBtn.style.justifyContent = '';
 }
 
-// > 버튼 클릭 시 최소화
-minimizeBtn.addEventListener('click', minimizePopup);
-// < 버튼 클릭 시 복원
-restoreBtn.addEventListener('click', restorePopup);
+// 버튼 클릭 시 최소화/복원 토글
+minimizeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (isPopupMinimized) {
+        restorePopup();
+    } else {
+        minimizePopup();
+    }
+});
+
+// 최소화된 팝업 클릭 시 복원
+if (gptResponsePopup) {
+    gptResponsePopup.addEventListener('click', function (e) {
+        if (isPopupMinimized) {
+            restorePopup();
+        }
+    });
+}
 
 // 팝업 내용 설정 함수
 function setPopupContent(content) {
