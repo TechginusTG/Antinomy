@@ -164,14 +164,19 @@ strong {
 }
 
 .response-box +  .user {
+	border: 2px solid #f59e0b;
 	background-color: #fef3c7;
 	margin-left: auto;
 }
 
+
 .response-box + .gpt {
 	background-color: #e0e7ff;
+	border: 2px solid #4f46e5;
 	margin-right: auto;
-	margin-left: 10px;
+	margin-left: 10px;	
+	border: 2px soild #000000;
+
 }
 
 #goalBox {
