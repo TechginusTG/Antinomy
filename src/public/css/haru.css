@@ -1,4 +1,5 @@
 .bubble {
+  outline: none !important;
   max-width: 70%;
   padding: 10px 14px;
   border-radius: 16px;
@@ -13,14 +14,14 @@
 }
 
 .ai {
-  background-color: #f7a6ab; /* 패널보다 진한 로즈핑크 */
+  background-color: #f7a6ab !important; /* 패널보다 진한 로즈핑크 */
   color: #fff;
   align-self: flex-start;
 }
 
 
 .user {
-  background-color: #d1f0c3; /* 봄 느낌 연연두 */
+  background-color: #d1f0c3 !important; /* 봄 느낌 연연두 */
   align-self: flex-end;
 }
 
