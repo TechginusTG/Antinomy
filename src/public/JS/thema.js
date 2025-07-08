@@ -39,50 +39,54 @@ const bg = document.getElementById("diagram");
 const chat = document.getElementById("chat");
 const body = document.querySelector("body");
 const btn = document.querySelectorAll(".btn");
+const cssL = document.querySelector('.cssT');
 
 function applyThema(t) {
-	body.style.backgroundColor = thema[t].bg;
-	body.style.color = thema[t].text; // ← 추가
-	const chatHeaders = chat.querySelectorAll("h2, h3, h4, h5, h6");
-	chatHeaders.forEach((h) => (h.style.color = thema[t].text));
-	bg.style.backgroundColor = thema[t].bg;
-	chat.style.backgroundColor = thema[t].chat;
-	btn.forEach((button) => {
-		button.style.backgroundColor = thema[t].btn;
-		button.style.color = thema[t].text; // 버튼 텍스트 색상 변경
-	});
-	setTheme(t);
+    if (!thema[t]) t = "haru"; // 기본값
+    body.style.backgroundColor = thema[t].bg;
+    body.style.color = thema[t].text;
+    const chatHeaders = chat.querySelectorAll("h2, h3, h4, h5, h6");
+    chatHeaders.forEach((h) => (h.style.color = thema[t].text));
+    bg.style.backgroundColor = thema[t].bg;
+    chat.style.backgroundColor = thema[t].chat;
+    btn.forEach((button) => {
+        button.style.backgroundColor = thema[t].btn;
+        button.style.color = thema[t].text;
+    });
+    setTheme(t);
 }
-
-applyThema(window.localStorage.getItem("thema"));
-
-const cssL=document.querySelector('.cssT');
 
 function setTheme(theme) {
-	currentTheme = theme;
-
-	const goalIcon = document.getElementById("goalIcon");
-	switch (theme) {
-		case "dark":
-			goalIcon.textContent = "🎯";
-			break;
-		case "light":
-			goalIcon.textContent = "🎯";
-			break;
-		case "haru":
-			goalIcon.textContent = "🌸";
-			cssL.href=`/css/${theme}.css`;
-			break;
-		case "natsu":
-			goalIcon.textContent = "🌊";
-			break;
-		case "aki":
-			goalIcon.textContent = "🍁";
-			break;
-		case "fuyu":
-			goalIcon.textContent = "🎁";
-			break;
-	}
-
-	document.body.setAttribute("data-theme", theme);
+    currentTheme = theme;
+    const goalIcon = document.getElementById("goalIcon");
+    switch (theme) {
+        case "dark":
+            goalIcon.textContent = "🎯";
+            if (cssL) cssL.href = ""; // 다크모드 별도 CSS 없으면 비움
+            break;
+        case "light":
+            goalIcon.textContent = "🎯";
+            if (cssL) cssL.href = ""; // 라이트모드 별도 CSS 없으면 비움
+            break;
+        case "haru":
+            goalIcon.textContent = "🌸";
+            if (cssL) cssL.href = "/css/haru.css";
+            break;
+        case "natsu":
+            goalIcon.textContent = "🌊";
+            if (cssL) cssL.href = "/css/natsu.css";
+            break;
+        case "aki":
+            goalIcon.textContent = "🍁";
+            if (cssL) cssL.href = "/css/aki.css";
+            break;
+        case "fuyu":
+            goalIcon.textContent = "🎁";
+            if (cssL) cssL.href = "/css/fuyu.css";
+            break;
+    }
+    document.body.setAttribute("data-theme", theme);
 }
+
+// 페이지 로드 시 테마 적용
+applyThema(window.localStorage.getItem("thema") || "haru");
