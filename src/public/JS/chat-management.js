@@ -24,9 +24,8 @@ function gotAnyResponse(content) {
 	// 팝업이 열려있으면 팝업 내용 업데이트
 	const gptResponsePopup = document.getElementById("gptResponsePopup");
 	const popupResponseContent = document.getElementById("popupResponseContent");
-	if (gptResponsePopup && popupResponseContent && gptResponsePopup.style.display === "block") {
-		popupResponseContent.textContent = content;
-	}
+        popupResponseContent.textContent = content;
+	
 }
 
 // 서버에서 오는 모든 메시지 수신 (이벤트명 무관)
