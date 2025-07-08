@@ -29,9 +29,9 @@ export function toggleChat() {
     openBtn.style.display = isCollapsed ? 'block' : 'none';
     if (!isCollapsed) {
         if (gptResponsePopup) gptResponsePopup.style.display = 'none';
-        if (minimizeBtn) minimizeBtn.style.display = 'none';
+    }else{
+	if(gptResponsePopup) gptResponsePopup.style.display = 'block';
     }
     diagram.style.flexGrow = isCollapsed ? 2 : 1;
-	
 
 }
