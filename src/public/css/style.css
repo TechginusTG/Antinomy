@@ -54,6 +54,8 @@ strong {
 #chat h2 {
 	color: #333;
 	margin: 16px;
+	outline: 0;
+	border-bottom: 1px solid #000;
 }
 
 #chatLog {
