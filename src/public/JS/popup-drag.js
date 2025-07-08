@@ -94,9 +94,9 @@ const restoreBtn = document.createElement('button');
 restoreBtn.id = 'popupRestoreBtn';
 restoreBtn.innerHTML = '&#x2039;'; // < 모양
 restoreBtn.title = '복원';
-restoreBtn.style.position = 'absolute';
-restoreBtn.style.right = '0';
-restoreBtn.style.top = '0';
+restoreBtn.style.position = 'fixed';
+restoreBtn.style.right = '20px';
+restoreBtn.style.bottom = '80px';
 restoreBtn.style.zIndex = '201';
 restoreBtn.style.background = '#2563eb';
 restoreBtn.style.color = 'white';
@@ -106,27 +106,19 @@ restoreBtn.style.width = '28px';
 restoreBtn.style.height = '40px';
 restoreBtn.style.cursor = 'pointer';
 restoreBtn.style.display = 'none';
-gptResponsePopup.appendChild(restoreBtn);
+document.body.appendChild(restoreBtn);
 
 // 팝업 최소화 함수
 function minimizePopup() {
-    gptResponsePopup.style.width = '40px';
-    gptResponsePopup.style.height = '40px';
-    gptResponsePopup.style.overflow = 'hidden';
-    gptResponsePopup.querySelector('.popup-header').style.display = 'none';
-    gptResponsePopup.querySelector('.popup-content').style.display = 'none';
+    gptResponsePopup.style.display = 'none'; // 팝업 전체 숨김
     minimizeBtn.style.display = 'none';
-    restoreBtn.style.display = 'block';
+    restoreBtn.style.display = 'block'; // 복원 버튼만 보이게
     isPopupMinimized = true;
 }
 
 // 팝업 복원 함수
 function restorePopup() {
-    gptResponsePopup.style.width = '';
-    gptResponsePopup.style.height = '';
-    gptResponsePopup.style.overflow = '';
-    gptResponsePopup.querySelector('.popup-header').style.display = '';
-    gptResponsePopup.querySelector('.popup-content').style.display = '';
+    gptResponsePopup.style.display = 'block'; // 팝업 다시 보이기
     minimizeBtn.style.display = 'block';
     restoreBtn.style.display = 'none';
     isPopupMinimized = false;
