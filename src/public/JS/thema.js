@@ -89,4 +89,4 @@ function setTheme(theme) {
 }
 
 // 페이지 로드 시 테마 적용
-applyThema(window.localStorage.getItem("thema") || "haru");
+applyThema(window.localStorage.getItem("thema"));
