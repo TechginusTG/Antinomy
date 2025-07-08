@@ -48,12 +48,6 @@ document.querySelectorAll('input[name="theme"]').forEach((radio) => {
 	});
 });
 
-// 언어 선택 시 라벨 변경
-document.getElementById("language").addEventListener("change", (e) => {
-	const selectedLang = e.target.value;
-	window.localStorage.setItem("lang", selectedLang);
-	updateLabels(selectedLang);
-});
 
 function applySettings() {
 	const language = document.getElementById("language").value;
