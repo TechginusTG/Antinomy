@@ -95,3 +95,14 @@ window.localStorage.setItem('thema','fuyu');
 
 // 초기 라벨 설정
 updateLabels(document.getElementById('language').value);
+
+// ...existing code...
+
+// 초기 라벨 설정
+updateLabels(document.getElementById('language').value);
+
+// 현재 선택된 테마를 radio에 반영
+const savedTheme = window.localStorage.getItem('thema') || 'light';
+const themeRadio = document.querySelector(`input[name="theme"][value="${savedTheme}"]`);
+if (themeRadio) {
+  themeRadio.checked = true;
