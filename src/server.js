@@ -51,6 +51,18 @@ io.on("connection", (socket) => {
 		// 클라이언트로부터 받은 메시지를 백엔드에서 수신.
 	});
 
+	const readline = require("readline");
+	const rl = readline.createInterface({
+		input: process.stdin,
+		output: process.stdout,
+	});
+
+	rl.on("line", (input) => {
+		// 콘솔에서 엔터로 입력받은 내용을 모든 클라이언트에게 전송
+		io.emit("server-message", input);
+		console.log(`모든 클라이언트에게 전송: ${input}`);
+	});
+
 	socket.on("disconnect", () => {
 		console.log("클라이언트 연결 해제:", socket.id);
 	});
