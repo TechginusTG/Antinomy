@@ -71,7 +71,7 @@ function setTheme(theme) {
 			break;
 		case "haru":
 			goalIcon.textContent = "🌸";
-			cssL.href=`/css/${theme}`;
+			cssL.href=`/css/${theme}.css`;
 			break;
 		case "natsu":
 			goalIcon.textContent = "🌊";
