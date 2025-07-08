@@ -13,12 +13,12 @@
 }
 
 .ai {
-  background-color: #edf1f4; /* 살짝 회색 섞인 눈 같은 색 */
+  background-color: #edf1f4 !important; /* 살짝 회색 섞인 눈 같은 색 */
   align-self: flex-start;
 }
 
 .user {
-  background-color: #daeafc; /* 맑은 하늘색 섞인 라이트 라벤더 */
+  background-color: #daeafc !important; /* 맑은 하늘색 섞인 라이트 라벤더 */
   align-self: flex-end;
 }
 

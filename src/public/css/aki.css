@@ -13,13 +13,13 @@
 }
 
 .ai {
-  background-color: #b8860b; /* 진한 황토색 계열 - 가을 노란빛 추가 */
+  background-color: #b8860b !important; /* 진한 황토색 계열 - 가을 노란빛 추가 */
   color: #000;
   align-self: flex-start;
 }
 
 .user {
-  background-color: #f4e2c2; /* 밝은 베이지 - 낙엽 느낌 */
+  background-color: #f4e2c2 !important; /* 밝은 베이지 - 낙엽 느낌 */
   color: #000;
   align-self: flex-end;
 }

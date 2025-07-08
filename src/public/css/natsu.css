@@ -12,14 +12,14 @@
 }
 
 .ai {
-  background-color: #ffe066; /* 여름 아침햇살 */
+  background-color: #ffe066 !important; /* 여름 아침햇살 */
   color: #333;
   align-self: flex-start;
 }
 
 
 .user {
-  background-color: #f5e2b8; /* 밝은 모래색 */
+  background-color: #f5e2b8 !important; /* 밝은 모래색 */
   color: #333;
   align-self: flex-end;
 }
