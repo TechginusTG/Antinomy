@@ -129,6 +129,7 @@
 			// 첫 방문 여부 확인
 			if (window.localStorage.getItem("visited") != "true") {
 				// 첫 방문인 경우
+				window.localStorage.setItem("thema", "light");
 				window.localStorage.setItem("visited", "true");
 			} else {
 				// 첫 방문이 아닌 경우

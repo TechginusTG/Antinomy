@@ -34,7 +34,7 @@ const thema = {
 		text: "#f1f1f1",
 	},
 
-    light: {
+        light: {
 		bg: "#white",
 		chat: "#FFFFFF",
 		btn: "#2563eb",
