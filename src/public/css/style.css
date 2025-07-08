@@ -373,11 +373,3 @@ strong {
 		/* openChatButton보다 높아 최상단에 표시되도록 함 */
 	}
 }
-
-/* 복원(>) 버튼이 항상 채팅창(chat)보다 z-index가 낮게 */
-#popupRestoreBtn {
-    z-index: 1 !important;
-}
-#chat {
-    z-index: 10 !important;
-}
