@@ -16,22 +16,6 @@ const translations = {
 		saveBtn: "저장",
 		alert: (lang, theme) => `설정이 저장되었습니다.\n언어: ${lang}\n테마: ${theme}`,
 	},
-	en: {
-		title: "Settings",
-		labelLanguage: "Language",
-		labelTheme: "Theme",
-		labelLight: "Light",
-		labelDark: "Dark",
-		labelSpring: "Spring",
-		labelSummer: "Summer",
-		labelAutmn: "Autumn",
-		labelWinter: "Winter",
-		labelBg: "Background Color",
-		labelText: "Text Color",
-		labelBtn: "Button Color",
-		saveBtn: "Save",
-		alert: (lang, theme) => `Settings saved.\nLanguage: ${lang}\nTheme: ${theme}`,
-	},
 };
 
 // 라벨 갱신 함수
