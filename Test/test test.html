@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>설문조사</title>
+  <link rel="stylesheet" href="test.css"/>
+</head>
+<body>
+  <div class="container">
+    <h1>설문조사</h1>
+    <form id="surveyForm" class="space-y-6"></form>
+    <div class="buttons">
+      <button type="button" id="prevBtn" disabled>이전</button>
+      <button type="button" id="nextBtn">다음</button>
+    </div>
+  </div>
+  <script>
+    const totalQuestions = 40;
+    const perPage = 10;
+    const choices = ['매우 그렇다', '그렇다', '보통이다', '아니다', '매우 아니다'];
+    let currentPage = 0;
+    const form = document.getElementById("surveyForm");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    function renderQuestions(page) {
+      form.innerHTML = '';
+      const start = page * perPage;
+      const end = Math.min(start + perPage, totalQuestions);
+      for (let i = start; i < end; i++) {
+        const qDiv = document.createElement('div');
+        qDiv.className = 'question';
+        const label = document.createElement('label');
+        label.textContent = `${i + 1}. 문항 ${i + 1}의 내용`;
+        const optionsDiv = document.createElement('div');
+        optionsDiv.className = 'options';
+        choices.forEach((choice, index) => {
+          const id = `q${i}_opt${index}`;
+          const optLabel = document.createElement('label');
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.name = `q${i}`;
+          radio.value = choice;
+          radio.id = id;
+          optLabel.appendChild(radio);
+          optLabel.appendChild(document.createTextNode(choice));
+          optionsDiv.appendChild(optLabel);
+        });
+        qDiv.appendChild(label);
+        qDiv.appendChild(optionsDiv);
+        form.appendChild(qDiv);
+      }
+      prevBtn.disabled = page === 0;
+      nextBtn.textContent = end === totalQuestions ? '다음' : '다음';
+    }
+
+    function renderCustomPage() {
+      form.innerHTML = '';
+      const questions = [
+        {
+          label: "관절 또는 신체 기능 문제로 인해 병원 진료를 받은 적이 있습니까?",
+          inputs: `
+            <label><input type="radio" name="joint1" value="네"> 네</label>
+            <input type="text" name="joint1_detail" placeholder="어떤 진단을 받으셨는지 명시">
+            <label><input type="radio" name="joint1" value="아니오"> 아니오</label>
+          `
+        },
+        {
+          label: "현재 복용 중인 관절 또는 근육 관련 약물이 있습니까?",
+          inputs: `
+            <label><input type="radio" name="joint2" value="네"> 네</label>
+            <input type="text" name="joint2_detail" placeholder="약물명">
+            <label><input type="radio" name="joint2" value="아니오"> 아니오</label>
+          `
+        },
+        {
+          label: "현재 겪고 있는 관절 문제가 일상생활에 미치는 영향",
+          inputs: `
+            <div class="options">
+              <label><input type="radio" name="impact" value="전혀 없음"> 전혀 없음</label>
+              <label><input type="radio" name="impact" value="약간 있음"> 약간 있음</label>
+              <label><input type="radio" name="impact" value="중간"> 중간</label>
+              <label><input type="radio" name="impact" value="상당히 있음"> 상당히 있음</label>
+              <label><input type="radio" name="impact" value="매우 심함"> 매우 심함</label>
+            </div>
+          `
+        },
+        {
+          label: "흡연 여부",
+          inputs: `
+            <label><input type="radio" name="smoke" value="현재 흡연"> 현재 흡연</label>
+            <input type="text" name="smoke_amount" placeholder="하루 ___ 개비">
+            <label><input type="radio" name="smoke" value="과거 흡연"> 과거 흡연</label>
+            <input type="text" name="quit_duration" placeholder="금연 기간">
+            <label><input type="radio" name="smoke" value="비흡연자"> 비흡연자</label>
+          `
+        },
+        {
+          label: "음주 여부",
+          inputs: `
+            <label><input type="radio" name="drink" value="주기적"> 주 ___ 회</label>
+            <input type="text" name="drink_amount" placeholder="1회 평균 음주량">
+            <label><input type="radio" name="drink" value="거의 안 마심"> 거의 안 마심</label>
+            <label><input type="radio" name="drink" value="마시지 않음"> 마시지 않음</label>
+          `
+        },
+        {
+          label: "운동 여부",
+          inputs: `
+            <label><input type="radio" name="exercise" value="네"> 네</label>
+            <input type="text" name="exercise_type" placeholder="어떤 운동을 하십니까?">
+            <label><input type="radio" name="exercise" value="아니오"> 아니오</label>
+            <input type="text" name="no_exercise_reason" placeholder="운동하지 않는 이유">
+          `
+        },
+        {
+          label: "식습관 (중복 선택 가능)",
+          inputs: `
+            <div class="options">
+              <label><input type="checkbox" name="diet" value="육류"> 육류 위주</label>
+              <label><input type="checkbox" name="diet" value="채소"> 채소 위주</label>
+              <label><input type="checkbox" name="diet" value="탄수화물"> 탄수화물 위주</label>
+              <label><input type="checkbox" name="diet" value="골고루"> 골고루</label>
+              <label><input type="checkbox" name="diet" value="가공식품"> 가공식품 많음</label>
+              <label><input type="checkbox" name="diet" value="패스트푸드"> 패스트푸드 많음</label>
+            </div>
+          `
+        },
+        {
+          label: "가족 중 자가면역 질환 여부",
+          inputs: `
+            <label><input type="radio" name="family" value="네"> 네</label>
+            <input type="text" name="family_detail" placeholder="어떤 질환인지">
+            <label><input type="radio" name="family" value="아니오"> 아니오</label>
+          `
+        },
+        {
+          label: "기타 건강상 특이사항",
+          inputs: `<textarea name="etc" placeholder="자유롭게 기재해주세요"></textarea>`
+        }
+      ];
+      questions.forEach(q => {
+        const div = document.createElement("div");
+        div.className = "question";
+        div.innerHTML = `<label>${q.label}</label>${q.inputs}`;
+        form.appendChild(div);
+      });
+      prevBtn.disabled = false;
+      nextBtn.textContent = '제출';
+    }
+
+    // 쿠키 저장 함수
+    function setCookie(name, value, days) {
+      let expires = '';
+      if (days) {
+        const date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = '; expires=' + date.toUTCString();
+      }
+      document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/';
+    }
+
+    function saveSurveyToCookies() {
+      // 첫 12문항: TestScore
+      const testAnswers = [];
+      for (let i = 0; i < 12; i++) {
+        const checked = form.querySelector(`input[name="q${i}"]:checked`);
+        testAnswers.push(checked ? checked.value : '');
+      }
+      setCookie('TestScore', testAnswers.join(','), 7);
+
+      // 커스텀 문항: 각 문항별 xScore
+      const customMap = [
+        {name: 'joint1', type: 'radio'},
+        {name: 'joint1_detail', type: 'text'},
+        {name: 'joint2', type: 'radio'},
+        {name: 'joint2_detail', type: 'text'},
+        {name: 'impact', type: 'radio'},
+        {name: 'smoke', type: 'radio'},
+        {name: 'smoke_amount', type: 'text'},
+        {name: 'quit_duration', type: 'text'},
+        {name: 'drink', type: 'radio'},
+        {name: 'drink_amount', type: 'text'},
+        {name: 'exercise', type: 'radio'},
+        {name: 'exercise_type', type: 'text'},
+        {name: 'no_exercise_reason', type: 'text'},
+        {name: 'diet', type: 'checkbox'},
+        {name: 'family', type: 'radio'},
+        {name: 'family_detail', type: 'text'},
+        {name: 'etc', type: 'textarea'}
+      ];
+      customMap.forEach(({name, type}) => {
+        let value = '';
+        if (type === 'radio') {
+          const checked = form.querySelector(`input[name="${name}"]:checked`);
+          value = checked ? checked.value : '';
+        } else if (type === 'text' || type === 'textarea') {
+          const input = form.querySelector(`[name="${name}"]`);
+          value = input ? input.value : '';
+        } else if (type === 'checkbox') {
+          const checked = Array.from(form.querySelectorAll(`input[name="${name}"]:checked`));
+          value = checked.map(c => c.value).join(',');
+        }
+        setCookie(name + 'Score', value, 7);
+      });
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentPage > 0) {
+        currentPage--;
+        renderQuestions(currentPage);
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      const totalPages = Math.ceil(totalQuestions / perPage);
+      if (currentPage < totalPages - 1) {
+        currentPage++;
+        renderQuestions(currentPage);
+      } else if (currentPage === totalPages - 1) {
+        currentPage++;
+        renderCustomPage();
+      } else {
+        saveSurveyToCookies();
+        alert("설문이 제출되었습니다. 감사합니다!");
+        // 결과 저장 등 추가 처리 가능
+      }
+    });
+
+    renderQuestions(currentPage);
+  </script>
+</body>
+</html>
