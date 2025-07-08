@@ -32,7 +32,58 @@ export function toggleChat() {
     }
     diagram.style.flexGrow = isCollapsed ? 2 : 1;
 
-
+    if (isCollapsed) {
+        if (lastResponseElement) {
+            const lastGptText = lastResponseElement.textContent.replace('ChatGPT:', '').trim();
+            const cleanedGptText = lastGptText.trim().replace(/\n{2,}/g, '\n').replace(/\t/g, ' ');
+            if (popupResponseContent && gptResponsePopup) {
+                popupResponseContent.textContent = cleanedGptText;
+                gptResponsePopup.style.display = 'block';
+                gptResponsePopup.style.top = '50%';
+                gptResponsePopup.style.left = '50%';
+                gptResponsePopup.style.transform = 'translate(-50%, -50%)';
+                if (minimizeBtn) {
+                    minimizeBtn.style.position = 'absolute';
+                    minimizeBtn.style.right = '10px';
+                    minimizeBtn.style.top = '10px';
+                    minimizeBtn.style.left = '';
+                    minimizeBtn.style.transform = '';
+                    minimizeBtn.style.display = 'block';
+                    // 복원/축소 상태에 따라 버튼 모양
+                    if (gptResponsePopup.classList.contains('popup-minimized')) {
+                        minimizeBtn.textContent = '>';
+                        minimizeBtn.title = '복원';
+                    } else {
+                        minimizeBtn.textContent = '<';
+                        minimizeBtn.title = '축소';
+                    }
+                }
+            }
+        } else {
+            if (popupResponseContent && gptResponsePopup) {
+                popupResponseContent.textContent = "마지막 ChatGPT 답변이 없습니다.";
+                gptResponsePopup.style.display = 'block';
+                if (minimizeBtn) {
+                    minimizeBtn.style.position = 'absolute';
+                    minimizeBtn.style.right = '10px';
+                    minimizeBtn.style.top = '10px';
+                    minimizeBtn.style.left = '';
+                    minimizeBtn.style.transform = '';
+                    minimizeBtn.style.display = 'block';
+                    if (gptResponsePopup.classList.contains('popup-minimized')) {
+                        minimizeBtn.textContent = '>';
+                        minimizeBtn.title = '복원';
+                    } else {
+                        minimizeBtn.textContent = '<';
+                        minimizeBtn.title = '축소';
+                    }
+                }
+            }
+        }
+    } else {
+        if (gptResponsePopup) gptResponsePopup.style.display = 'none';
+    }
+}
 
 // 팝업 최소화/복원 토글 (버튼 하나만 사용)
 export function togglePopup() {
