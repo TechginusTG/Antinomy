@@ -15,7 +15,7 @@ export function toggleGoalModal() {
 // 채팅 창 표시/숨김 및 팝업 동기화
 export function toggleChat() {
     const chat = document.getElementById('chat');
-    const chatInputArea = document.getElementById('chatInputArea').classList.toggle('collapsed');
+    const chatInputArea = document.getElementById('chatInputArea');
     const openBtn = document.getElementById('openChatButton');
     const diagram = document.getElementById('diagram');
     const lastResponseElement = document.getElementById('lastResponse');
@@ -24,6 +24,7 @@ export function toggleChat() {
     const minimizeBtn = document.getElementById('popupMinimizeBtn');
 
     const isCollapsed = chat.classList.toggle('collapsed');
+    chatInputArea.classList.toggle('collapsed');
 
     openBtn.style.display = isCollapsed ? 'block' : 'none';
     if (!isCollapsed) {
@@ -31,5 +32,6 @@ export function toggleChat() {
         if (minimizeBtn) minimizeBtn.style.display = 'none';
     }
     diagram.style.flexGrow = isCollapsed ? 2 : 1;
+	
 
 }
