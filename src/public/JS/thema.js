@@ -62,25 +62,22 @@ function setTheme(theme) {
 	const goalIcon = document.getElementById("goalIcon");
 	switch (theme) {
 		case "dark":
-			goalIcon.src = "\uD83C\uDFAF";
+			goalIcon.textContent = "🎯";
 			break;
 		case "light":
-			goalIcon.src = "\uD83C\uDFAF";
+			goalIcon.textContent = "🎯";
 			break;
 		case "haru":
-			goalIcon.src = "\uD83C\uDF38";
+			goalIcon.textContent = "🌸";
 			break;
-
 		case "natsu":
-			goalIcon.src = "\uD83C\uDF0A";
+			goalIcon.textContent = "🌊";
 			break;
-
 		case "aki":
-			goalIcon.src = "\uD83C\uDF41";
+			goalIcon.textContent = "🍁";
 			break;
-
 		case "fuyu":
-			goalIcon.src = "\uD83C\uDF81";
+			goalIcon.textContent = "🎁";
 			break;
 	}
 
