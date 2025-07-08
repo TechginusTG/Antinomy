@@ -33,6 +33,15 @@ function gotAnyResponse(content) {
 socket.onAny((event, ...args) => {
 	gotAnyResponse(args.join(" "));
 });
+// 팝업 무조건 닫기 함수
+function forceClosePopup() {
+    const gptResponsePopup = document.getElementById("gptResponsePopup");
+    if (gptResponsePopup) {
+        gptResponsePopup.classList.remove('minimized-popup');
+        gptResponsePopup.style.display = 'none';
+    }
+}
+
 // 메시지 전송 로직
 export function sendChatMessage() {
 	const userInputElement = document.getElementById("userInput");
@@ -73,4 +82,7 @@ export function sendChatMessage() {
 	import("./goal-summary.js").then(({ updateGoalSummary }) => {
 		updateGoalSummary();
 	});
+
+	// 채팅 입력 시 팝업 무조건 닫기
+	forceClosePopup();
 }
