@@ -1,4 +1,5 @@
 .bubble {
+  outline: none !important;
   max-width: 70%;
   padding: 10px 14px;
   border-radius: 16px;
