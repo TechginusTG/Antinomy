@@ -82,8 +82,7 @@ function applySettings() {
 	}
 
 	window.location.href = window.close("/settings");
-	location.replace(location.href);
-}
+	
 
 // 초기 라벨 설정
 updateLabels(document.getElementById("language").value);
