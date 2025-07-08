@@ -6,11 +6,40 @@ export function autoResizeTextarea() {
 	this.style.height = this.scrollHeight + "px";
 }
 
+const socket = io(); // Socket.IO 클라이언트 초기화
+
+function gotAnyResponse(content) {
+	const chatLog = document.getElementById("chatLog");
+	// 기존 마지막 응답 ID 제거 및 새 응답에 ID 부여
+	const existingLastResponse = document.getElementById("lastResponse");
+	if (existingLastResponse) {
+		existingLastResponse.removeAttribute("id");
+	}
+	const gptMessageLi = document.createElement("li");
+	gptMessageLi.classList.add("response-box", "gpt");
+	gptMessageLi.id = "lastResponse";
+	gptMessageLi.innerHTML = `<strong>${content}</strong>`;
+	chatLog.appendChild(gptMessageLi);
+	chatLog.scrollTop = chatLog.scrollHeight;
+	// 팝업이 열려있으면 팝업 내용 업데이트
+	const gptResponsePopup = document.getElementById("gptResponsePopup");
+	const popupResponseContent = document.getElementById("popupResponseContent");
+	if (gptResponsePopup && popupResponseContent && gptResponsePopup.style.display === "block") {
+		popupResponseContent.textContent = content;
+	}
+}
+
+// 서버에서 오는 모든 메시지 수신 (이벤트명 무관)
+socket.onAny((event, ...args) => {
+	gotAnyResponse(args.join(" "));
+});
 // 메시지 전송 로직
 export function sendChatMessage() {
 	const userInputElement = document.getElementById("userInput");
 	const input = userInputElement.value;
 	if (!input.trim()) return;
+
+	socket.emit("chat message", input);
 
 	const chatLog = document.getElementById("chatLog");
 
@@ -35,33 +64,10 @@ export function sendChatMessage() {
 		gptResponseContent = `'${input}'에 대한 답변입니다.`;
 	}
 
-	// 줄바꿈, 탭 등은 건드리지 않고 원본 그대로 사용
-	const cleanedGptResponseContent = gptResponseContent;
+	gotAnyResponse(gptResponseContent);
 
-	// 기존 마지막 응답 ID 제거 및 새 응답에 ID 부여
-	const existingLastResponse = document.getElementById("lastResponse");
-	if (existingLastResponse) {
-		existingLastResponse.removeAttribute("id");
-	}
-
-	const gptMessageLi = document.createElement("li");
-	gptMessageLi.classList.add("response-box", "gpt");
-	gptMessageLi.id = "lastResponse"; // 마지막 응답으로 설정
-	gptMessageLi.innerHTML = `<strong>${cleanedGptResponseContent}</strong>`;
-	chatLog.appendChild(gptMessageLi);
-
-	chatLog.scrollTop = chatLog.scrollHeight; // 스크롤을 최하단으로 이동
-
-	userInputElement.value = ""; // 입력창 초기화
-	userInputElement.style.height = "40px"; // 입력창 높이 초기화
-
-	// 팝업이 열려있으면 팝업 내용 업데이트 (gptResponsePopup은 main.js에서 import 해야 함)
-	const gptResponsePopup = document.getElementById("gptResponsePopup");
-	const popupResponseContent = document.getElementById("popupResponseContent");
-	if (gptResponsePopup && popupResponseContent && gptResponsePopup.style.display === "block") {
-		// 팝업에만 줄바꿈을 없애고 한 줄로 표시 + 앞뒤 줄바꿈 완전 제거
-		popupResponseContent.textContent = cleanedGptResponseContent;
-	}
+	userInputElement.value = "";
+	userInputElement.style.height = "40px";
 
 	// 목표 요약 업데이트 (goal-summary.js에서 import 해야 함)
 	import("./goal-summary.js").then(({ updateGoalSummary }) => {

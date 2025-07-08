@@ -44,10 +44,11 @@ app.use((req, res) => {
 // --- Socket.IO 이벤트 처리 ---
 io.on("connection", (socket) => {
 	console.log("클라이언트가 연결됨:", socket.id);
+	socket.emit("welcome", "서버에 연결되었습니다!"); // 클라이언트에게 환영 메시지 전송
 
 	socket.on("chat message", (msg) => {
-		// 받은 메시지를 모든 클라이언트에게 전송
-		io.emit("chat message", msg);
+		console.log("메시지 수신:", msg);
+		// 클라이언트로부터 받은 메시지를 백엔드에서 수신.
 	});
 
 	socket.on("disconnect", () => {
@@ -56,7 +57,7 @@ io.on("connection", (socket) => {
 });
 // --- 서버 시작 ---
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
 	console.log(`✨ Server is running on http://localhost:${PORT}`);
 	console.log(`정적 파일은 ${path.join(__dirname, "public")}에서 제공됩니다.`);
 	console.log(`뷰 파일은 ${path.join(__dirname, "views")}에 있습니다.`);
