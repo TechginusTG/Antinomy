@@ -40,48 +40,21 @@ const chat = document.getElementById("chat");
 const body = document.querySelector("body");
 const btn = document.querySelectorAll(".btn");
 
-// 쿠키 저장 함수
-function setCookie(name, value, days) {
-    let expires = '';
-    if (days) {
-        const date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = '; expires=' + date.toUTCString();
-    }
-    document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/';
-}
-
-// 쿠키 읽기 함수
-function getCookie(name) {
-    const nameEQ = name + '=';
-    const ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-        if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
-    }
-    return null;
-}
-
 function applyThema(t) {
-    if (!t || !thema[t]) t = 'light';
-    setCookie('thema', t, 365); // 테마를 쿠키에 저장
-    body.style.backgroundColor = thema[t].bg;
-    body.style.color = thema[t].text;
-    const chatHeaders = chat.querySelectorAll('h2, h3, h4, h5, h6');
-    chatHeaders.forEach((h) => (h.style.color = thema[t].text));
-    bg.style.backgroundColor = thema[t].bg;
-    chat.style.backgroundColor = thema[t].chat;
-    btn.forEach((button) => {
-        button.style.backgroundColor = thema[t].btn;
-        button.style.color = thema[t].text;
-    });
-    setTheme(t);
+	body.style.backgroundColor = thema[t].bg;
+	body.style.color = thema[t].text; // ← 추가
+	const chatHeaders = chat.querySelectorAll("h2, h3, h4, h5, h6");
+	chatHeaders.forEach((h) => (h.style.color = thema[t].text));
+	bg.style.backgroundColor = thema[t].bg;
+	chat.style.backgroundColor = thema[t].chat;
+	btn.forEach((button) => {
+		button.style.backgroundColor = thema[t].btn;
+		button.style.color = thema[t].text; // 버튼 텍스트 색상 변경
+	});
+	setTheme(t);
 }
 
-// 페이지 로드 시 쿠키에서 테마 읽기
-const savedThema = getCookie('thema') || 'light';
-applyThema(savedThema);
+applyThema(window.localStorage.getItem("thema"));
 
 function setTheme(theme) {
 	currentTheme = theme;
