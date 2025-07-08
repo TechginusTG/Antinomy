@@ -10,7 +10,7 @@ const thema = {
 		bg: "#f3e9d2",
 		chat: "#2a6f9e",
 		btn: "#e7d9b9",
-		text: "#1f4b66",
+		text: "#FFFFFF",
 	},
 
 	aki: {
