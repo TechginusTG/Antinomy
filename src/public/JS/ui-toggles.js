@@ -25,6 +25,14 @@ export function toggleChat() {
     const isCollapsed = chat.classList.toggle('collapsed'); // 'collapsed' 클래스 토글
 
     openBtn.style.display = isCollapsed ? 'block' : 'none'; // 버튼 표시/숨김
+    // 채팅창 열릴 때 팝업창과 버튼도 숨김
+    if (!isCollapsed) {
+        if (gptResponsePopup) gptResponsePopup.style.display = 'none';
+        const minimizeBtn = document.getElementById('popupMinimizeBtn');
+        const restoreBtn = document.getElementById('popupRestoreBtn');
+        if (minimizeBtn) minimizeBtn.style.display = 'none';
+        if (restoreBtn) restoreBtn.style.display = 'none';
+    }
     diagram.style.flexGrow = isCollapsed ? 2 : 1; // 다이어그램 영역 크기 조절
 
     if (isCollapsed) { // 채팅이 접힐 때
