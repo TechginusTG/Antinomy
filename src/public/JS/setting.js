@@ -94,6 +94,9 @@ updateLabels(document.getElementById("language").value);
 
 // 현재 선택된 테마를 radio에 반영
 const savedTheme = window.localStorage.getItem("thema") || "light";
+document.querySelectorAll('input[name="theme"]').forEach((radio) => {
+	radio.checked = false; // 모두 해제
+});
 const themeRadio = document.querySelector(`input[name="theme"][value="${savedTheme}"]`);
 if (themeRadio) {
 	themeRadio.checked = true;
