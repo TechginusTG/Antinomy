@@ -25,11 +25,14 @@ export function toggleChat() {
     const isCollapsed = chat.classList.toggle('collapsed'); // 'collapsed' 클래스 토글
 
     openBtn.style.display = isCollapsed ? 'block' : 'none'; // 버튼 표시/숨김
-    // 채팅창 열릴 때 팝업창과 버튼도 숨김, 닫힐 때는 원래 위치로 복원
     const minimizeBtn = document.getElementById('popupMinimizeBtn');
     const restoreBtn = document.getElementById('popupRestoreBtn');
+    // 채팅창 열릴 때 팝업/버튼 복원 상태로 강제
     if (!isCollapsed) {
-        if (gptResponsePopup) gptResponsePopup.style.display = 'none';
+        if (gptResponsePopup) {
+            gptResponsePopup.classList.remove('popup-minimized');
+            gptResponsePopup.style.display = 'block';
+        }
         if (minimizeBtn) {
             minimizeBtn.style.display = 'block';
             minimizeBtn.style.position = 'absolute';
@@ -43,6 +46,16 @@ export function toggleChat() {
             restoreBtn.style.top = '50%';
             restoreBtn.style.transform = 'translateY(-50%)';
         }
+        window.isPopupMinimized = false;
+    } else {
+        // 채팅창 닫힐 때 팝업/버튼 축소 상태로 강제
+        if (gptResponsePopup) {
+            gptResponsePopup.classList.add('popup-minimized');
+            gptResponsePopup.style.display = 'none';
+        }
+        if (minimizeBtn) minimizeBtn.style.display = 'none';
+        if (restoreBtn) restoreBtn.style.display = 'block';
+        window.isPopupMinimized = true;
     }
     diagram.style.flexGrow = isCollapsed ? 2 : 1; // 다이어그램 영역 크기 조절
 
