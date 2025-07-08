@@ -164,27 +164,6 @@ function forceHidePopupAndButtons() {
     }
 }
 
-// 팝업을 거대화(복원) 상태로 만들고 < 버튼으로 바꾸는 함수
-function showPopupAndMinimizeBtn() {
-    gptResponsePopup.classList.remove('popup-minimized');
-    gptResponsePopup.style.display = 'block';
-    minimizeBtn.style.display = 'block';
-    restoreBtn.style.display = 'none';
-    isPopupMinimized = false;
-    minimizeBtn.innerHTML = '&#x2039;'; // <
-    minimizeBtn.title = '축소';
-}
-// 팝업을 축소 상태로 만들고 > 버튼으로 바꾸는 함수
-function minimizePopupAndShowRestoreBtn() {
-    gptResponsePopup.classList.add('popup-minimized');
-    gptResponsePopup.style.display = 'none';
-    minimizeBtn.style.display = 'none';
-    restoreBtn.style.display = 'block';
-    isPopupMinimized = true;
-    restoreBtn.innerHTML = '&#x203A;'; // >
-    restoreBtn.title = '복원';
-}
-
 // 예시: chat-management.js 등에서 채팅창 열릴 때 forceHidePopupAndButtons() 호출
 // 채팅창 열기: showPopupAndMinimizeBtn();
 // 채팅창 닫기: minimizePopupAndShowRestoreBtn();
