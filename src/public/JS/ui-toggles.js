@@ -33,3 +33,5 @@ export function toggleChat() {
     }
     diagram.style.flexGrow = isCollapsed ? 2 : 1;
 	
+
+}
