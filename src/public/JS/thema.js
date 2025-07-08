@@ -49,6 +49,7 @@ function applyThema(t) {
 	chat.style.backgroundColor = thema[t].chat;
 	btn.forEach((button) => {
 		button.style.backgroundColor = thema[t].btn;
+		button.style.color = thema[t].text; // 버튼 텍스트 색상 변경
 	});
 }
 
