@@ -271,7 +271,7 @@ strong {
 	display: block;
 	position: relative;
 	z-index: 99;
-	background-color: #AAAFAF;
+	background-color:none;
 	padding: 3px;
 	margin-left: 2px;
 	font:0.7em;
