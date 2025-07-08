@@ -17,7 +17,7 @@ const thema = {
 		bg: "#f7f1df",
 		chat: "#d2b48c",
 		btn: "#DEB887",
-		text: "#f7f1df",
+		text: "#4e3b2c",
 	},
 
 	fuyu: {
