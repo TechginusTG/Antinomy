@@ -54,3 +54,37 @@ function applyThema(t) {
 }
 
 applyThema(window.localStorage.getItem("thema"));
+
+
+function setTheme(theme) {
+  currentTheme = theme;
+
+  
+  const goalIcon = document.getElementById("goalIcon");
+  switch (theme) {
+    case "dark":
+      goalIcon.src = "\uD83C\uDFAF";
+      break;
+    case "light":
+      goalIcon.src = "\uD83C\uDFAF";
+      break;
+    case "haru":
+      goalIcon.src = "\uD83C\uDF38";
+      break;
+
+	case "natsu":
+      goalIcon.src = "\uD83C\uDF0A";
+      break;
+	
+	case "aki":
+      goalIcon.src = "\uD83C\uDF41";
+      break;
+
+	case "fuyu":
+      goalIcon.src = "\uD83C\uDF81";
+      break;
+  }
+
+  
+  document.body.setAttribute("data-theme", theme);
+}
