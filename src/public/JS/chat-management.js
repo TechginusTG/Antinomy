@@ -14,10 +14,10 @@ export function sendChatMessage() {
 
 	const chatLog = document.getElementById("chatLog");
 
-	const userMessageDiv = document.createElement("li");
-	userMessageDiv.classList.add("response-box", "user");
-	userMessageDiv.innerHTML = `<strong>${input}</strong>`;
-	chatLog.appendChild(userMessageDiv);
+	const userMessageLi = document.createElement("li");
+	userMessageLi.classList.add("response-box", "user");
+	userMessageLi.innerHTML = `<strong>${input}</strong>`;
+	chatLog.appendChild(userMessageLi);
 
 	let gptResponseContent = "";
 	// 사용자 입력에 따른 ChatGPT 응답 로직
@@ -44,11 +44,11 @@ export function sendChatMessage() {
 		existingLastResponse.removeAttribute("id");
 	}
 
-	const gptMessageDiv = document.createElement("li");
-	gptMessageDiv.classList.add("response-box", "gpt");
-	gptMessageDiv.id = "lastResponse"; // 마지막 응답으로 설정
-	gptMessageDiv.innerHTML = `<strong>${cleanedGptResponseContent}</strong>`;
-	chatLog.appendChild(gptMessageDiv);
+	const gptMessageLi = document.createElement("li");
+	gptMessageLi.classList.add("response-box", "gpt");
+	gptMessageLi.id = "lastResponse"; // 마지막 응답으로 설정
+	gptMessageLi.innerHTML = `<strong>${cleanedGptResponseContent}</strong>`;
+	chatLog.appendChild(gptMessageLi);
 
 	chatLog.scrollTop = chatLog.scrollHeight; // 스크롤을 최하단으로 이동
 
