@@ -163,16 +163,15 @@ strong {
 	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.response-box.user {
+.response-box +  .user {
 	background-color: #fef3c7;
-	border: 2px solid #f59e0b;
 	margin-left: auto;
 }
 
-.response-box.gpt {
+.response-box + .gpt {
 	background-color: #e0e7ff;
-	border: 2px solid #4f46e5;
 	margin-right: auto;
+	margin-left: 10px;
 }
 
 #goalBox {
@@ -266,8 +265,19 @@ strong {
 	max-width: 400px;
 	width: fit-content;
 }
+#popupMinimizeBtn {
+	display: block;
+	position: relative;
+	z-index: 99;
+	background-color: #AAAFAF;
+	padding: 3px;
+	margin-left: 2px;
+	font:0.7em;
+
+}
 
 #gptResponsePopup .popup-header {
+	display: flex;
 	font-weight: bold;
 	margin-bottom: 5px;
 	/* 헤더와 내용 사이 간격 유지 */
