@@ -16,7 +16,8 @@ const translations = {
 		saveBtn: "저장",
 		alert: (lang, theme) => `설정이 저장되었습니다.\n언어: ${lang}\n테마: ${theme}`,
 	},
-};
+	};
+	 // 한국어
 
 // 라벨 갱신 함수
 function updateLabels(lang) {
