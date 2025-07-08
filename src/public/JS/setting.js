@@ -81,7 +81,7 @@ function applySettings() {
 		window.localStorage.setItem("thema", "fuyu");
 	}
 
-	window.location.href = "/visited";
+	window.location.href = window.close("/settings");
 }
 
 // 초기 라벨 설정
