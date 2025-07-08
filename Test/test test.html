@@ -16,15 +16,7 @@
     </div>
   </div>
   <script>
-    const totalQuestions = 40;
-    const perPage = 10;
-    const choices = ['매우 그렇다', '그렇다', '보통이다', '아니다', '매우 아니다'];
-    let currentPage = 0;
-    const form = document.getElementById("surveyForm");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
-
-    function renderQuestions(page) {
+    function TrenderQuestions(page) {
       form.innerHTML = '';
       const start = page * perPage;
       const end = Math.min(start + perPage, totalQuestions);
@@ -35,12 +27,12 @@
         label.textContent = `${i + 1}. 문항 ${i + 1}의 내용`;
         const optionsDiv = document.createElement('div');
         optionsDiv.className = 'options';
-        choices.forEach((choice, index) => {
-          const id = `q${i}_opt${index}`;
+        Tchoices.forEach((choice, index) => {
+          const id = `Tq${i}_opt${index}`;
           const optLabel = document.createElement('label');
           const radio = document.createElement('input');
           radio.type = 'radio';
-          radio.name = `q${i}`;
+          radio.name = `Tq${i}`;
           radio.value = choice;
           radio.id = id;
           optLabel.appendChild(radio);
@@ -206,29 +198,36 @@
       });
     }
 
+    const totalQuestions = 12;
+    const perPage = 12;
+    const Tchoices = ['매우 그렇다', '그렇다', '보통이다', '아니다', '매우 아니다'];
+    let TcurrentPage = 0;
+    const form = document.getElementById("surveyForm");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
     prevBtn.addEventListener('click', () => {
-      if (currentPage > 0) {
-        currentPage--;
-        renderQuestions(currentPage);
+      if (TcurrentPage > 0) {
+        TcurrentPage--;
+        TrenderQuestions(TcurrentPage);
       }
     });
 
     nextBtn.addEventListener('click', () => {
       const totalPages = Math.ceil(totalQuestions / perPage);
-      if (currentPage < totalPages - 1) {
-        currentPage++;
-        renderQuestions(currentPage);
-      } else if (currentPage === totalPages - 1) {
-        currentPage++;
+      if (TcurrentPage < totalPages - 1) {
+        TcurrentPage++;
+        TrenderQuestions(TcurrentPage);
+      } else if (TcurrentPage === totalPages - 1) {
+        TcurrentPage++;
         renderCustomPage();
       } else {
         saveSurveyToCookies();
         alert("설문이 제출되었습니다. 감사합니다!");
-        // 결과 저장 등 추가 처리 가능
       }
     });
 
-    renderQuestions(currentPage);
+    TrenderQuestions(TcurrentPage);
   </script>
 </body>
 </html>
