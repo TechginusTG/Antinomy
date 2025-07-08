@@ -6,7 +6,10 @@ const translations = {
 		labelTheme: "테마 선택",
 		labelLight: "라이트",
 		labelDark: "다크",
-		labelCustom: "사용자 정의",
+		labelSpring: "봄",
+		labelSummer: "여름",
+		labelAutmn: "가을",
+		labelWinter: "겨울",
 		labelBg: "배경 색상",
 		labelText: "텍스트 색상",
 		labelBtn: "버튼 색상",
@@ -19,7 +22,10 @@ const translations = {
 		labelTheme: "Theme",
 		labelLight: "Light",
 		labelDark: "Dark",
-		labelCustom: "Custom",
+		labelSpring: "Spring",
+		labelSummer: "Summer",
+		labelAutmn: "Autumn",
+		labelWinter: "Winter",
 		labelBg: "Background Color",
 		labelText: "Text Color",
 		labelBtn: "Button Color",
@@ -38,6 +44,10 @@ function updateLabels(lang) {
 	document.getElementById("label-theme").textContent = t.labelTheme;
 	document.getElementById("label-light").textContent = t.labelLight;
 	document.getElementById("label-dark").textContent = t.labelDark;
+	document.getElementById("label-Sprig").textContent = t.labelSpring;
+	document.getElementById("label-Summer").textContent = t.labelSummer;
+	document.getElementById("label-Autumn").textContent = t.labelAutumn;
+	document.getElementById("label-Winter").textContent = t.labelWinter;
 	//document.getElementById("label-custom").textContent = t.labelCustom;
 	document.getElementById("label-bg").textContent = t.labelBg;
 	document.getElementById("label-text").textContent = t.labelText;
