@@ -252,8 +252,6 @@ strong {
 	border-radius: 15px;
 	padding: 10px;
 	/* 팝업창 전체의 내부 여백 유지 */
-	max-width: calc(100% / 3 * 2);
-	width: fit-content;
 	box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 	z-index: 100;
 	text-align: left;
@@ -263,8 +261,6 @@ strong {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	word-wrap: break-word;
-	white-space: pre-wrap;
 }
 
 #gptResponsePopup .popup-header {
