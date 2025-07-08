@@ -38,7 +38,7 @@ function updateLabels(lang) {
 	document.getElementById("label-theme").textContent = t.labelTheme;
 	document.getElementById("label-light").textContent = t.labelLight;
 	document.getElementById("label-dark").textContent = t.labelDark;
-	document.getElementById("label-custom").textContent = t.labelCustom;
+	//document.getElementById("label-custom").textContent = t.labelCustom;
 	document.getElementById("label-bg").textContent = t.labelBg;
 	document.getElementById("label-text").textContent = t.labelText;
 	document.getElementById("label-btn").textContent = t.labelBtn;
@@ -88,11 +88,11 @@ function applySettings() {
 updateLabels(document.getElementById("language").value);
 
 // 현재 선택된 테마를 radio에 반영
-const savedTheme = window.localStorage.getItem("thema") || "light";
+let savedTheme = window.localStorage.getItem("thema") || "light";
 document.querySelectorAll('input[name="theme"]').forEach((radio) => {
 	radio.checked = false; // 모두 해제
 });
-const themeRadio = document.querySelector(`input[name="theme"][value="${savedTheme}"]`);
+let themeRadio = document.querySelector(`input[name="theme"][value="${savedTheme}"]`);
 if (themeRadio) {
 	themeRadio.checked = true;
 }
