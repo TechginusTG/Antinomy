@@ -41,6 +41,19 @@
       align-items: center;
       gap: 5px;
     }
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      max-width: 500px;
+      padding: 6px;
+      margin-top: 5px;
+      margin-bottom: 10px;
+    }
+    textarea {
+      height: 60px;
+    }
+
 
     .buttons {
       display: flex;
@@ -61,4 +74,7 @@
     button:disabled {
       background-color: #ccc;
       cursor: default;
+    }
+    hr {
+      margin: 30px 0;
     }

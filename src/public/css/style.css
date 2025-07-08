@@ -30,7 +30,7 @@ strong {
 	flex-direction: column;
 	background-color: #ffffff;
 	position: relative;
-	z-index: 2;
+	z-index: 10;
 	border-radius: 0 20px 20px 0;
 }
 
@@ -308,30 +308,6 @@ strong {
 	display: none !important;
 }
 
-#gptResponsePopup .restore-plus-btn {
-	display: none;
-}
-
-#gptResponsePopup.minimized-popup .restore-plus-btn {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	width: 40px;
-	height: 40px;
-	border-radius: 50%;
-	background: #2563eb;
-	color: #fff;
-	font-size: 2em;
-	border: none;
-	box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-	cursor: pointer;
-	margin: auto;
-	transition: background 0.2s;
-}
-
-#gptResponsePopup.minimized-popup .restore-plus-btn:hover {
-	background: #1d4ed8;
-}
 
 @keyframes fadeIn {
 	from {
@@ -396,4 +372,12 @@ strong {
 		z-index: 102;
 		/* openChatButton보다 높아 최상단에 표시되도록 함 */
 	}
+}
+
+/* 복원(>) 버튼이 항상 채팅창(chat)보다 z-index가 낮게 */
+#popupRestoreBtn {
+    z-index: 1 !important;
+}
+#chat {
+    z-index: 10 !important;
 }
