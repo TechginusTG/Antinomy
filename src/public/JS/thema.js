@@ -3,7 +3,7 @@ const thema = {
         bg: '#fff3f5',
         chat: '#f9d5d3',
         btn: '#ffffff',
-        text: '#f5d5d6'
+        text: '#9c5a65'
     },
 
     natsu:{
