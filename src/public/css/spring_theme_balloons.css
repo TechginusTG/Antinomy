@@ -1,0 +1,37 @@
+.bubble {
+  max-width: 70%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  margin: 8px 0;
+  position: relative;
+  line-height: 1.4;
+  font-size: 14px;
+  word-wrap: break-word;
+  word-break: break-word;
+  animation: slideIn 0.3s ease-out;
+  color: #000;
+}
+
+.ai {
+  background-color: #f7a6ab; /* 패널보다 진한 로즈핑크 */
+  color: #fff;
+  align-self: flex-start;
+}
+
+
+.user {
+  background-color: #d1f0c3; /* 봄 느낌 연연두 */
+  align-self: flex-end;
+}
+
+
+@keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
