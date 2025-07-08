@@ -31,7 +31,7 @@ const thema = {
 		bg: "#273238",
 		chat: "#394A54",
 		btn: "#90A4AE",
-		text: "#1E2D36",
+		text: "#f1f1f1",
 	},
 };
 
@@ -51,40 +51,38 @@ function applyThema(t) {
 		button.style.backgroundColor = thema[t].btn;
 		button.style.color = thema[t].text; // 버튼 텍스트 색상 변경
 	});
+	setTheme(t);
 }
 
 applyThema(window.localStorage.getItem("thema"));
 
-
 function setTheme(theme) {
-  currentTheme = theme;
+	currentTheme = theme;
 
-  
-  const goalIcon = document.getElementById("goalIcon");
-  switch (theme) {
-    case "dark":
-      goalIcon.src = "\uD83C\uDFAF";
-      break;
-    case "light":
-      goalIcon.src = "\uD83C\uDFAF";
-      break;
-    case "haru":
-      goalIcon.src = "\uD83C\uDF38";
-      break;
+	const goalIcon = document.getElementById("goalIcon");
+	switch (theme) {
+		case "dark":
+			goalIcon.src = "\uD83C\uDFAF";
+			break;
+		case "light":
+			goalIcon.src = "\uD83C\uDFAF";
+			break;
+		case "haru":
+			goalIcon.src = "\uD83C\uDF38";
+			break;
 
-	case "natsu":
-      goalIcon.src = "\uD83C\uDF0A";
-      break;
-	
-	case "aki":
-      goalIcon.src = "\uD83C\uDF41";
-      break;
+		case "natsu":
+			goalIcon.src = "\uD83C\uDF0A";
+			break;
 
-	case "fuyu":
-      goalIcon.src = "\uD83C\uDF81";
-      break;
-  }
+		case "aki":
+			goalIcon.src = "\uD83C\uDF41";
+			break;
 
-  
-  document.body.setAttribute("data-theme", theme);
+		case "fuyu":
+			goalIcon.src = "\uD83C\uDF81";
+			break;
+	}
+
+	document.body.setAttribute("data-theme", theme);
 }
