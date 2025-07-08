@@ -67,6 +67,76 @@ if (gptResponsePopup) {
     });
 }
 
+// 최소화 상태 관리 변수
+let isPopupMinimized = false;
+
+// 최소화 버튼 생성 및 삽입 (오른쪽 상단에 > 버튼)
+const minimizeBtn = document.createElement('button');
+minimizeBtn.id = 'popupMinimizeBtn';
+minimizeBtn.innerHTML = '&#x203A;'; // > 모양
+minimizeBtn.title = '최소화';
+minimizeBtn.style.position = 'absolute';
+minimizeBtn.style.right = '10px';
+minimizeBtn.style.top = '10px';
+minimizeBtn.style.zIndex = '200';
+minimizeBtn.style.background = '#2563eb';
+minimizeBtn.style.color = 'white';
+minimizeBtn.style.border = 'none';
+minimizeBtn.style.borderRadius = '10px';
+minimizeBtn.style.width = '28px';
+minimizeBtn.style.height = '28px';
+minimizeBtn.style.cursor = 'pointer';
+minimizeBtn.style.display = 'block';
+gptResponsePopup.appendChild(minimizeBtn);
+
+// 복원 버튼 생성 및 삽입 (최소화 상태에서 < 버튼)
+const restoreBtn = document.createElement('button');
+restoreBtn.id = 'popupRestoreBtn';
+restoreBtn.innerHTML = '&#x2039;'; // < 모양
+restoreBtn.title = '복원';
+restoreBtn.style.position = 'absolute';
+restoreBtn.style.right = '0';
+restoreBtn.style.top = '0';
+restoreBtn.style.zIndex = '201';
+restoreBtn.style.background = '#2563eb';
+restoreBtn.style.color = 'white';
+restoreBtn.style.border = 'none';
+restoreBtn.style.borderRadius = '10px 0 0 10px';
+restoreBtn.style.width = '28px';
+restoreBtn.style.height = '40px';
+restoreBtn.style.cursor = 'pointer';
+restoreBtn.style.display = 'none';
+gptResponsePopup.appendChild(restoreBtn);
+
+// 팝업 최소화 함수
+function minimizePopup() {
+    gptResponsePopup.style.width = '40px';
+    gptResponsePopup.style.height = '40px';
+    gptResponsePopup.style.overflow = 'hidden';
+    gptResponsePopup.querySelector('.popup-header').style.display = 'none';
+    gptResponsePopup.querySelector('.popup-content').style.display = 'none';
+    minimizeBtn.style.display = 'none';
+    restoreBtn.style.display = 'block';
+    isPopupMinimized = true;
+}
+
+// 팝업 복원 함수
+function restorePopup() {
+    gptResponsePopup.style.width = '';
+    gptResponsePopup.style.height = '';
+    gptResponsePopup.style.overflow = '';
+    gptResponsePopup.querySelector('.popup-header').style.display = '';
+    gptResponsePopup.querySelector('.popup-content').style.display = '';
+    minimizeBtn.style.display = 'block';
+    restoreBtn.style.display = 'none';
+    isPopupMinimized = false;
+}
+
+// > 버튼 클릭 시 최소화
+minimizeBtn.addEventListener('click', minimizePopup);
+// < 버튼 클릭 시 복원
+restoreBtn.addEventListener('click', restorePopup);
+
 // 팝업 내용 설정 함수
 function setPopupContent(content) {
     const popupResponseContent = gptResponsePopup.querySelector('.popup-response-content');
