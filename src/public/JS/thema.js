@@ -36,9 +36,9 @@ const thema = {
 
     light: {
 		bg: "#white",
-		chat: "#000000",
+		chat: "#FFFFFF",
 		btn: "#2563eb",
-		text: "#FFFFFF",
+		text: "#000000",
 	},
 };
 
