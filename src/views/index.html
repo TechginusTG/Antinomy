@@ -32,15 +32,7 @@
 				</ul>
 				<div id="summarizedGoalContent"></div>
 			</div>
-
-			<iframe
-				src="https://tldraw.com"
-				width="1000"
-				height="800"
-				frameborder="0"
-				id="diagramContent"
-			></iframe>
-			
+			<iframe src="https://tldraw.com" frameborder="0" id="diagramContent"></iframe>
 
 			<div id="gptResponsePopup">
 				<div class="popup-header">ChatGPT 답변</div>
@@ -57,6 +49,7 @@
 				window.location.href = "/settings";
 			});
 		</script>
+		<script src="/socket.io/socket.io.js"></script>
 		<script type="module" src="/JS/main.js"></script>
 		<script src="/JS/thema.js"></script>
 	</body>
