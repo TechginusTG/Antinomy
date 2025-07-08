@@ -13,7 +13,7 @@
 }
 
 .ai {
-  background-color: #f7a6ab; /* 패널보다 진한 로즈핑크 */
+  background-color: #f7a6ab !important; /* 패널보다 진한 로즈핑크 */
   color: #fff;
   align-self: flex-start;
 }
