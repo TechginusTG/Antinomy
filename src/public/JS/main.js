@@ -49,3 +49,35 @@ document.addEventListener('DOMContentLoaded', () => {
     // 페이지 로드 시 목표 요약 초기화
     updateGoalSummary();
 });
+
+// 소켓 연결
+const socket = io();
+
+// GPT 답변 수신 시 채팅창에 추가
+socket.on("gpt response", (gptMsg) => {
+    addGptMessage(gptMsg);
+});
+
+// GPT 답변을 채팅창에 추가하는 함수
+function addGptMessage(msg) {
+    const chatLog = document.getElementById('chatLog');
+    if (!chatLog) return;
+    const li = document.createElement('li');
+    li.className = "bubble ai";
+    li.textContent = msg;
+    chatLog.appendChild(li);
+    chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+// 기존 sendChatMessage 함수에서 메시지 전송
+
+
+function addUserMessage(msg) {
+    const chatLog = document.getElementById('chatLog');
+    if (!chatLog) return;
+    const li = document.createElement('li');
+    li.className = "bubble user";
+    li.textContent = msg;
+    chatLog.appendChild(li);
+    chatLog.scrollTop = chatLog.scrollHeight;
+}
