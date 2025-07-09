@@ -66,12 +66,6 @@ io.on("connection", (socket) => {
 	socket.on("disconnect", () => {
 		console.log("클라이언트 연결 해제:", socket.id);
 	});
-
-
-
-
-
-	
 });
 // --- 서버 시작 ---
 
