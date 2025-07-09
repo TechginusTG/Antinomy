@@ -67,69 +67,11 @@ io.on("connection", (socket) => {
 		console.log("클라이언트 연결 해제:", socket.id);
 	});
 
-const express = require('express')
-const cors = require('cors')
-const dotenv = require('dotenv')
-const { OpenAI } = require('openai')
-
-dotenv.config()
-const app = express()
-const port = 3000
-
-app.use(cors())
-app.use(express.json())
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-})
-
-const SYSTEM_PROMPT = `
-너는 TLDraw에서 사용할 도형을 생성하는 도우미야.
-사용자가 입력한 내용을 바탕으로 다음 형식의 JSON 하나만 출력해.
-
-{
-  "type": "geo",
-  "x": <x>,
-  "y": <y>,
-  "props": {
-	"geo": "<rectangle|ellipse|triangle|diamond>",
-	"w": <width>,
-	"h": <height>,
-	"color": "<red|blue|green|black>"
-  }
-}
-
-절대 설명을 넣지 말고 JSON만 반환해.
-모든 값은 숫자나 문자열로 정확히 채워줘.
-좌표는 대략 100~500 사이 값을 사용해.
-`
-
-app.post('/api/gpt-draw', async (req, res) => {
-  const userInput = req.body.input
-
-  try {
-	const chat = await openai.chat.completions.create({
-	  model: 'gpt-4o',
-	  messages: [
-		{ role: 'system', content: SYSTEM_PROMPT },
-		{ role: 'user', content: userInput }
-	  ],
-	  temperature: 0.5,
-	})
-
-	const content = chat.choices[0].message.content
-	const shape = JSON.parse(content)
-
-	res.json({ shape })
-  } catch (error) {
-	console.error('Error:', error)
-	res.status(500).json({ error: 'Failed to get shape from GPT' })
-  }
-})
 
 
 
 
+	
 });
 // --- 서버 시작 ---
 
