@@ -58,7 +58,7 @@ export function sendChatMessage() {
 
 	let gptResponseContent = "";
 	// 사용자 입력에 따른 ChatGPT 응답 로직
-	if (input.includes("일본 여행 순서도") || input.includes("단계") || input.includes("시작")) {
+	/*if (input.includes("일본 여행 순서도") || input.includes("단계") || input.includes("시작")) {
 		gptResponseContent =
 			"네, 일본 여행 순서도는 크게 '여행 목표 및 예산 설정 → 항공권 및 숙소 예약 → 세부 일정 계획 및 현지 정보 조사 → 여행 준비물 확인 및 환전' 등의 단계로 진행됩니다.";
 	} else if (input.includes("목표") || input.includes("예산")) {
@@ -78,7 +78,7 @@ export function sendChatMessage() {
 	}
 
 	gotAnyResponse(gptResponseContent);
-
+*/
 	userInputElement.value = "";
 	userInputElement.style.height = "40px";
 
