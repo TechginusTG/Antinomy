@@ -18,7 +18,7 @@ const openai = new OpenAI({
 
 const sessions = {}; // ✅ 유저별 대화 기록
 const userSpecial = {}; // ✅ 유저별 특성 저장
-const systemPrompt = "We're going to have a conversation to strengthen problem-solving thinking. I will present a problem, and you will respond with a series of focused questions and hints, step by step, to guide me toward a solution."; // 시스템 프롬프트 설정
+const systemPrompt = "We're going to have a conversation to strengthen problem-solving thinking. Users will present a problem, and you will respond with a series of focused questions and hints, step by step, to guide user toward a solution with user's language."; // 시스템 프롬프트 설정
 
 
 
@@ -97,7 +97,7 @@ io.on("connection", (socket) => {
             const special = userSpecial[socket.id] || [];
             sessions[socket.id] = [
                 { role: "system", content: systemPrompt },
-                { role: "system", content: `This user has the following traits: ${special.join(", ")}` }
+                { role: "system", content: `This user has the following traits: ${userSpecial.join(", ")}. When you answer, you should be care these properties.` }
             ];
         }
 
