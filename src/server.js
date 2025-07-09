@@ -10,6 +10,12 @@ const server = http.createServer(app); // Express 앱을 HTTP 서버로 래핑
 const PORT = process.env.PORT || 3000; // 환경 변수에 PORT가 설정되어 있으면 사용, 없으면 3000번 포트 사용
 const io = socketIo(server); // Express 앱을 HTTP 서버로 래핑하고 Socket.IO를 초기화
 
+const OpenAI = require("openai"); // OpenAI API를 사용하기 위한 모듈
+require("dotenv").config(); // .env 파일에서 환경 변수를 로드하기 위한 모듈
+const openai = new OpenAI({
+	apiKey: process.env.OPENAI_API_KEY, // 환경 변수에서 OpenAI API 키를 가져옴
+});
+
 const readline = require("readline");
 const rl = readline.createInterface({
 	input: process.stdin,
