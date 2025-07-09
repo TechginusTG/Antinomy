@@ -97,7 +97,7 @@ io.on("connection", (socket) => {
             const special = userSpecial[socket.id] || [];
             sessions[socket.id] = [
                 { role: "system", content: systemPrompt },
-                { role: "system", content: `This user has the following traits: ${special.join(", ")}` }
+                { role: "system", content: `This user has the following traits: ${userSpecial.join(", ")}. When you answer, you should be care these properties.` }
             ];
         }
 
