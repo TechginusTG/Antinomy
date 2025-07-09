@@ -8,7 +8,7 @@ export function autoResizeTextarea() {
 
 const socket = io(); // Socket.IO 클라이언트 초기화
 
-function gotAnyResponse(content) {
+async function gotAnyResponse(content) {
 	const chatLog = document.getElementById("chatLog");
 	// 기존 마지막 응답 ID 제거 및 새 응답에 ID 부여
 	const existingLastResponse = document.getElementById("lastResponse");
@@ -16,16 +16,16 @@ function gotAnyResponse(content) {
 		existingLastResponse.removeAttribute("id");
 	}
 	const gptMessageLi = document.createElement("li");
-	gptMessageLi.classList.add("response-box", "gpt","ai","bubble");
+	gptMessageLi.classList.add("bubble","ai","response-box");
 	gptMessageLi.id = "lastResponse";
 	gptMessageLi.innerHTML = `<strong>${content}</strong>`;
 	chatLog.appendChild(gptMessageLi);
 	chatLog.scrollTop = chatLog.scrollHeight;
 	// 팝업이 열려있으면 팝업 내용 업데이트
-	const gptResponsePopup = document.getElementById("gptResponsePopup");
 	const popupResponseContent = document.getElementById("popupResponseContent");
-        popupResponseContent.textContent = content;
-	
+	if (popupResponseContent) {
+		popupResponseContent.textContent = content;
+	}
 }
 
 // 서버에서 오는 모든 메시지 수신 (이벤트명 무관)
@@ -52,7 +52,7 @@ export function sendChatMessage() {
 	const chatLog = document.getElementById("chatLog");
 
 	const userMessageLi = document.createElement("li");
-	userMessageLi.classList.add("response-box", "user",'bubble');
+	userMessageLi.classList.add("bubble", "user");
 	userMessageLi.innerHTML = `<strong>${input}</strong>`;
 	chatLog.appendChild(userMessageLi);
 
