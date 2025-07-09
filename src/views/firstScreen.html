@@ -115,7 +115,8 @@
 			const startButton = document.getElementById("Start");
 
 			startButton.addEventListener("click", () => {
-				window.location.href = "/";
+				window.open("/test", "survey", "width=600,height=800"); // 설문조사 팝업
+				window.location.href = "/visited"; // 메인창 이동
 			});
 			let current = 0;
 

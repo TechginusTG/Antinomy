@@ -38,6 +38,18 @@ rl.on("line", (input) => {
 //src/public 폴더를 정적 파일 제공 폴더로 지정
 app.use(express.static(path.join(__dirname, "public")));
 
+// JSON 파싱 미들웨어
+app.use(express.json()); // JSON 파싱 미들웨어
+
+// 설문 결과를 userSpecial에 저장
+app.post("/api/survey", (req, res) => {
+    const traits = req.body.traits;
+    const key = "survey_" + Date.now() + "_" + Math.floor(Math.random() * 10000);
+    userSpecial[key] = traits;
+    console.log(`설문 결과 저장 [${key}]:`, traits);
+    res.json({ success: true });
+});
+
 // 루트 경로 ('/') 요청 처리
 app.get("/visited", (req, res) => {
 	// src/views/index.html 파일을 클라이언트에게 전송
@@ -76,12 +88,6 @@ io.on("connection", (socket) => {
 	console.log("클라이언트가 연결됨:", socket.id);
 	socket.emit("welcome", "서버에 연결되었습니다!"); // 클라이언트에게 환영 메시지 전송
 
-
-	// ✅ [추가] 클라이언트가 특성을 보내는 경우
-    socket.on("set special", (traitsArray) => {
-        userSpecial[socket.id] = traitsArray;
-        console.log(`특성 설정됨 [${socket.id}]:`, traitsArray.join(", "));
-    });
 
     // ✅ GPT와 대화 처리
     socket.on("chat message", async (msg) => {
