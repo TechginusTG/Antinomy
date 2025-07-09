@@ -7,8 +7,20 @@ const socketIo = require("socket.io"); // Socket.IO를 사용하기 위한 모�
 
 const app = express();
 const server = http.createServer(app); // Express 앱을 HTTP 서버로 래핑
-const PORT = process.env.PORT || 3000; // 환경 변수에 PORT가 설정되어 있으면 사용, 없으면 3000번 포트 사용const io = socketIo(http.createServer(app)); // Express 앱을 HTTP 서버로 래핑하고 Socket.IO를 초기화
+const PORT = process.env.PORT || 3000; // 환경 변수에 PORT가 설정되어 있으면 사용, 없으면 3000번 포트 사용
 const io = socketIo(server); // Express 앱을 HTTP 서버로 래핑하고 Socket.IO를 초기화
+
+const readline = require("readline");
+const rl = readline.createInterface({
+	input: process.stdin,
+	output: process.stdout,
+});
+
+rl.on("line", (input) => {
+	// 콘솔에서 엔터로 입력받은 내용을 모든 클라이언트에게 전송
+	io.emit("server-message", input);
+	console.log(`모든 클라이언트에게 전송: ${input}`);
+});
 
 //src/public 폴더를 정적 파일 제공 폴더로 지정
 app.use(express.static(path.join(__dirname, "public")));
@@ -49,18 +61,6 @@ io.on("connection", (socket) => {
 	socket.on("chat message", (msg) => {
 		console.log("메시지 수신:", msg);
 		// 클라이언트로부터 받은 메시지를 백엔드에서 수신.
-	});
-
-	const readline = require("readline");
-	const rl = readline.createInterface({
-		input: process.stdin,
-		output: process.stdout,
-	});
-
-	rl.on("line", (input) => {
-		// 콘솔에서 엔터로 입력받은 내용을 모든 클라이언트에게 전송
-		io.emit("server-message", input);
-		console.log(`모든 클라이언트에게 전송: ${input}`);
 	});
 
 	socket.on("disconnect", () => {
