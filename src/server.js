@@ -18,7 +18,7 @@ const openai = new OpenAI({
 
 const sessions = {}; // ✅ 유저별 대화 기록
 const userSpecial = {}; // ✅ 유저별 특성 저장
-const systemPrompt = "";
+const systemPrompt = "your system prompt here"; // 시스템 프롬프트 설정
 
 
 

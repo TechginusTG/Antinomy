@@ -190,8 +190,8 @@
       } else {
         saveSurveyToCookies();
         alert("설문이 제출되었습니다. 감사합니다!");
-      
-      window.location.href = "firtScreen.html";  // ← 원하는 주소로 바꿔줘!
+        window.close(); // 설문 제출 후 창 닫기
+        // window.location.href = "firtScreen.html";  // 필요시 리다이렉트
         currentStep = 2;
       }
     });

@@ -73,6 +73,8 @@ const theme = document.querySelector('input[name="theme"]:checked').value;
 window.close("/settings");
 	
 }
+
+
 // 현재 선택된 테마를 radio에 반영
 let savedTheme = window.localStorage.getItem("thema") || "light";
 document.querySelectorAll('input[name="theme"]').forEach((radio) => {
@@ -81,4 +83,9 @@ document.querySelectorAll('input[name="theme"]').forEach((radio) => {
 let themeRadio = document.querySelector(`input[name="theme"][value="${savedTheme}"]`);
 if (themeRadio) {
 	themeRadio.checked = true;
+}
+
+// 개인설문조사 버튼 클릭 시 test_test.html 새창 열기
+function openSettings() {
+	window.open("/test", "survey", "width=600,height=800");
 }
