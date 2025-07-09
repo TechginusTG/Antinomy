@@ -94,12 +94,16 @@ io.on("connection", (socket) => {
         console.log(`메시지 수신 [${socket.id}]:`, msg);
 
         if (!sessions[socket.id]) {
-            const special = userSpecial[socket.id] || [];
-            sessions[socket.id] = [
-                { role: "system", content: systemPrompt },
-                { role: "system", content: `This user has the following traits: ${userSpecial.join(", ")}. When you answer, you should be care these properties.` }
-            ];
-        }
+			const special = userSpecial[socket.id] || [];
+			const specialString = Array.isArray(special) ? special.join(", ") : special.toString();
+			sessions[socket.id] = [
+				{ role: "system", content: systemPrompt },
+				{
+					role: "system",
+					content: `This user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
+				},
+			];
+		}
 
         sessions[socket.id].push({ role: "user", content: msg });
 
