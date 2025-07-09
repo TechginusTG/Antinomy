@@ -16,6 +16,13 @@ const openai = new OpenAI({
 	apiKey: process.env.OPENAI_API_KEY, // 환경 변수에서 OpenAI API 키를 가져옴
 });
 
+const sessions = {}; // ✅ 유저별 대화 기록
+const userSpecial = {}; // ✅ 유저별 특성 저장
+const systemPrompt = "";
+
+
+
+
 const readline = require("readline");
 const rl = readline.createInterface({
 	input: process.stdin,
@@ -69,13 +76,47 @@ io.on("connection", (socket) => {
 	console.log("클라이언트가 연결됨:", socket.id);
 	socket.emit("welcome", "서버에 연결되었습니다!"); // 클라이언트에게 환영 메시지 전송
 
-	socket.on("chat message", (msg) => {
-		console.log("메시지 수신:", msg);
-		// 클라이언트로부터 받은 메시지를 백엔드에서 수신.
-	});
+
+	// ✅ [추가] 클라이언트가 특성을 보내는 경우
+    socket.on("set special", (traitsArray) => {
+        userSpecial[socket.id] = traitsArray;
+        console.log(`특성 설정됨 [${socket.id}]:`, traitsArray.join(", "));
+    });
+
+    // ✅ GPT와 대화 처리
+    socket.on("chat message", async (msg) => {
+        console.log(`메시지 수신 [${socket.id}]:`, msg);
+
+        if (!sessions[socket.id]) {
+            const special = userSpecial[socket.id] || [];
+            sessions[socket.id] = [
+                { role: "system", content: systemPrompt },
+                { role: "system", content: `This user has the following traits: ${special.join(", ")}` }
+            ];
+        }
+
+        sessions[socket.id].push({ role: "user", content: msg });
+
+        try {
+            const res = await openai.chat.completions.create({
+                model: "gpt-4", // 또는 gpt-4o
+                messages: sessions[socket.id],
+            });
+
+            const reply = res.choices[0].message.content;
+            sessions[socket.id].push({ role: "assistant", content: reply });
+
+            socket.emit("chat message", reply);
+        } catch (err) {
+            console.error("GPT 에러:", err);
+            socket.emit("chat message", "GPT 고장 💀");
+        }
+    });
 
 	socket.on("disconnect", () => {
 		console.log("클라이언트 연결 해제:", socket.id);
+		delete sessions[socket.id];
+        delete userSpecial[socket.id];
 	});
 });
 // --- 서버 시작 ---
