@@ -105,7 +105,7 @@ io.on("connection", (socket) => {
 
             const reply = res.choices[0].message.content;
             sessions[socket.id].push({ role: "assistant", content: reply });
-
+			console.log(`GPT 응답 [${socket.id}]:`, reply);
             socket.emit("chat message", reply);
         } catch (err) {
             console.error("GPT 에러:", err);
