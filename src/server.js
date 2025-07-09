@@ -49,6 +49,11 @@ app.get("/settings", (req, res) => {
 	// path.join()을 사용하여 OS에 관계없이 올바른 경로를 만듭니다.
 	res.sendFile(path.join(__dirname, "views", "setting.html"));
 });
+app.get("/test", (req, res) => {
+	// src/views/index.html 파일을 클라이언트에게 전송
+	// path.join()을 사용하여 OS에 관계없이 올바른 경로를 만듭니다.
+	res.sendFile(path.join(__dirname, "views", "test_test.html"));
+});
 // --- 모든 정의되지 않은 경로를 루트로 리디렉션 (추가된 코드) ---
 // 이 미들웨어는 위의 app.get('/') 라우트가 처리하지 못한 모든 요청을 잡습니다.
 app.use((req, res) => {
