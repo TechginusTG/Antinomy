@@ -68,55 +68,6 @@
           `
         },
         {
-          label: "흡연 여부",
-          inputs: `
-            <label><input type="radio" name="smoke" value="현재 흡연"> 현재 흡연</label>
-            <input type="text" name="SmokeAmount" placeholder="하루 ___ 개비">
-            <label><input type="radio" name="smoke" value="과거 흡연"> 과거 흡연</label>
-            <input type="text" name="WhenDidStopSmoke" placeholder="금연 기간">
-            <label><input type="radio" name="smoke" value="비흡연자"> 비흡연자</label>
-          `
-        },
-        {
-          label: "음주 여부",
-          inputs: `
-            <label><input type="radio" name="Drunk" value="주기적"> 주 ___ 회</label>
-            <input type="text" name="DrunkAmount" placeholder="1회 평균 음주량">
-            <label><input type="radio" name="Drunk" value="거의 안 마심"> 거의 안 마심</label>
-            <label><input type="radio" name="Drunk" value="마시지 않음"> 마시지 않음</label>
-          `
-        },
-        {
-          label: "운동 여부",
-          inputs: `
-            <label><input type="radio" name="exercise" value="네"> 네</label>
-            <input type="text" name="ExerciseType" placeholder="어떤 운동을 하십니까?">
-            <label><input type="radio" name="exercise" value="아니오"> 아니오</label>
-            <input type="text" name="WhyDontExerciseReason" placeholder="운동하지 않는 이유">
-          `
-        },
-        {
-          label: "식습관 (중복 선택 가능)",
-          inputs: `
-            <div class="options">
-              <label><input type="checkbox" name="Food" value="육류"> 육류 위주</label>
-              <label><input type="checkbox" name="Food" value="채소"> 채소 위주</label>
-              <label><input type="checkbox" name="Food" value="탄수화물"> 탄수화물 위주</label>
-              <label><input type="checkbox" name="Food" value="골고루"> 골고루</label>
-              <label><input type="checkbox" name="Food" value="가공식품"> 가공식품 많음</label>
-              <label><input type="checkbox" name="Food" value="패스트푸드"> 패스트푸드 많음</label>
-            </div>
-          `
-        },
-        {
-          label: "가족 중 자가 면역 질환 여부",
-          inputs: `
-            <label><input type="radio" name="family" value="네"> 네</label>
-            <input type="text" name="FamilyDiseaseHistory" placeholder="어떤 질환인지">
-            <label><input type="radio" name="family" value="아니오"> 아니오</label>
-          `
-        },
-        {
           label: "기타 건강상 특이사항",
           inputs: `<textarea name="etc" placeholder="자유롭게 기재해주세요"></textarea>`
         }
@@ -144,17 +95,6 @@
       {name: 'muscle', type: 'radio'},
       {name: 'DrugAbuse', type: 'text'},
       {name: 'JointProblem', type: 'radio'},
-      {name: 'smoke', type: 'radio'},
-      {name: 'SmokeAmount', type: 'text'},
-      {name: 'WhenDidStopSmoke', type: 'text'},
-      {name: 'Drunk', type: 'radio'},
-      {name: 'DrunkAmount', type: 'text'},
-      {name: 'exercise', type: 'radio'},
-      {name: 'ExerciseType', type: 'text'},
-      {name: 'WhyDontExerciseReason', type: 'text'},
-      {name: 'Food', type: 'checkbox'},
-      {name: 'familyDisease', type: 'radio'},
-      {name: 'FamilyDiseaseHistory', type: 'text'},
       {name: 'etc', type: 'textarea'}
     ];
 
@@ -191,23 +131,12 @@
       } else {
         // 설문 결과 수집
         const customMap = [
-          {name: 'joint1', type: 'radio'},
-          {name: 'joint1_detail', type: 'text'},
-          {name: 'joint2', type: 'radio'},
-          {name: 'joint2_detail', type: 'text'},
-          {name: 'impact', type: 'radio'},
-          {name: 'smoke', type: 'radio'},
-          {name: 'smoke_amount', type: 'text'},
-          {name: 'quit_duration', type: 'text'},
-          {name: 'drink', type: 'radio'},
-          {name: 'drink_amount', type: 'text'},
-          {name: 'exercise', type: 'radio'},
-          {name: 'exercise_type', type: 'text'},
-          {name: 'no_exercise_reason', type: 'text'},
-          {name: 'diet', type: 'checkbox'},
-          {name: 'family', type: 'radio'},
-          {name: 'family_detail', type: 'text'},
-          {name: 'etc', type: 'textarea'}
+          {name: 'injured', type: 'radio'},
+        {name: 'InjuredDetail', type: 'text'},
+        {name: 'muscle', type: 'radio'},
+        {name: 'DrugAbuse', type: 'text'},
+        {name: 'JointProblem', type: 'radio'},
+        {name: 'etc', type: 'textarea'}
         ];
         const surveyResult = {};
         customMap.forEach(({name, type}) => {
