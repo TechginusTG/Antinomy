@@ -8,6 +8,31 @@ export function autoResizeTextarea() {
 
 const socket = io(); // Socket.IO 클라이언트 초기화
 
+function saveChatLogToLocal() {
+	const chatLog = document.getElementById("chatLog");
+	const messages = [];
+	chatLog.querySelectorAll("li").forEach(li => {
+		messages.push({
+			role: li.classList.contains("user") ? "user" : "ai",
+			html: li.innerHTML
+		});
+	});
+	localStorage.setItem("chatLog", JSON.stringify(messages));
+}
+
+function loadChatLogFromLocal() {
+	const chatLog = document.getElementById("chatLog");
+	const messages = JSON.parse(localStorage.getItem("chatLog") || "[]");
+	chatLog.innerHTML = "";
+	messages.forEach(msg => {
+		const li = document.createElement("li");
+		li.className = msg.role === "user" ? "bubble user response-box" : "bubble ai response-box";
+		li.innerHTML = msg.html;
+		chatLog.appendChild(li);
+	});
+	chatLog.scrollTop = chatLog.scrollHeight;
+}
+
 async function gotAnyResponse(content) {
 	const chatLog = document.getElementById("chatLog");
 	// 기존 마지막 응답 ID 제거 및 새 응답에 ID 부여
@@ -26,6 +51,7 @@ async function gotAnyResponse(content) {
 	if (popupResponseContent) {
 		popupResponseContent.textContent = content;
 	}
+	saveChatLogToLocal(); // 대화 저장
 }
 
 // 서버에서 오는 모든 메시지 수신 (이벤트명 무관)
@@ -89,4 +115,13 @@ export function sendChatMessage() {
 
 	// 채팅 입력 시 팝업 무조건 닫기
 	forceClosePopup();
+
+	saveChatLogToLocal(); // 대화 저장
+}
+
+// 페이지 로드시 대화 복원
+if (document.readyState === "loading") {
+	document.addEventListener('DOMContentLoaded', loadChatLogFromLocal);
+} else {
+	loadChatLogFromLocal();
 }
