@@ -432,6 +432,7 @@ strong {
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	font-size: 1em;
 	transition: background 0.2s;
+	white-space: nowrap;
 }
 .btn:hover {
 	background-color: #059669;
@@ -467,8 +468,4 @@ strong {
 	text-align: auto;
 	margin-left: 0;
 	margin-right: auto;
-}
-#makeDiagram {
-
-font-size: 0.5em;
 }
