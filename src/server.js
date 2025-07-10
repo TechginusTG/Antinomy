@@ -85,8 +85,6 @@ app.use((req, res) => {
 });
 // --- Socket.IO 이벤트 처리 ---
 io.on("connection", (socket) => {
-	console.log("클라이언트가 연결됨:", socket.id);
-	socket.emit("welcome", "서버에 연결되었습니다!"); // 클라이언트에게 환영 메시지 전송
 
 
     // ✅ GPT와 대화 처리
