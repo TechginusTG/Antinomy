@@ -246,6 +246,18 @@ strong {
 	cursor: pointer;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+#resetBtn {
+	position: fixed;
+	right: 150px;
+	bottom: 20px;
+	background-color: #10b981;
+	color: white;
+	padding: 10px 16px;
+	border: none;
+	border-radius: 12px;
+	cursor: pointer;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
 /* 팝업 스타일 조정 */
 #gptResponsePopup {
 	display: none;
@@ -386,3 +398,35 @@ strong {
 		/* openChatButton보다 높아 최상단에 표시되도록 함 */
 	}
 }
+
+/* 다이어그램 하단 버튼 그룹 스타일 */
+.diagram-btn-group {
+	display: flex;
+	gap: 12px;
+	position: fixed;
+	right: 20px;
+	bottom: 20px;
+	z-index: 10;
+}
+
+.diagram-btn {
+	background-color: #10b981;
+	color: white;
+	padding: 10px 16px;
+	border: none;
+	border-radius: 12px;
+	cursor: pointer;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	font-size: 1em;
+	transition: background 0.2s;
+}
+.diagram-btn:hover {
+	background-color: #059669;
+}
+
+#exportBtn, #setting, #resetBtn {
+	position: static;
+	margin: 0;
+}
+
+/* 기존 #exportBtn, #setting 개별 스타일 제거 (위에서 통합) */

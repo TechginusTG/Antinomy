@@ -46,6 +46,20 @@ document.addEventListener('DOMContentLoaded', () => {
         exportXmlBtn.addEventListener('click', exportToXML);
     }
 
+    // 초기화 버튼 이벤트 리스너
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) {
+        resetBtn.addEventListener('click', () => {
+            if (confirm("정말 모든 대화 기록을 초기화하시겠습니까?")) {
+                localStorage.clear();
+                // 채팅창도 비우기
+                const chatLog = document.getElementById('chatLog');
+                if (chatLog) chatLog.innerHTML = "";
+                alert("초기화가 완료되었습니다.");
+            }
+        });
+    }
+
     // 페이지 로드 시 목표 요약 초기화
     updateGoalSummary();
 });
