@@ -115,7 +115,6 @@
 			const startButton = document.getElementById("Start");
 
 			startButton.addEventListener("click", () => {
-				window.open("/test", "survey", "width=600,height=800"); // 설문조사 팝업
 				window.location.href = "/visited"; // 메인창 이동
 			});
 			let current = 0;
@@ -132,7 +131,7 @@
 				// 첫 방문인 경우
 				window.localStorage.setItem("thema", "light");
 				window.localStorage.setItem("visited", "true");
-			} else {
+			} else{
 				// 첫 방문이 아닌 경우
 				console.log("you visited this site");
 				window.location.href = "/visited";
