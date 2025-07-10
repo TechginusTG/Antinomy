@@ -41,7 +41,7 @@ async function gotAnyResponse(content) {
 		existingLastResponse.removeAttribute("id");
 	}
 	const gptMessageLi = document.createElement("li");
-	gptMessageLi.classList.add("bubble", "ai", "response-box");
+	gptMessageLi.className = "bubble ai response-box";
 	gptMessageLi.id = "lastResponse";
 	gptMessageLi.innerHTML = `<strong>${content}</strong>`;
 	chatLog.appendChild(gptMessageLi);

@@ -62,6 +62,8 @@ strong {
 	flex: 1;
 	overflow-y: auto;
 	margin: 0 16px 100px 16px;
+ 	padding: 0;
+	list-style: none;
 }
 
 #chatInputArea {
@@ -160,12 +162,15 @@ strong {
 	max-width: 70%;
 	word-wrap: break-word;
 	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+	margin-left: 0;
+	margin-right: auto;
 }
 
 .response-box +  .user {
 	border: none;
 	background-color: #fef3c7;
-	margin-left: auto;
+	margin-left: 0;
+	margin-right: auto;
 }
 
 
@@ -437,4 +442,29 @@ strong {
 	font-size: 0.95em;
 }
 
-/* 기존 #exportBtn, #setting 개별 스타일 제거 (위에서 통합) */
+.bubble.user {
+	background-color: #fef3c7;
+	margin-left: 0;
+	margin-right: auto;
+	display: block;
+}
+
+.bubble.ai {
+	background-color: #e0e7ff;
+	margin-left: auto;
+	margin-right: 0;
+	display: block;
+}
+
+.response-box {
+	background-color: inherit;
+	border-radius: 20px;
+	padding: 16px;
+	margin-bottom: 16px;
+	max-width: 70%;
+	word-wrap: break-word;
+	box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+	text-align: auto;
+	margin-left: 0;
+	margin-right: auto;
+}
