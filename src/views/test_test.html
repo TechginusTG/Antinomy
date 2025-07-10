@@ -11,14 +11,12 @@
     <h1>설문조사</h1>
     <form id="surveyForm" class="space-y-6"></form>
     <div class="buttons">
-      <button type="button" id="prevBtn" disabled>이전</button>
-      <button type="button" id="nextBtn">다음</button>
+      <button type="button" id="nextBtn">제출</button>
     </div>
   </div>
   <script src="/socket.io/socket.io.js"></script>
   <script>
     const form = document.getElementById("surveyForm");
-    const prevBtn = document.getElementById("prevBtn");
     const nextBtn = document.getElementById("nextBtn");
     const socket = io();
 
@@ -73,7 +71,6 @@
   });
   
 
-    prevBtn.disabled = false;
     nextBtn.textContent = '제출';
    }
    function saveSurveyToCookies() {
