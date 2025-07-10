@@ -22,6 +22,45 @@ graph TD
         // 동적 렌더링을 위해 API 호출
         mermaid.init(undefined, diagramContainer);
     }
+
+    // 다이어그램 만들기 버튼 이벤트 리스너
+    const makeDiagramBtn = document.getElementById('makeDiagram');
+    if (makeDiagramBtn) {
+        makeDiagramBtn.addEventListener('click', () => {
+            const storedMessages = localStorage.getItem("chatLog");
+            if (!storedMessages) {
+                alert('대화 내용이 없어 다이어그램을 만들 수 없습니다.');
+                return;
+            }
+
+            const messages = JSON.parse(storedMessages);
+            if (messages.length === 0) {
+                alert('대화 내용이 없어 다이어그램을 만들 수 없습니다.');
+                return;
+            }
+
+            const conversation = [];
+            // HTML 문자열을 실제 텍스트로 변환하기 위한 임시 엘리먼트
+            const tempDiv = document.createElement('div');
+
+            messages.forEach(msg => {
+                const role = msg.role === 'user' ? 'User' : 'AI';
+                // 저장된 HTML에서 텍스트 내용만 추출
+                tempDiv.innerHTML = msg.html;
+                const text = (tempDiv.textContent || tempDiv.innerText || "").trim();
+                if (text) {
+                    conversation.push(`${role}: ${text}`);
+                }
+            });
+
+            if (conversation.length > 0) {
+                const fullPrompt = "Summarize the following conversation into a Mermaid.js flowchart diagram. Only provide the Mermaid code block, nothing else:\n\n" + conversation.join('\n');
+                socket.emit('makdiagram', fullPrompt);
+            } else {
+                alert('대화 내용이 없어 다이어그램을 만들 수 없습니다.');
+            }
+        });
+    }
 });
 
 /**
@@ -38,3 +77,8 @@ function updateDiagram(newContent) {
         mermaid.init(undefined, container);
     }
 }
+
+const socket = io();
+socket.on("diagram-update", (data) => {
+    updateDiagram(data);
+});
