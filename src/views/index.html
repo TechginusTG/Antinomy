@@ -10,7 +10,10 @@
 	<body>
 		<div id="chat">
 			<button id="toggleChat">◀</button>
-			<h2>ChatGPT 대화창</h2>
+			<div class="chat-header" style="display:flex; align-items:center; gap:10px; margin:16px;">
+				<h2 style="margin:0; border-bottom:1px solid #000;">ChatGPT 대화창</h2>
+				<button id="resetBtn" class="btn">초기화</button>
+			</div>
 			<ul id="chatLog"></ul>
 			<div id="chatInputArea">
 				<textarea id="userInput" placeholder="입력하세요..."></textarea>
@@ -42,7 +45,6 @@
 
 			<div class="diagram-btn-group">
 				<button id="exportBtn" class="btn">XML 파일로 내보내기</button>
-				<button id="resetBtn" class="btn">초기화</button>
 				<button id="setting" class="btn">설정</button>
 			</div>
 		</div>
