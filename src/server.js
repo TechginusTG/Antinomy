@@ -18,7 +18,7 @@ const openai = new OpenAI({
 
 const sessions = {}; // ✅ 유저별 대화 기록
 const userSpecial = {}; // ✅ 유저별 특성 저장
-const systemPrompt = 'From now on, we will have a conversation that suggests steps to solve the problem. Depending on the users answer, we will provide appropriate hints.'
+const systemPrompt = 'We are going to have a conversation to strengthen problem-solving thinking. I will present a problem, and you will respond with a series of focused questions and hints, step by step, to guide me toward a solution.'
 ; // 시스템 프롬프트 설정
 
 
