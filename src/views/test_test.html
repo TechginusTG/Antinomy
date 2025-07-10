@@ -24,19 +24,8 @@
 
     let currentStep = 0; // 0: 환영화면, 1: 문항, 2: 제출
 
-    function renderWelcomePage() {
-      form.innerHTML = `
-        <div class="welcome">
-          <p>각각의 사용자 여러분에게 최적화된 답변을 도출하기위해 설문조사를 실시중입니다.</p>
-          <p>문항에 성실하게 응답해 주세요. 소요 시간은 약 3분 내외입니다.</p>
-          <p>시작하려면 아래 "다음" 버튼을 눌러주세요.</p>
-        </div>
-      `;
-      prevBtn.disabled = true;
-      nextBtn.textContent = '다음';
-    }
 
-    function renderCustomPage() {
+    function renderWelcomePage() {
       form.innerHTML = '';
       const questions = [
         {
