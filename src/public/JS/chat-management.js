@@ -40,18 +40,50 @@ async function gotAnyResponse(content) {
 	if (existingLastResponse) {
 		existingLastResponse.removeAttribute("id");
 	}
-	const gptMessageLi = document.createElement("li");
-	gptMessageLi.className = "bubble ai response-box";
-	gptMessageLi.id = "lastResponse";
-	gptMessageLi.innerHTML = `<strong>${content}</strong>`;
-	chatLog.appendChild(gptMessageLi);
+
+	// 입력중... 표시 추가
+	let typingLi = document.createElement("li");
+	typingLi.className = "bubble ai response-box";
+	typingLi.id = "gptTyping";
+	typingLi.innerHTML = '<strong>입력중...</strong>';
+	chatLog.appendChild(typingLi);
 	chatLog.scrollTop = chatLog.scrollHeight;
-	// 팝업이 열려있으면 팝업 내용 업데이트
+
 	const popupResponseContent = document.getElementById("popupResponseContent");
 	if (popupResponseContent) {
-		popupResponseContent.textContent = content;
+		popupResponseContent.textContent = "입력중...";
 	}
-	saveChatLogToLocal(); // 대화 저장
+
+	// 타이핑 애니메이션
+	setTimeout(() => {
+		// 입력중... li를 실제 답변 li로 교체
+		chatLog.removeChild(typingLi);
+		const gptMessageLi = document.createElement("li");
+		gptMessageLi.className = "bubble ai response-box";
+		gptMessageLi.id = "lastResponse";
+		gptMessageLi.innerHTML = "<strong></strong>";
+		chatLog.appendChild(gptMessageLi);
+		chatLog.scrollTop = chatLog.scrollHeight;
+
+		if (popupResponseContent) {
+			popupResponseContent.textContent = "";
+		}
+
+		const strongElem = gptMessageLi.querySelector("strong");
+		let i = 0;
+		function typeChar() {
+			if (i <= content.length) {
+				strongElem.textContent = content.slice(0, i);
+				if (popupResponseContent) popupResponseContent.textContent = content.slice(0, i);
+				chatLog.scrollTop = chatLog.scrollHeight;
+				i++;
+				setTimeout(typeChar, 18);
+			} else {
+				saveChatLogToLocal();
+			}
+		}
+		typeChar();
+	}, 300); // 입력중... 표시 후 0.3초 뒤 타이핑 시작
 }
 
 // 서버에서 오는 모든 메시지 수신 (이벤트명 무관)
