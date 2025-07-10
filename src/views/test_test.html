@@ -22,19 +22,7 @@
     const nextBtn = document.getElementById("nextBtn");
     const socket = io();
 
-    let currentStep = 0; // 0: 환영화면, 1: 문항, 2: 제출
-
-    function renderWelcomePage() {
-      form.innerHTML = `
-        <div class="welcome">
-          <p>각각의 사용자 여러분에게 최적화된 답변을 도출하기위해 설문조사를 실시중입니다.</p>
-          <p>문항에 성실하게 응답해 주세요. 소요 시간은 약 3분 내외입니다.</p>
-          <p>시작하려면 아래 "다음" 버튼을 눌러주세요.</p>
-        </div>
-      `;
-      prevBtn.disabled = true;
-      nextBtn.textContent = '다음';
-    }
+    let currentStep = 1; // 1: 문항, 2: 제출
 
     function renderCustomPage() {
       form.innerHTML = '';
@@ -125,54 +113,49 @@
   }
 
     nextBtn.addEventListener('click', () => {
-      if (currentStep === 0) {
-        renderCustomPage();
-        currentStep = 1;
-      } else {
-        // 설문 결과 수집
-        const customMap = [
-          {name: 'injured', type: 'radio'},
-        {name: 'InjuredDetail', type: 'text'},
-        {name: 'muscle', type: 'radio'},
-        {name: 'DrugAbuse', type: 'text'},
-        {name: 'JointProblem', type: 'radio'},
-        {name: 'etc', type: 'textarea'}
-        ];
-        const surveyResult = {};
-        customMap.forEach(({name, type}) => {
-          let value = '';
-          if (type === 'radio') {
-            const checked = form.querySelector(`input[name="${name}"]:checked`);
-            value = checked ? checked.value : '';
-          } else if (type === 'text' || type === 'textarea') {
-            const input = form.querySelector(`[name="${name}"]`);
-            value = input ? input.value : '';
-          } else if (type === 'checkbox') {
-            const checked = Array.from(form.querySelectorAll(`input[name="${name}"]:checked`));
-            value = checked.map(c => c.value);
-          }
-          surveyResult[name] = value;
-        });
-        // 서버로 socketId와 traits 전송
-        fetch("/api/survey", {
-          method: "POST",
-          headers: {"Content-Type": "application/json"},
-          body: JSON.stringify({ socketId: socket.id, traits: surveyResult })
-        })
-        .then(res => res.json())
-        .then(data => {
-          alert("사용자 특성이 저장되었습니다. 감사합니다!");
-          window.close();
-        })
-        .catch(() => {
-          alert("서버 전송 실패");
-        });
-        currentStep = 2;
-      }
+      // 설문 결과 수집
+      const customMap = [
+        {name: 'injured', type: 'radio'},
+      {name: 'InjuredDetail', type: 'text'},
+      {name: 'muscle', type: 'radio'},
+      {name: 'DrugAbuse', type: 'text'},
+      {name: 'JointProblem', type: 'radio'},
+      {name: 'etc', type: 'textarea'}
+      ];
+      const surveyResult = {};
+      customMap.forEach(({name, type}) => {
+        let value = '';
+        if (type === 'radio') {
+          const checked = form.querySelector(`input[name="${name}"]:checked`);
+          value = checked ? checked.value : '';
+        } else if (type === 'text' || type === 'textarea') {
+          const input = form.querySelector(`[name="${name}"]`);
+          value = input ? input.value : '';
+        } else if (type === 'checkbox') {
+          const checked = Array.from(form.querySelectorAll(`input[name="${name}"]:checked`));
+          value = checked.map(c => c.value);
+        }
+        surveyResult[name] = value;
+      });
+      // 서버로 socketId와 traits 전송
+      fetch("/api/survey", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({ socketId: socket.id, traits: surveyResult })
+      })
+      .then(res => res.json())
+      .then(data => {
+        alert("사용자 특성이 저장되었습니다. 감사합니다!");
+        window.close();
+      })
+      .catch(() => {
+        alert("서버 전송 실패");
+      });
+      currentStep = 2;
     });
  
     // 초기 로딩
-    renderWelcomePage();
+    renderCustomPage();
   
   </script>
 </body>
