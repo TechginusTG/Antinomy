@@ -18,7 +18,7 @@ const openai = new OpenAI({
 
 const sessions = {}; // ✅ 유저별 대화 기록
 const userSpecial = {}; // ✅ 유저별 특성 저장
-const systemPrompt = "We're going to have a conversation to strengthen problem-solving thinking. Users will present a problem, and you will respond with a series of focused questions and hints, step by step, to guide user toward a solution with user's language."; // 시스템 프롬프트 설정
+const systemPrompt = "We're going to have a competition to improve the user's thinking skills When the user presents the problem situation, do not immediately say the answer needed to solve the problem, but provide the hints needed to solve the problem step by step"; // 시스템 프롬프트 설정
 
 
 
