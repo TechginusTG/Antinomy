@@ -154,6 +154,7 @@ export function sendChatMessage() {
 
 	if (isFirstChat) {
 		isFirstChat = false; // 첫 채팅 여부 초기화
+		userInputElement.placeholder="질문에 대답하기";
 	}
 }
 
