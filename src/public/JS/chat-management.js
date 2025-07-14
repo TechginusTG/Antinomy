@@ -1,5 +1,6 @@
 // chat-management.js
 
+let isFirstChat = true; // 첫 채팅 여부 플래그
 // 사용자 입력 시 텍스트 영역 자동 크기 조절
 export function autoResizeTextarea() {
 	this.style.height = "auto";
@@ -11,10 +12,10 @@ const socket = io(); // Socket.IO 클라이언트 초기화
 function saveChatLogToLocal() {
 	const chatLog = document.getElementById("chatLog");
 	const messages = [];
-	chatLog.querySelectorAll("li").forEach(li => {
+	chatLog.querySelectorAll("li").forEach((li) => {
 		messages.push({
 			role: li.classList.contains("user") ? "user" : "ai",
-			html: li.innerHTML
+			html: li.innerHTML,
 		});
 	});
 	localStorage.setItem("chatLog", JSON.stringify(messages));
@@ -24,13 +25,14 @@ function loadChatLogFromLocal() {
 	const chatLog = document.getElementById("chatLog");
 	const messages = JSON.parse(localStorage.getItem("chatLog") || "[]");
 	chatLog.innerHTML = "";
-	messages.forEach(msg => {
+	messages.forEach((msg) => {
 		const li = document.createElement("li");
 		li.className = msg.role === "user" ? "bubble user response-box" : "bubble ai response-box";
 		li.innerHTML = msg.html;
 		chatLog.appendChild(li);
 	});
 	chatLog.scrollTop = chatLog.scrollHeight;
+	isFirstChat = false; // 로드 후 첫 채팅 여부 초기화
 }
 
 async function gotAnyResponse(content) {
@@ -45,7 +47,7 @@ async function gotAnyResponse(content) {
 	let typingLi = document.createElement("li");
 	typingLi.className = "bubble ai response-box";
 	typingLi.id = "gptTyping";
-	typingLi.innerHTML = '<strong>입력중...</strong>';
+	typingLi.innerHTML = "<strong>입력중...</strong>";
 	chatLog.appendChild(typingLi);
 	chatLog.scrollTop = chatLog.scrollHeight;
 
@@ -149,11 +151,15 @@ export function sendChatMessage() {
 	forceClosePopup();
 
 	saveChatLogToLocal(); // 대화 저장
+
+	if (isFirstChat) {
+		isFirstChat = false; // 첫 채팅 여부 초기화
+	}
 }
 
 // 페이지 로드시 대화 복원
 if (document.readyState === "loading") {
-	document.addEventListener('DOMContentLoaded', loadChatLogFromLocal);
+	document.addEventListener("DOMContentLoaded", loadChatLogFromLocal);
 } else {
 	loadChatLogFromLocal();
 }
