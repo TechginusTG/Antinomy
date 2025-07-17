@@ -3,122 +3,127 @@
 let isFirstChat = true; // 첫 채팅 여부 플래그
 // 사용자 입력 시 텍스트 영역 자동 크기 조절
 export function autoResizeTextarea() {
-	this.style.height = "auto";
-	this.style.height = this.scrollHeight + "px";
+    this.style.height = "auto";
+    this.style.height = this.scrollHeight + "px";
 }
 
 const socket = io(); // Socket.IO 클라이언트 초기화
 
 function saveChatLogToLocal() {
-	const chatLog = document.getElementById("chatLog");
-	const messages = [];
-	chatLog.querySelectorAll("li").forEach((li) => {
-		messages.push({
-			role: li.classList.contains("user") ? "user" : "ai",
-			html: li.innerHTML,
-		});
-	});
-	localStorage.setItem("chatLog", JSON.stringify(messages));
+    const chatLog = document.getElementById("chatLog");
+    const messages = [];
+    chatLog.querySelectorAll("li").forEach((li) => {
+        messages.push({
+            role: li.classList.contains("user") ? "user" : "ai",
+            html: li.innerHTML,
+        });
+    });
+    localStorage.setItem("chatLog", JSON.stringify(messages));
 }
 
 function loadChatLogFromLocal() {
-	const chatLog = document.getElementById("chatLog");
-	const messages = JSON.parse(localStorage.getItem("chatLog") || "[]");
-	chatLog.innerHTML = "";
-	messages.forEach((msg) => {
-		const li = document.createElement("li");
-		li.className = msg.role === "user" ? "bubble user response-box" : "bubble ai response-box";
-		li.innerHTML = msg.html;
-		chatLog.appendChild(li);
-	});
-	chatLog.scrollTop = chatLog.scrollHeight;
-	isFirstChat = false; // 로드 후 첫 채팅 여부 초기화
+    const chatLog = document.getElementById("chatLog");
+    const messages = JSON.parse(localStorage.getItem("chatLog") || "[]");
+    chatLog.innerHTML = "";
+    messages.forEach((msg) => {
+        const li = document.createElement("li");
+        li.className =
+            msg.role === "user"
+                ? "bubble user response-box"
+                : "bubble ai response-box";
+        li.innerHTML = msg.html;
+        chatLog.appendChild(li);
+    });
+    chatLog.scrollTop = chatLog.scrollHeight;
+    isFirstChat = false; // 로드 후 첫 채팅 여부 초기화
 }
 
 async function gotAnyResponse(content) {
-	const chatLog = document.getElementById("chatLog");
-	// 기존 마지막 응답 ID 제거 및 새 응답에 ID 부여
-	const existingLastResponse = document.getElementById("lastResponse");
-	if (existingLastResponse) {
-		existingLastResponse.removeAttribute("id");
-	}
+    const chatLog = document.getElementById("chatLog");
+    // 기존 마지막 응답 ID 제거 및 새 응답에 ID 부여
+    const existingLastResponse = document.getElementById("lastResponse");
+    if (existingLastResponse) {
+        existingLastResponse.removeAttribute("id");
+    }
 
-	// 입력중... 표시 추가
-	let typingLi = document.createElement("li");
-	typingLi.className = "bubble ai response-box";
-	typingLi.id = "gptTyping";
-	typingLi.innerHTML = "<strong>입력중...</strong>";
-	chatLog.appendChild(typingLi);
-	chatLog.scrollTop = chatLog.scrollHeight;
+    // 입력중... 표시 추가
+    let typingLi = document.createElement("li");
+    typingLi.className = "bubble ai response-box";
+    typingLi.id = "gptTyping";
+    typingLi.innerHTML = "<strong>입력중...</strong>";
+    chatLog.appendChild(typingLi);
+    chatLog.scrollTop = chatLog.scrollHeight;
 
-	const popupResponseContent = document.getElementById("popupResponseContent");
-	if (popupResponseContent) {
-		popupResponseContent.textContent = "입력중...";
-	}
+    const popupResponseContent = document.getElementById(
+        "popupResponseContent"
+    );
+    if (popupResponseContent) {
+        popupResponseContent.textContent = "입력중...";
+    }
 
-	// 타이핑 애니메이션
-	setTimeout(() => {
-		// 입력중... li를 실제 답변 li로 교체
-		chatLog.removeChild(typingLi);
-		const gptMessageLi = document.createElement("li");
-		gptMessageLi.className = "bubble ai response-box";
-		gptMessageLi.id = "lastResponse";
-		gptMessageLi.innerHTML = "<strong></strong>";
-		chatLog.appendChild(gptMessageLi);
-		chatLog.scrollTop = chatLog.scrollHeight;
+    // 타이핑 애니메이션
+    setTimeout(() => {
+        // 입력중... li를 실제 답변 li로 교체
+        chatLog.removeChild(typingLi);
+        const gptMessageLi = document.createElement("li");
+        gptMessageLi.className = "bubble ai response-box";
+        gptMessageLi.id = "lastResponse";
+        gptMessageLi.innerHTML = "<strong></strong>";
+        chatLog.appendChild(gptMessageLi);
+        chatLog.scrollTop = chatLog.scrollHeight;
 
-		if (popupResponseContent) {
-			popupResponseContent.textContent = "";
-		}
+        if (popupResponseContent) {
+            popupResponseContent.textContent = "";
+        }
 
-		const strongElem = gptMessageLi.querySelector("strong");
-		let i = 0;
-		function typeChar() {
-			if (i <= content.length) {
-				strongElem.textContent = content.slice(0, i);
-				if (popupResponseContent) popupResponseContent.textContent = content.slice(0, i);
-				chatLog.scrollTop = chatLog.scrollHeight;
-				i++;
-				setTimeout(typeChar, 18);
-			} else {
-				saveChatLogToLocal();
-			}
-		}
-		typeChar();
-	}, 300); // 입력중... 표시 후 0.3초 뒤 타이핑 시작
+        const strongElem = gptMessageLi.querySelector("strong");
+        let i = 0;
+        function typeChar() {
+            if (i <= content.length) {
+                strongElem.textContent = content.slice(0, i);
+                if (popupResponseContent)
+                    popupResponseContent.textContent = content.slice(0, i);
+                chatLog.scrollTop = chatLog.scrollHeight;
+                i++;
+                setTimeout(typeChar, 18);
+            } else {
+                saveChatLogToLocal();
+            }
+        }
+        typeChar();
+    }, 300); // 입력중... 표시 후 0.3초 뒤 타이핑 시작
 }
 
 // 서버에서 오는 모든 메시지 수신 (이벤트명 무관)
 socket.onAny((event, ...args) => {
-	gotAnyResponse(args.join(" "));
+    gotAnyResponse(args.join(" "));
 });
 // 팝업 무조건 닫기 함수
 function forceClosePopup() {
-	const gptResponsePopup = document.getElementById("gptResponsePopup");
-	if (gptResponsePopup) {
-		gptResponsePopup.classList.remove("minimized-popup");
-		gptResponsePopup.style.display = "none";
-	}
+    const gptResponsePopup = document.getElementById("gptResponsePopup");
+    if (gptResponsePopup) {
+        gptResponsePopup.classList.remove("minimized-popup");
+        gptResponsePopup.style.display = "none";
+    }
 }
 
 // 메시지 전송 로직
 export function sendChatMessage() {
-	const userInputElement = document.getElementById("userInput");
-	const input = userInputElement.value;
-	if (!input.trim()) return;
+    const userInputElement = document.getElementById("userInput");
+    const input = userInputElement.value;
+    if (!input.trim()) return;
 
-	socket.emit("chat message", input);
+    socket.emit("chat message", input);
 
-	const chatLog = document.getElementById("chatLog");
+    const chatLog = document.getElementById("chatLog");
 
-	const userMessageLi = document.createElement("li");
-	userMessageLi.classList.add("bubble", "user", "response-box");
-	userMessageLi.innerHTML = `<strong>${input}</strong>`;
-	chatLog.appendChild(userMessageLi);
+    const userMessageLi = document.createElement("li");
+    userMessageLi.classList.add("bubble", "user", "response-box");
+    userMessageLi.innerHTML = `<strong>${input}</strong>`;
+    chatLog.appendChild(userMessageLi);
 
-	let gptResponseContent = "";
-	// 사용자 입력에 따른 ChatGPT 응답 로직
-	/*if (input.includes("일본 여행 순서도") || input.includes("단계") || input.includes("시작")) {
+    // 사용자 입력에 따른 ChatGPT 응답 로직
+    /*if (input.includes("일본 여행 순서도") || input.includes("단계") || input.includes("시작")) {
 		gptResponseContent =
 			"네, 일본 여행 순서도는 크게 '여행 목표 및 예산 설정 → 항공권 및 숙소 예약 → 세부 일정 계획 및 현지 정보 조사 → 여행 준비물 확인 및 환전' 등의 단계로 진행됩니다.";
 	} else if (input.includes("목표") || input.includes("예산")) {
@@ -139,28 +144,28 @@ export function sendChatMessage() {
 
 	gotAnyResponse(gptResponseContent);
 */
-	userInputElement.value = "";
-	userInputElement.style.height = "40px";
+    userInputElement.value = "";
+    userInputElement.style.height = "40px";
 
-	// 목표 요약 업데이트 (goal-summary.js에서 import 해야 함)
-	import("./goal-summary.js").then(({ updateGoalSummary }) => {
-		updateGoalSummary();
-	});
+    // 목표 요약 업데이트 (goal-summary.js에서 import 해야 함)
+    import("./goal-summary.js").then(({ updateGoalSummary }) => {
+        updateGoalSummary();
+    });
 
-	// 채팅 입력 시 팝업 무조건 닫기
-	forceClosePopup();
+    // 채팅 입력 시 팝업 무조건 닫기
+    forceClosePopup();
 
-	saveChatLogToLocal(); // 대화 저장
+    saveChatLogToLocal(); // 대화 저장
 
-	if (isFirstChat) {
-		isFirstChat = false; // 첫 채팅 여부 초기화
-		userInputElement.placeholder="질문에 대답하기";
-	}
+    if (isFirstChat) {
+        isFirstChat = false; // 첫 채팅 여부 초기화
+        userInputElement.placeholder = "질문에 대답하기";
+    }
 }
 
 // 페이지 로드시 대화 복원
 if (document.readyState === "loading") {
-	document.addEventListener("DOMContentLoaded", loadChatLogFromLocal);
+    document.addEventListener("DOMContentLoaded", loadChatLogFromLocal);
 } else {
-	loadChatLogFromLocal();
+    loadChatLogFromLocal();
 }
