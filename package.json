@@ -1,9 +1,13 @@
 {
-  "name": "antinomy",
+  "name": "antinomy-fullstack",
   "version": "1.0.0",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "dev": "nodemon"
+    "dev": "concurrently \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "nodemon src/server.js",
+    "dev:client": "vite",
+    "build": "vite build",
+    "start": "node src/server.js"
   },
   "repository": {
     "type": "git",
@@ -18,17 +22,23 @@
   "homepage": "https://github.com/TechginusTG/Antinomy#readme",
   "description": "",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^17.1.0",
     "express": "^5.1.0",
     "openai": "^5.8.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.25.1",
     "socket.io": "^4.8.1",
+    "socket.io-client": "^4.7.5",
     "ws": "^8.18.3"
   },
   "devDependencies": {
-    "@babel/cli": "^7.28.0",
-    "@babel/core": "^7.28.0",
-    "@babel/node": "^7.28.0",
-    "@babel/preset-env": "^7.28.0",
-    "nodemon": "^3.1.10"
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.10",
+    "vite": "^5.3.4"
   }
 }
