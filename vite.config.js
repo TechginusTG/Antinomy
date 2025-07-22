@@ -8,4 +8,8 @@ export default defineConfig({
   build: {
     outDir: '../dist',
   },
+  publicDir: 'assets',
+  server: {
+    host: true, // Listen on all network interfaces
+  },
 })
