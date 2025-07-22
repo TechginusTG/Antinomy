@@ -107,13 +107,32 @@ function forceClosePopup() {
     }
 }
 
+// Helper function to parse history from localStorage for the server
+function getHistoryForServer() {
+    const chatLog = localStorage.getItem("chatLog");
+    if (!chatLog) return [];
+
+    const messages = JSON.parse(chatLog);
+    return messages.map(msg => {
+        const tempEl = document.createElement('div');
+        tempEl.innerHTML = msg.html;
+        const content = tempEl.querySelector('strong')?.textContent || tempEl.textContent;
+        // map 'ai' to 'assistant' for the server
+        return {
+            role: msg.role === 'ai' ? 'assistant' : msg.role,
+            content: content
+        };
+    });
+}
+
 // 메시지 전송 로직
 export function sendChatMessage() {
     const userInputElement = document.getElementById("userInput");
     const input = userInputElement.value;
     if (!input.trim()) return;
 
-    socket.emit("chat message", input);
+    const history = getHistoryForServer();
+    socket.emit("chat message", { message: input, history: history });
 
     const chatLog = document.getElementById("chatLog");
 

@@ -85,22 +85,29 @@ io.on("connection", (socket) => {
 
 
     // ✅ GPT와 대화 처리
-    socket.on("chat message", async (msg) => {
-        console.log(`메시지 수신 [${socket.id}]:`, msg);
+    socket.on("chat message", async (data) => {
+        const { message, history } = data;
+        console.log(`메시지 수신 [${socket.id}]:`, message);
 
         if (!sessions[socket.id]) {
-			const special = userSpecial[socket.id] || [];
-			const specialString = Array.isArray(special) ? special.join(", ") : special.toString();
-			sessions[socket.id] = [
-				{ role: "system", content: systemPrompt },
-				{
-					role: "system",
-					content: `This user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
-				},
-			];
-		}
+            const special = userSpecial[socket.id] || [];
+            const specialString = Array.isArray(special) ? special.join(", ") : special.toString();
+            
+            // Start with system prompts
+            const initialPrompts = [
+                { role: "system", content: systemPrompt },
+                {
+                    role: "system",
+                    content: `This user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
+                },
+            ];
 
-        sessions[socket.id].push({ role: "user", content: msg });
+            // Combine initial prompts with history from client
+            sessions[socket.id] = [...initialPrompts, ...history];
+
+        }
+
+        sessions[socket.id].push({ role: "user", content: message });
 
         try {
             const res = await openai.chat.completions.create({
