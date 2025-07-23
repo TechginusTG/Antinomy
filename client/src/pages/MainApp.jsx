@@ -1,6 +1,6 @@
 import React from 'react';
 
-function App() {
+function MainApp() {
   return (
     <div>
       <h1>Hello, Antinomy!</h1>
@@ -9,4 +9,4 @@ function App() {
   );
 }
 
-export default App;
+export default MainApp;
