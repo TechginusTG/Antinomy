@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import { Layout, Button, Input, Space } from 'antd';
+import { Layout, Button } from 'antd';
 import {
-  UnorderedListOutlined,
-  ArrowsAltOutlined,
-  SaveOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
   AppstoreOutlined,
-  SendOutlined,
+  SaveOutlined,
 } from '@ant-design/icons';
+import ChatSider from '../components/ChatSider';
 
-const { Sider, Content } = Layout;
+const { Content } = Layout;
 
 const MainApp = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -21,36 +19,7 @@ const MainApp = () => {
 
   return (
     <Layout>
-      <Sider
-        width={300}
-        collapsible
-        collapsed={collapsed}
-        trigger={null}
-        theme="light"
-        collapsedWidth={0}
-      >
-        {!collapsed && (
-          <div>
-            <div>
-              <h3>Chat</h3>
-              <Space>
-                <button>Reset</button> {/*btn for clear chatLog*/}
-                <button>Make Diagram</button> {/*btn for make diagram*/}
-              </Space>
-            </div>
-            <div>
-              {/* Chat messages will go here */}
-            </div>
-            <div>
-              <Input.TextArea
-                autoSize={{ minRows: 1, maxRows: 5 }}
-                placeholder="Type a message..."
-              />
-              <Button icon={<SendOutlined />} type="primary" />
-            </div>
-          </div>
-        )}
-      </Sider>
+      <ChatSider collapsed={collapsed} />
       <Layout>
         <Button
           onClick={toggleCollapsed}
