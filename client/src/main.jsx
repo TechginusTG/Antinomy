@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import LandingPage from './pages/LandingPage.jsx';
-import MainApp from './pages/MainApp.jsx';
+import MainApp from './pages/MainApp/MainApp.jsx';
 
 const router = createBrowserRouter([
   {

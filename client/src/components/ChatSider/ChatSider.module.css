@@ -1,0 +1,35 @@
+/* ===== ChatSider Component Styles ===== */
+.chat-sider {
+    height: 100%; 
+    background-color: #fff; /* Sider needs a background */
+}
+
+.chat {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem; /* 12px 16px */
+    border-bottom: 1px solid #f0f0f0;
+    flex-shrink: 0; /* Prevent header from shrinking */
+}
+
+.chat-log {
+    flex-grow: 1; /* Grow to fill available space */
+    overflow-y: auto; /* Enable vertical scroll on overflow */
+    padding: 1rem; /* 16px */
+}
+
+.chat-footer {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem 1rem; /* 12px 16px */
+    border-top: 1px solid #f0f0f0;
+    flex-shrink: 0; /* Prevent footer from shrinking */
+    gap: 0.5rem; /* Use gap for spacing between children */
+}

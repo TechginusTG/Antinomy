@@ -1,0 +1,30 @@
+/* ===== MainApp Component Styles ===== */
+.main-layout {
+    height: 100vh;
+    overflow: hidden; /* Prevent unwanted body scrollbars */
+}
+
+.content-layout {
+    /* Smooth transition for when the sider collapses/expands */
+    transition: margin-left 0.2s ease-in-out;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.main-content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem; /* 12px 16px */
+    flex-shrink: 0;
+    background: #fff;
+}
+
+.react-flow-wrapper {
+    flex-grow: 1;
+    height: 100%;
+}

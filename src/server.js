@@ -30,13 +30,14 @@ const io = new Server(server, {
   }
 });
 
+/*
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
 const sessions = {};
 const userSpecial = {};
-const systemPrompt = `We are going to have a conversation to strengthen problem-solving thinking. I will present a problem, and you will respond with a focused question and hint, step by step, to guide me toward a solution. User's FISRT chat will be biggest problem which user want to solve.`;
+const systemPrompt = `We are going to have a conversation to strengthen problem-solving thinking. I will present a problem, and you will respond with a focused question and hint, step by step, to guide me toward a solution. User's FISRT chat will be biggest problem which user want to solve.`
 
 app.use(express.json());
 
@@ -127,6 +128,7 @@ io.on('connection', (socket) => {
     delete userSpecial[socket.id];
   });
 });
+*/
 
 server.listen(PORT, () => {
   console.log(`✨ API Server is running on http://localhost:${PORT}`);
