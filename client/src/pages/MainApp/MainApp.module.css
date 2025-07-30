@@ -48,7 +48,6 @@ body {
     background: #f0f2f5; /* Light background for contrast */
 }
 
-
 /* Ant Design Overrides */
 .ant-layout {
     margin: 0 !important;
@@ -61,12 +60,22 @@ body {
 }
 
 .exp-bar {
+    position: relative;
     height: 12px;
     background: #e0e0e0;
     border-radius: 6px;
     margin: 0 24px 30px 24px;
-    overflow: hidden;
+    overflow: visible;
     z-index: 5;
+}
+
+.exp-bar-label {
+    position: absolute;
+    left: 0;
+    bottom: -25px;
+    font-size: 20px;
+    color: #333;
+    font-weight: bold;
 }
 
 .exp-bar-fill {
@@ -86,7 +95,7 @@ body {
 
 .settings-button :global(.ant-btn) {
     position: absolute;
-    top: 70px;
+    top: 10px;
     right: 15px;
     width: 50px;
     height: 50px;

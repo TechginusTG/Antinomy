@@ -64,6 +64,7 @@ const MainApp = () => {
                                 className={styles["exp-bar-fill"]}
                                 style={{ width: "60%" }} // 예시로 exp 60%
                             />
+                            <span className={styles["exp-bar-label"]}>Exp {Math.round(60)}%</span>
                         </div>
                         <Modal
                             title="Setting"
