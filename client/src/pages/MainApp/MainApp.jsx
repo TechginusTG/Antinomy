@@ -31,6 +31,8 @@ const MainApp = () => {
     const openSettings = () => setIsSettingsOpen(true);
     const closeSettings = () => setIsSettingsOpen(false);
 
+    let exp = 70;
+    let level = 1;
     return (
         <Layout style={{ height: "100vh" }}>
             <Header className={styles["header"]} />
@@ -62,9 +64,9 @@ const MainApp = () => {
                         <div className={styles["exp-bar"]}>
                             <div
                                 className={styles["exp-bar-fill"]}
-                                style={{ width: "60%" }} // 예시로 exp 60%
+                                style={{ width: `${exp}%` }}
                             />
-                            <span className={styles["exp-bar-label"]}>Exp {Math.round(60)}%</span>
+                            <span className={styles["exp-bar-label"]}>Lv {level} / Exp {Math.round(exp)}%</span>
                         </div>
                         <Modal
                             title="Setting"
