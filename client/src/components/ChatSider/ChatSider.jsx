@@ -1,6 +1,7 @@
 import { Layout, Button, Input, Space, Row, Col } from "antd";
 import { SendOutlined } from "@ant-design/icons";
 
+import Bubble from "../ChatBubble/Bubble";
 import styles from "./ChatSider.module.css";
 
 const { Sider } = Layout;
@@ -14,7 +15,9 @@ const ChatSider = ({ className }) => {
                     <Button>Make Diagram</Button> {/*btn for make diagram*/}
                 </div>
                 <div className={styles["chat-log"]}>
-                    <ul></ul>
+                    <ul>
+                        <Bubble className={styles.bubble}>안녕하세요!</Bubble>
+                    </ul>
                     {/* Chat messages will go here */}
                 </div>
                 <div className={styles["chat-footer"]}>

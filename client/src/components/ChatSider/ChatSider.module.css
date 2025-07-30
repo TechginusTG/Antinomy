@@ -2,7 +2,7 @@
 .chat-sider {
     height: 100%;
     background-color: #fff; /* Sider needs a background */
-    border-right: rgba(0,0,0, 0.7) 1px solid; /* Light border for separation */
+    border-right: rgba(0, 0, 0, 0.7) 1px solid; /* Light border for separation */
 }
 
 .chat {
@@ -33,4 +33,19 @@
     border-top: 1px solid #f0f0f0;
     flex-shrink: 0; /* Prevent footer from shrinking */
     gap: 0.5rem; /* Use gap for spacing between children */
+}
+
+/* Bubble Component Styles */
+.bubble {
+    list-style: none;
+}
+
+.bubble.user {
+    margin-right: 0;
+    margin-left: auto;
+}
+
+.bubble.ai {
+    margin-right: auto;
+    margin-left: 0;
 }
