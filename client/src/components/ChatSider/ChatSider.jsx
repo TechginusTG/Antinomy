@@ -17,7 +17,7 @@ const ChatSider = ({ className }) => {
                 <div className={styles["chat-log"]}>
                     <ul>
                         <Bubble className={`${styles.bubble} ${styles.user}`}>
-                            안녕하세요!
+                            안녕하세요!!!!!
                         </Bubble>
                         <Bubble className={`${styles.bubble} ${styles.ai}`}>
                             왜 안녕하신가요?
