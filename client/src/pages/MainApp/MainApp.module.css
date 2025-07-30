@@ -84,6 +84,14 @@ body {
     transition: width 0.4s;
 }
 
+.levelup-button {
+    position: absolute;
+    left: 0;
+    bottom: 15px;
+    width: 100px;
+    height: 40px;
+}
+
 .tail-buttons :global(.ant-btn) {
     position: absolute;
     bottom: 15px;
