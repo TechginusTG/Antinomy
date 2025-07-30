@@ -1,7 +1,6 @@
 import React, { useCallback } from "react";
-import { Layout, Button, Row } from "antd";
+import { Layout, Button } from "antd";
 import {
-    AppstoreOutlined,
     SaveOutlined,
     SettingFilled,
 } from "@ant-design/icons";
@@ -11,7 +10,7 @@ import ReactFlow, { useNodesState, useEdgesState, addEdge } from "reactflow";
 import "reactflow/dist/style.css";
 import styles from "./MainApp.module.css"; // Import CSS Module
 
-const { Content } = Layout;
+const { Header, Content } = Layout;
 
 const initialNodes = [
     { id: "1", position: { x: 300, y: 200 }, data: { label: "Hello" } },
@@ -30,27 +29,31 @@ const MainApp = () => {
     );
 
     return (
-        <Layout className={styles["main-layout"]}>
-            <ChatSider className={styles["chat-sider"]} />
-            <Layout className={styles["content-layout"]}>
-                <Content className={styles["main-content"]}>
-                    <div className={styles["main-content-header"]}></div>
-                    <div className={styles["react-flow-wrapper"]}>
-                        <ReactFlow
-                            nodes={nodes}
-                            edges={edges}
-                            onNodesChange={onNodesChange}
-                            onEdgesChange={onEdgesChange}
-                            onConnect={onConnect}
-                        />
-                    </div>
-                    <div className={styles["tail-buttons"]}>
-                        <Button type="primary" icon={<SaveOutlined />}>
-                            Save
-                        </Button>
-                        <Button icon={<SettingFilled />} />
-                    </div>
-                </Content>
+        <Layout style={{ height: "100vh" }}>
+            <Header className={styles.header}>
+                <h2 className={styles["header-title"]}>ANTINOMY</h2>
+            </Header>
+            <Layout>
+                <ChatSider className={styles["chat-sider"]} />
+                <Layout className={styles["content-layout"]}>
+                    <Content className={styles["main-content"]}>
+                        <div className={styles["react-flow-wrapper"]}>
+                            <ReactFlow
+                                nodes={nodes}
+                                edges={edges}
+                                onNodesChange={onNodesChange}
+                                onEdgesChange={onEdgesChange}
+                                onConnect={onConnect}
+                            />
+                        </div>
+                        <div className={styles["tail-buttons"]}>
+                            <Button type="primary" icon={<SaveOutlined />}>
+                                Save
+                            </Button>
+                            <Button icon={<SettingFilled />} />
+                        </div>
+                    </Content>
+                </Layout>
             </Layout>
         </Layout>
     );

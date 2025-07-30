@@ -7,14 +7,9 @@ const { Sider } = Layout;
 
 const ChatSider = ({ className }) => {
     return (
-        <Sider
-            width={300}
-            theme="light"
-            className={className}
-        >
+        <Sider width={300} theme="light" className={className}>
             <div className={styles.chat}>
                 <div className={styles["chat-header"]}>
-                    <h3 className={styles["chat-header-title"]}>Chat</h3>
                     <Button>Reset</Button> {/*btn for clear chatLog*/}
                     <Button>Make Diagram</Button> {/*btn for make diagram*/}
                 </div>
