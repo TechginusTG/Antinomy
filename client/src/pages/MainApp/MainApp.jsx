@@ -31,13 +31,10 @@ const MainApp = () => {
 
     return (
         <Layout className={styles["main-layout"]}>
-            <ChatSider
-                className={styles["chat-sider"]}
-            />
+            <ChatSider className={styles["chat-sider"]} />
             <Layout className={styles["content-layout"]}>
                 <Content className={styles["main-content"]}>
-                    <div className={styles["main-content-header"]}>
-                    </div>
+                    <div className={styles["main-content-header"]}></div>
                     <div className={styles["react-flow-wrapper"]}>
                         <ReactFlow
                             nodes={nodes}
@@ -48,10 +45,10 @@ const MainApp = () => {
                         />
                     </div>
                     <div className={styles["tail-buttons"]}>
-                        <Button icon={<SettingFilled />} />
                         <Button type="primary" icon={<SaveOutlined />}>
                             Save
                         </Button>
+                        <Button icon={<SettingFilled />} />
                     </div>
                 </Content>
             </Layout>
