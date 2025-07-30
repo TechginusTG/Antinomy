@@ -4,7 +4,7 @@ import styles from "./Landing.module.css"; // Assuming you have a CSS file for s
 function LandingPage() {
   return (
     <div className={styles.landingPage}>
-      <main>
+      <main className={styles["main-content"]}>
         <p className={styles["Title"]}>This is the landing page.</p>
         <button className={styles["main-button"]} onClick={() => window.location.href = "/app"}>Go to App</button>
       </main>
