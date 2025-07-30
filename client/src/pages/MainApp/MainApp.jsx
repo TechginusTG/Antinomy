@@ -1,5 +1,5 @@
-import React, { useCallback } from "react";
-import { Layout, Button } from "antd";
+import React, { useCallback, useState } from "react";
+import { Layout, Button, Modal } from "antd";
 import { SaveOutlined, SettingFilled } from "@ant-design/icons";
 import ChatSider from "../../components/ChatSider/ChatSider"; // Updated import path
 import Header from "../../components/HeaderBar/HeaderBar"; // Updated import path
@@ -21,10 +21,15 @@ const MainApp = () => {
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+
     const onConnect = useCallback(
         (params) => setEdges((eds) => addEdge(params, eds)),
         [setEdges]
     );
+
+    const openSettings = () => setIsSettingsOpen(true);
+    const closeSettings = () => setIsSettingsOpen(false);
 
     return (
         <Layout style={{ height: "100vh" }}>
@@ -48,9 +53,20 @@ const MainApp = () => {
                             </Button>
                         </div>
                         <div className={styles["settings-button"]}>
-                            <Button type="default" icon={<SettingFilled />}>
-                            </Button>
+                            <Button
+                                type="default"
+                                icon={<SettingFilled />}
+                                onClick={openSettings}
+                            />
                         </div>
+                        <Modal
+                            title="Setting"
+                            open={isSettingsOpen}
+                            onCancel={closeSettings}
+                            onOk={closeSettings}
+                        >
+                        <p>설정 내용(추가예정)</p>
+                        </Modal>
                     </Content>
                 </Layout>
             </Layout>
