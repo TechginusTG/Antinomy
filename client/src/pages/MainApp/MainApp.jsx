@@ -59,6 +59,12 @@ const MainApp = () => {
                                 onClick={openSettings}
                             />
                         </div>
+                        <div className={styles["exp-bar"]}>
+                            <div
+                                className={styles["exp-bar-fill"]}
+                                style={{ width: "60%" }} // 예시로 exp 60%
+                            />
+                        </div>
                         <Modal
                             title="Setting"
                             open={isSettingsOpen}
