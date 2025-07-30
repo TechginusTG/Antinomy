@@ -6,20 +6,16 @@ import {
     SaveOutlined,
 } from "@ant-design/icons";
 import ChatSider from "../../components/ChatSider/ChatSider"; // Updated import path
-import ReactFlow, {
-    useNodesState,
-    useEdgesState,
-    addEdge,
-} from "reactflow";
+import ReactFlow, { useNodesState, useEdgesState, addEdge } from "reactflow";
 
 import "reactflow/dist/style.css";
-import styles from './MainApp.module.css'; // Import CSS Module
+import styles from "./MainApp.module.css"; // Import CSS Module
 
 const { Content } = Layout;
 
 const initialNodes = [
-    { id: "1", position: { x: 0, y: 0 }, data: { label: "Hello" } },
-    { id: "2", position: { x: 100, y: 100 }, data: { label: "World" } },
+    { id: "1", position: { x: 300, y: 200 }, data: { label: "Hello" } },
+    { id: "2", position: { x: 400, y: 300 }, data: { label: "World" } },
 ];
 
 const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
@@ -38,15 +34,15 @@ const MainApp = () => {
     const closeSider = () => setCollapsed(true);
 
     return (
-        <Layout className={styles['main-layout']}>
+        <Layout className={styles["main-layout"]}>
             <ChatSider
                 collapsed={collapsed}
-                className={styles['chat-sider']}
+                className={styles["chat-sider"]}
                 onClose={closeSider}
             />
-            <Layout className={styles['content-layout']}>
-                <Content className={styles['main-content']}>
-                    <div className={styles['main-content-header']}>
+            <Layout className={styles["content-layout"]}>
+                <Content className={styles["main-content"]}>
+                    <div className={styles["main-content-header"]}>
                         {collapsed && (
                             <Button
                                 onClick={openSider}
@@ -60,7 +56,7 @@ const MainApp = () => {
                             </Button>
                         </Row>
                     </div>
-                    <div className={styles['react-flow-wrapper']}>
+                    <div className={styles["react-flow-wrapper"]}>
                         <ReactFlow
                             nodes={nodes}
                             edges={edges}

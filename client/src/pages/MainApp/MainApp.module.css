@@ -1,3 +1,10 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
 /* ===== MainApp Component Styles ===== */
 .main-layout {
     height: 100vh;
@@ -26,5 +33,15 @@
 
 .react-flow-wrapper {
     flex-grow: 1;
-    height: 100%;
+}
+
+/* Ant Design Overrides */
+.ant-layout {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.ant-layout-content {
+    margin: 0 !important;
+    padding: 0 !important;
 }
