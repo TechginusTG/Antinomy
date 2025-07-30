@@ -46,7 +46,10 @@ const MainApp = () => {
                             <Button type="primary" icon={<SaveOutlined />}>
                                 Save
                             </Button>
-                            <Button icon={<SettingFilled />} />
+                        </div>
+                        <div className={styles["settings-button"]}>
+                            <Button type="default" icon={<SettingFilled />}>
+                            </Button>
                         </div>
                     </Content>
                 </Layout>

@@ -21,7 +21,8 @@ body {
 /* ===== MainApp Component Styles ===== */
 .main-layout {
     height: 100vh;
-    overflow: hidden; /* Prevent unwanted body scrollbars */
+    overflow: hidden;
+    position: relative;
 }
 
 .content-layout {
@@ -46,6 +47,7 @@ body {
     background: #f0f2f5; /* Light background for contrast */
 }
 
+
 /* Ant Design Overrides */
 .ant-layout {
     margin: 0 !important;
@@ -61,4 +63,16 @@ body {
     height: 40px;
     padding: 4px 20px;
     font-size: 16px;
+}
+
+.settings-button :global(.ant-btn) {
+    position: absolute;
+    top: 70px;
+    right: 15px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
 }
