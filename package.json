@@ -4,10 +4,10 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm:dev:server\" \"npm:dev:client\"",
-    "dev:server": "nodemon src/server.js",
-    "dev:client": "vite",
-    "build": "vite build",
-    "start": "node src/server.js"
+    "dev:server": "nodemon server/server.js",
+    "dev:client": "vite client --config client/vite.config.js",
+    "build": "vite build client --config client/vite.config.js",
+    "start": "node server/server.js"
   },
   "repository": {
     "type": "git",
