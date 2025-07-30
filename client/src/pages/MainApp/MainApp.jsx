@@ -1,16 +1,14 @@
 import React, { useCallback } from "react";
 import { Layout, Button } from "antd";
-import {
-    SaveOutlined,
-    SettingFilled,
-} from "@ant-design/icons";
+import { SaveOutlined, SettingFilled } from "@ant-design/icons";
 import ChatSider from "../../components/ChatSider/ChatSider"; // Updated import path
+import Header from "../../components/Header/Header"; // Updated import path
 import ReactFlow, { useNodesState, useEdgesState, addEdge } from "reactflow";
 
 import "reactflow/dist/style.css";
 import styles from "./MainApp.module.css"; // Import CSS Module
 
-const { Header, Content } = Layout;
+const { Content } = Layout;
 
 const initialNodes = [
     { id: "1", position: { x: 300, y: 200 }, data: { label: "Hello" } },
@@ -30,9 +28,7 @@ const MainApp = () => {
 
     return (
         <Layout style={{ height: "100vh" }}>
-            <Header className={styles.header}>
-                <h2 className={styles["header-title"]}>ANTINOMY</h2>
-            </Header>
+            <Header className={styles["header"]} />
             <Layout>
                 <ChatSider className={styles["chat-sider"]} />
                 <Layout className={styles["content-layout"]}>
