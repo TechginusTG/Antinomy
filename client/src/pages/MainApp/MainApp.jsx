@@ -1,7 +1,6 @@
-import React, { useState, useCallback } from "react";
+import React, { useCallback } from "react";
 import { Layout, Button, Row } from "antd";
 import {
-    MenuUnfoldOutlined,
     AppstoreOutlined,
     SaveOutlined,
     SettingFilled,
@@ -22,7 +21,6 @@ const initialNodes = [
 const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
 
 const MainApp = () => {
-    const [collapsed, setCollapsed] = useState(true);
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
@@ -31,25 +29,14 @@ const MainApp = () => {
         [setEdges]
     );
 
-    const openSider = () => setCollapsed(false);
-    const closeSider = () => setCollapsed(true);
-
     return (
         <Layout className={styles["main-layout"]}>
             <ChatSider
-                collapsed={collapsed}
                 className={styles["chat-sider"]}
-                onClose={closeSider}
             />
             <Layout className={styles["content-layout"]}>
                 <Content className={styles["main-content"]}>
                     <div className={styles["main-content-header"]}>
-                        {collapsed && (
-                            <Button
-                                onClick={openSider}
-                                icon={<MenuUnfoldOutlined />}
-                            />
-                        )}
                     </div>
                     <div className={styles["react-flow-wrapper"]}>
                         <ReactFlow
