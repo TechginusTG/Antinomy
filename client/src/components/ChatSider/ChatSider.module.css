@@ -2,6 +2,7 @@
 .chat-sider {
     height: 100%;
     background-color: #fff; /* Sider needs a background */
+    border-right: rgba(0,0,0, 0.7) 1px solid; /* Light border for separation */
 }
 
 .chat {

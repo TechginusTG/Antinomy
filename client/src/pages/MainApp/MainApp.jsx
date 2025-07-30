@@ -4,6 +4,7 @@ import {
     MenuUnfoldOutlined,
     AppstoreOutlined,
     SaveOutlined,
+    SettingFilled,
 } from "@ant-design/icons";
 import ChatSider from "../../components/ChatSider/ChatSider"; // Updated import path
 import ReactFlow, { useNodesState, useEdgesState, addEdge } from "reactflow";
@@ -49,12 +50,6 @@ const MainApp = () => {
                                 icon={<MenuUnfoldOutlined />}
                             />
                         )}
-                        <Row>
-                            <Button icon={<AppstoreOutlined />} />
-                            <Button type="primary" icon={<SaveOutlined />}>
-                                Save
-                            </Button>
-                        </Row>
                     </div>
                     <div className={styles["react-flow-wrapper"]}>
                         <ReactFlow
@@ -64,6 +59,12 @@ const MainApp = () => {
                             onEdgesChange={onEdgesChange}
                             onConnect={onConnect}
                         />
+                    </div>
+                    <div className={styles["tail-buttons"]}>
+                        <Button icon={<SettingFilled />} />
+                        <Button type="primary" icon={<SaveOutlined />}>
+                            Save
+                        </Button>
                     </div>
                 </Content>
             </Layout>
