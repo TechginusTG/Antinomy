@@ -1,4 +1,3 @@
-import React from "react";
 import { Layout, Button, Input, Space, Row, Col } from "antd";
 import { SendOutlined, MenuFoldOutlined } from "@ant-design/icons";
 
