@@ -2,7 +2,7 @@ import React, { useCallback } from "react";
 import { Layout, Button } from "antd";
 import { SaveOutlined, SettingFilled } from "@ant-design/icons";
 import ChatSider from "../../components/ChatSider/ChatSider"; // Updated import path
-import Header from "../../components/Header/Header"; // Updated import path
+import Header from "../../components/HeaderBar/HeaderBar"; // Updated import path
 import ReactFlow, { useNodesState, useEdgesState, addEdge } from "reactflow";
 
 import "reactflow/dist/style.css";
