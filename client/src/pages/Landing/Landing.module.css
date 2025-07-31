@@ -13,5 +13,5 @@
     align-items: center;
     width: 720px;
     height: 480px;
-    background-color: whitesmoke;
+    background-color: var(--background-secondary);
 }
