@@ -3,3 +3,10 @@
     justify-content: space-between;
     align-items: center;
 }
+
+.header h2 {
+    color: #1e1e1e;
+}
+body[data-theme="dark"] .header h2 {
+    color: #fff;
+}

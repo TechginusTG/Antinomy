@@ -6,12 +6,26 @@ body {
     overflow: hidden;
 }
 
+/* body[data-theme="dark"] {
+    background: #181818;
+    color: #eee;
+    filter: invert(1) hue-rotate(180deg);
+}
+body[data-theme="dark"] img,
+body[data-theme="dark"] video {
+    filter: invert(1) hue-rotate(180deg);
+} */
+
 .header {
     background: #fff;
     padding: 0 24px;
     border-bottom: 1px solid #f0f0f0;
     display: flex;
     align-items: center;
+}
+body[data-theme="dark"] .header {
+    background: #1e1e1e;
+    border-bottom: 1px solid #000000;
 }
 
 .header-title {
@@ -36,9 +50,15 @@ body {
     height: 100%;
     position: relative;
 }
+body[data-theme="dark"] .main-content {
+    background: #1e1e1e;
+}
 
 .react-flow-wrapper {
     flex-grow: 1;
+}
+body[data-theme="dark"] .react-flow-wrapper {
+    background: #22232a;
 }
 
 .tail-buttons {
@@ -47,16 +67,25 @@ body {
     padding: 0.5rem 1rem; /* 8px 16px */
     background: #f0f2f5; /* Light background for contrast */
 }
+body[data-theme="dark"] .tail-buttons {
+    background: #1e1e1e;
+}
 
 /* Ant Design Overrides */
 .ant-layout {
     margin: 0 !important;
     padding: 0 !important;
 }
+body[data-theme="dark"] .ant-layout {
+    background: #1e1e1e;
+}
 
 .ant-layout-content {
     margin: 0 !important;
     padding: 0 !important;
+}
+body[data-theme="dark"] .ant-layout-content {
+    background: #1e1e1e;
 }
 
 .exp-bar {
@@ -76,6 +105,9 @@ body {
     font-size: 20px;
     color: #333;
     font-weight: bold;
+}
+body[data-theme="dark"] .exp-bar-label {
+    color: #f0f0f0;
 }
 
 .exp-bar-fill {

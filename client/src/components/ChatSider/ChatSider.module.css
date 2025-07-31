@@ -19,11 +19,27 @@
     border-bottom: 1px solid #f0f0f0;
     flex-shrink: 0; /* Prevent header from shrinking */
 }
+body[data-theme="dark"] .chat-header {
+    background: #1e1e1e;
+    border-bottom: 1px solid #000000;
+}
+
+.chat-header :global(.ant-btn) {
+    background: #f0f0f0;
+}
+body[data-theme="dark"] .chat-header :global(.ant-btn) {
+    background: #333b45;
+    color: #fff;
+    border: #000000;
+}
 
 .chat-log {
     flex-grow: 1; /* Grow to fill available space */
     overflow-y: auto; /* Enable vertical scroll on overflow */
     padding: 1rem; /* 16px */
+}
+body[data-theme="dark"] .chat-log {
+    background: #1e1e1e;
 }
 
 .chat-log ul {
@@ -40,6 +56,10 @@
     border-top: 1px solid #f0f0f0;
     flex-shrink: 0; /* Prevent footer from shrinking */
     gap: 0.5rem; /* Use gap for spacing between children */
+}
+body[data-theme="dark"] .chat-footer {
+    background: #1e1e1e;
+    border-top: 1px solid #000000;
 }
 
 /* Bubble Component Styles */
@@ -64,4 +84,20 @@
     margin-left: 0;
     background-color: aquamarine;
     border-bottom-left-radius: 0px;
+}
+
+body[data-theme="dark"] .bubble.user {
+    color: #d7d7d7;
+}
+
+body[data-theme="dark"] .bubble.ai {
+    color: #d7d7d7;
+}
+
+body[data-theme="dark"] .user {
+    background-color: #96b179;
+}
+
+body[data-theme="dark"] .ai {
+    background-color: #a374db;
 }

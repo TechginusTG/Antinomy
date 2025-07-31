@@ -18,6 +18,13 @@ const initialNodes = [
 const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
 
 const MainApp = () => {
+    const [theme, setTheme] = useState("light");
+
+    const themeChange = (e) => {
+        setTheme(e.target.value);
+        document.body.setAttribute("data-theme", e.target.value);
+    };
+
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
@@ -74,7 +81,7 @@ const MainApp = () => {
                         <div className={styles["settings-button"]}>
                             <Button
                                 type="default"
-                                icon={<SettingFilled />}
+                                icon={<SettingFilled/>}
                                 onClick={openSettings}
                             />
                         </div>
@@ -96,7 +103,28 @@ const MainApp = () => {
                             onCancel={closeSettings}
                             onOk={closeSettings}
                         >
-                        <p>설정 내용(추가예정)</p>
+                            <div>
+                                <p>Choose your Theme:</p>
+                                <label>
+                                    <input
+                                        type="radio"
+                                        value="light"
+                                        checked={theme === "light"}
+                                        onChange={themeChange}
+                                    />
+                                    Light theme
+                                </label>
+                                <label style={{ marginLeft: 16}}>
+                                    <input
+                                        type="radio"
+                                        value="dark"
+                                        checked={theme === "dark"}
+                                        onChange={themeChange}
+                                    />
+                                    Dark theme
+                                </label>
+                            </div>
+                            <p>이후 추가 예정</p>
                         </Modal>
                     </Content>
                 </Layout>
