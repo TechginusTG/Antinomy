@@ -98,33 +98,72 @@ const MainApp = () => {
                         </div>
                         </div>
                         <Modal
-                            title="Setting"
+                            title="Settings"
                             open={isSettingsOpen}
                             onCancel={closeSettings}
                             onOk={closeSettings}
                         >
                             <div>
                                 <p>Choose your Theme:</p>
-                                <label>
-                                    <input
-                                        type="radio"
-                                        value="light"
-                                        checked={theme === "light"}
-                                        onChange={themeChange}
-                                    />
-                                    Light theme
-                                </label>
-                                <label style={{ marginLeft: 16}}>
-                                    <input
-                                        type="radio"
-                                        value="dark"
-                                        checked={theme === "dark"}
-                                        onChange={themeChange}
-                                    />
-                                    Dark theme
-                                </label>
+                                <div>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value="light"
+                                            checked={theme === "light"}
+                                            onChange={themeChange}
+                                        />
+                                        Light
+                                    </label>
+                                    <label style={{marginLeft: 16}}>
+                                        <input
+                                            type="radio"
+                                            value="dark"
+                                            checked={theme === "dark"}
+                                            onChange={themeChange}
+                                        />
+                                        Dark
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>
+                                        <input
+                                            type="radio"
+                                            value="haru"
+                                            checked={theme === "haru"}
+                                            onChange={themeChange}
+                                        />
+                                        Spring
+                                    </label>
+                                    <label style={{marginLeft: 7}}>
+                                        <input
+                                            type="radio"
+                                            value="natsu"
+                                            checked={theme === "natsu"}
+                                            onChange={themeChange}
+                                        />
+                                        Summer
+                                    </label>
+                                    <label style={{marginLeft: 7}}>
+                                        <input
+                                            type="radio"
+                                            value="aki"
+                                            checked={theme === "aki"}
+                                            onChange={themeChange}
+                                        />
+                                        Autumn
+                                    </label>
+                                    <label style={{marginLeft: 7}}>
+                                        <input
+                                            type="radio"
+                                            value="fuyu"
+                                            checked={theme === "fuyu"}
+                                            onChange={themeChange}
+                                        />
+                                        Winter
+                                    </label>
+                                </div>
                             </div>
-                            <p>이후 추가 예정</p>
                         </Modal>
                     </Content>
                 </Layout>

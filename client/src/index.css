@@ -24,6 +24,58 @@ body[data-theme="dark"] {
     --bubble-ai-bg: #a374db;
 }
 
+body[data-theme="haru"] {
+    --background-primary: #fff4f8;   
+    --background-secondary: #ffeaf2;     
+    --background-header: #ffd8e6;       
+    --background-flow-wrapper: #ffe0ec; 
+    --text-primary: #4d2c2c;        
+    --text-secondary: #8c5a5a;         
+    --border-color: #f7b6c2;            
+    --header-title-color: #a52a3a; 
+    --bubble-user-bg: #e6f7d4;        
+    --bubble-ai-bg: #f9c2dc;          
+}
+
+body[data-theme="natsu"] {
+    --background-primary: #e0f7fa;        
+    --background-secondary: #b2ebf2;       
+    --background-header: #4dd0e1;          
+    --background-flow-wrapper: #b2ebf2;    
+    --text-primary: #004d40;                
+    --text-secondary: #00796b;           
+    --border-color: #26c6da;               
+    --header-title-color: #006064;         
+    --bubble-user-bg: #fff9c4;           
+    --bubble-ai-bg: #b2dfdb;             
+}
+
+body[data-theme="aki"] {
+    --background-primary: #fff3e0;     
+    --background-secondary: #ffe0b2;      
+    --background-header: #ffcc80;       
+    --background-flow-wrapper: #ffe0b2;    
+    --text-primary: #4e342e;            
+    --text-secondary: #6d4c41;              
+    --border-color: #ffb74d;              
+    --header-title-color: #e65100;          
+    --bubble-user-bg: #d7ccc8;            
+    --bubble-ai-bg: #ffccbc;            
+}
+
+body[data-theme="fuyu"] {
+    --background-primary: #e0f7fa;    
+    --background-secondary: #b2ebf2;       
+    --background-header: #80deea;         
+    --background-flow-wrapper: #cbf9ff;  
+    --text-primary: #01579b;               
+    --text-secondary: #0277bd;             
+    --border-color: #4fc3f7;               
+    --header-title-color: #0288d1;  
+    --bubble-user-bg: #ffffff;              
+    --bubble-ai-bg: #bbdefb;                
+}
+
 html,
 body {
     margin: 0;
