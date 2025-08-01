@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
 import styles from "./Landing.module.css"; // Assuming you have a CSS file for styling
 
+import { Button } from "antd";
+
+document.body.setAttribute("data-theme", "dark");
+
 function LandingPage() {
     return (
         <div className={styles.landingPage}>
@@ -8,12 +12,12 @@ function LandingPage() {
                 <h1 className={styles["Title"]}>ANTINOMY</h1>
                 <h2 className={`${styles.subtitle}`}>~의식의 흐름~</h2>
                 <span>계획과 목표를 수립하고 실천하기</span>
-                <button
+                <Button
                     className={styles["main-button"]}
                     onClick={() => (window.location.href = "/app")}
                 >
                     Go to App
-                </button>
+                </Button>
             </main>
         </div>
     );
