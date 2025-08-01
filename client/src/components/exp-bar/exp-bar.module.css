@@ -1,0 +1,32 @@
+.exp-bar {
+    position: relative;
+    height: 12px;
+    background: #e0e0e0;
+    border-radius: 6px;
+    margin: 0 24px 30px 24px;
+    overflow: visible;
+    z-index: 5;
+}
+
+.exp-bar-label {
+    position: absolute;
+    left: 0;
+    bottom: -25px;
+    font-size: 20px;
+    color: var(--text-primary);
+    font-weight: bold;
+}
+
+.exp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4caf50 0%, #81c784 100%);
+    transition: width 0.4s;
+}
+
+.levelup-button {
+    position: absolute;
+    left: 0;
+    bottom: 15px;
+    width: 100px;
+    height: 40px;
+}

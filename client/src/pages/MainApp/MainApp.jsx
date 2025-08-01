@@ -3,6 +3,7 @@ import { Layout, Button, Modal } from "antd";
 import { SaveOutlined, SettingFilled } from "@ant-design/icons";
 import ChatSider from "../../components/ChatSider/ChatSider"; // Updated import path
 import Header from "../../components/HeaderBar/HeaderBar"; // Updated import path
+import ExpBar from "../../components/exp-bar/exp-bar";
 import ReactFlow, { useNodesState, useEdgesState, addEdge } from "reactflow";
 
 import "reactflow/dist/style.css";
@@ -29,8 +30,7 @@ const MainApp = () => {
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    const [exp, setExp] = useState(0);
-    const [level, setLevel] = useState(1);
+    
 
     const onConnect = useCallback(
         (params) => setEdges((eds) => addEdge(params, eds)),
@@ -40,22 +40,7 @@ const MainApp = () => {
     const openSettings = () => setIsSettingsOpen(true);
     const closeSettings = () => setIsSettingsOpen(false);
 
-    const increaseExp = useCallback((d) => {
-        setExp((prevExp) => {
-            let totalExp = prevExp + d;
-            let levelUps = 0;
-            while (totalExp >= 100) {
-                totalExp -= 100;
-                levelUps += 1;
-            }
-            if (levelUps > 0) {
-                setLevel((prevLevel) => prevLevel + levelUps);
-            }
-            return totalExp;
-        });
-    }, []);
-
-    const handleExpUp = useCallback(() => increaseExp(10), [increaseExp]);
+    
 
     return (
         <Layout style={{ height: "100vh" }}>
@@ -85,18 +70,7 @@ const MainApp = () => {
                                 onClick={openSettings}
                             />
                         </div>
-                        <div className={styles["exp-bar"]}>
-                            <div
-                                className={styles["exp-bar-fill"]}
-                                style={{ width: `${exp}%` }}
-                            />
-                            <span className={styles["exp-bar-label"]}>Lv {level} / Exp {Math.round(exp)}%</span>
-                            <div className={styles["levelup-button"]}>
-                                <Button type="default" onClick={handleExpUp}>
-                                    Exp UP
-                                </Button>
-                        </div>
-                        </div>
+                        <ExpBar />
                         <Modal
                             title="Settings"
                             open={isSettingsOpen}
