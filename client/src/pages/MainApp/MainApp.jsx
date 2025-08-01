@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Layout, Button, Modal } from "antd";
-import { SaveOutlined, SettingFilled } from "@ant-design/icons";
+import { SaveOutlined, SettingFilled, BulbOutlined } from "@ant-design/icons";
 import ChatSider from "../../components/ChatSider/ChatSider"; // Updated import path
 import Header from "../../components/HeaderBar/HeaderBar"; // Updated import path
 import ExpBar from "../../components/exp-bar/exp-bar";
@@ -30,7 +30,7 @@ const MainApp = () => {
     const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-    
+    const [isQuestOpen, setIsQuestOpen] = useState(false);
 
     const onConnect = useCallback(
         (params) => setEdges((eds) => addEdge(params, eds)),
@@ -39,8 +39,8 @@ const MainApp = () => {
 
     const openSettings = () => setIsSettingsOpen(true);
     const closeSettings = () => setIsSettingsOpen(false);
-
-    
+    const openQuest = () => setIsQuestOpen(true);
+    const closeQuest = () => setIsQuestOpen(false);
 
     return (
         <Layout style={{ height: "100vh" }}>
@@ -66,8 +66,15 @@ const MainApp = () => {
                         <div className={styles["settings-button"]}>
                             <Button
                                 type="default"
-                                icon={<SettingFilled/>}
+                                icon={<SettingFilled />}
                                 onClick={openSettings}
+                            />
+                        </div>
+                        <div className={styles["quest-button"]}>
+                            <Button
+                                type="default"
+                                icon={<BulbOutlined />}
+                                onClick={openQuest}
                             />
                         </div>
                         <ExpBar />
@@ -89,7 +96,7 @@ const MainApp = () => {
                                         />
                                         Light
                                     </label>
-                                    <label style={{marginLeft: 16}}>
+                                    <label style={{ marginLeft: 16 }}>
                                         <input
                                             type="radio"
                                             value="dark"
@@ -109,7 +116,7 @@ const MainApp = () => {
                                         />
                                         Spring
                                     </label>
-                                    <label style={{marginLeft: 7}}>
+                                    <label style={{ marginLeft: 7 }}>
                                         <input
                                             type="radio"
                                             value="natsu"
@@ -118,7 +125,7 @@ const MainApp = () => {
                                         />
                                         Summer
                                     </label>
-                                    <label style={{marginLeft: 7}}>
+                                    <label style={{ marginLeft: 7 }}>
                                         <input
                                             type="radio"
                                             value="aki"
@@ -127,7 +134,7 @@ const MainApp = () => {
                                         />
                                         Autumn
                                     </label>
-                                    <label style={{marginLeft: 7}}>
+                                    <label style={{ marginLeft: 7 }}>
                                         <input
                                             type="radio"
                                             value="fuyu"
@@ -137,6 +144,16 @@ const MainApp = () => {
                                         Winter
                                     </label>
                                 </div>
+                            </div>
+                        </Modal>
+                        <Modal
+                            title="Quest"
+                            open={isQuestOpen}
+                            onCancel={closeQuest}
+                            onOk={closeQuest}
+                        >
+                            <div>
+                                <p>퀘스트 내용</p>
                             </div>
                         </Modal>
                     </Content>

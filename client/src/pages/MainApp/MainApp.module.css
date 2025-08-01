@@ -75,6 +75,18 @@ body {
     font-size: 28px;
 }
 
+.quest-button :global(.ant-btn) {
+    position: absolute;
+    top: 70px;
+    right: 15px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
 /* ===== theme apply ===== */
 .header,
 .ant-layout-header {
