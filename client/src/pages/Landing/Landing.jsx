@@ -3,8 +3,6 @@ import styles from "./Landing.module.css"; // Assuming you have a CSS file for s
 
 import { Button } from "antd";
 
-document.body.setAttribute("data-theme", "dark");
-
 function LandingPage() {
     return (
         <div className={styles.landingPage}>
@@ -14,7 +12,7 @@ function LandingPage() {
                 <span>계획과 목표를 수립하고 실천하기</span>
                 <Button
                     className={styles["main-button"]}
-                    onClick={() => (window.location.href = "/app")}
+                    onClick={() => (window.location.replace = "/app")}
                 >
                     Go to App
                 </Button>
