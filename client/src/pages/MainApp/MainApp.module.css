@@ -7,7 +7,6 @@ body {
 }
 
 .header {
-    background: var(--background-header);
     padding: 0 24px;
     border-bottom: 2px solid var(--border-color);
     display: flex;
@@ -36,39 +35,24 @@ body {
     flex-direction: column;
     height: 100%;
     position: relative;
-    background: var(--background-primary);
 }
 
 .react-flow-wrapper {
     flex-grow: 1;
-    background: var(--background-flow-wrapper);
 }
 
 .tail-buttons {
     display: flex;
     justify-content: flex-end;
     padding: 0.5rem 1rem; /* 8px 16px */
-    background: var(--background-primary);
 }
 
 /* Ant Design Overrides */
-.ant-layout {
-    margin: 0 !important;
-    padding: 0 !important;
-    background: var(--background-primary);
-}
-
+.ant-layout,
 .ant-layout-content {
     margin: 0 !important;
     padding: 0 !important;
-    background: var(--background-primary);
 }
-
-.ant-layout-header {
-    background: var(--background-header);
-}
-
-
 
 .tail-buttons :global(.ant-btn) {
     position: absolute;
@@ -89,4 +73,21 @@ body {
     align-items: center;
     justify-content: center;
     font-size: 28px;
+}
+
+/* ===== theme apply ===== */
+.header,
+.ant-layout-header {
+    background: var(--background-header);
+}
+
+.main-content,
+.tail-buttons,
+.ant-layout,
+.ant-layout-content {
+    background: var(--background-primary);
+}
+
+.react-flow-wrapper {
+    background: var(--background-flow-wrapper);
 }
