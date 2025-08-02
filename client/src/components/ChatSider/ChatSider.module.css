@@ -55,7 +55,8 @@
 .bubble {
     list-style: none;
     padding: 16px;
-    margin: 8px auto;
+    margin-top: 8px;
+    margin-bottom: 8px;
     border-radius: 50px;
     width: auto;
     max-width: 70%;
@@ -64,14 +65,14 @@
 }
 
 .user {
-    margin-right: 0;
+    align-self: flex-end;
     background-color: var(--bubble-user-bg);
     border-bottom-right-radius: 0;
     text-align: end;
 }
 
 .ai {
-    margin-left: 0;
+    align-self: flex-start;
     background-color: var(--bubble-ai-bg);
     border-bottom-left-radius: 0px;
 }
