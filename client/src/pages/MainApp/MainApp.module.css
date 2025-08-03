@@ -39,6 +39,7 @@ body {
 
 .react-flow-wrapper {
     flex-grow: 1;
+    height: 100%;
 }
 
 .tail-buttons {
