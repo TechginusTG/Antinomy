@@ -1,41 +1,45 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import { Layout, Button, Modal } from "antd";
 import { SaveOutlined, SettingFilled, BulbOutlined } from "@ant-design/icons";
-import ChatSider from "../../components/ChatSider/ChatSider"; // Updated import path
-import Header from "../../components/HeaderBar/HeaderBar"; // Updated import path
+import ChatSider from "../../components/ChatSider/ChatSider";
+import Header from "../../components/HeaderBar/HeaderBar";
 import ExpBar from "../../components/exp-bar/exp-bar";
-import ReactFlow, { useNodesState, useEdgesState, addEdge } from "reactflow";
+import ReactFlow from "reactflow";
+import useFlowStore from "../../utils/flowStore";
 
 import "reactflow/dist/style.css";
-import styles from "./MainApp.module.css"; // Import CSS Module
+import styles from "./MainApp.module.css";
 
 const { Content } = Layout;
 
-const initialNodes = [
-    { id: "1", position: { x: 300, y: 200 }, data: { label: "Hello" } },
-    { id: "2", position: { x: 400, y: 300 }, data: { label: "World" } },
-];
-
-const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
-
 const MainApp = () => {
     const [theme, setTheme] = useState("light");
+    const { nodes, edges, onNodesChange, onEdgesChange, onConnect, undo, redo } = useFlowStore();
+
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            if (event.ctrlKey && event.key === 'z') {
+                undo();
+            }
+            if (event.ctrlKey && event.key === 'y') {
+                redo();
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, [undo, redo]);
 
     const themeChange = (e) => {
         setTheme(e.target.value);
         document.body.setAttribute("data-theme", e.target.value);
     };
 
-    const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-    const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isQuestOpen, setIsQuestOpen] = useState(false);
-
-    const onConnect = useCallback(
-        (params) => setEdges((eds) => addEdge(params, eds)),
-        [setEdges]
-    );
 
     const openSettings = () => setIsSettingsOpen(true);
     const closeSettings = () => setIsSettingsOpen(false);
