@@ -6,7 +6,7 @@ const systemPrompt = `We are going to have a conversation to strengthen problem-
 
 export function registerSocketHandlers(io) {
     io.on("connection", (socket) => {
-        console.log(`클라이언트 연결 성공: ${socket.id}`);
+        console.log(`클라이언트 연결: ${socket.id}`);
 
         socket.on("chat message", async (msg) => {
             console.log(`메시지 수신 [${socket.id}]:`, msg);
@@ -44,7 +44,7 @@ export function registerSocketHandlers(io) {
         });
 
         socket.on("disconnect", () => {
-            console.log("클라이언트 연결 해제:", socket.id);
+            console.log(`클라이언트 연결 해제: ${socket.id}`);
             delete sessions[socket.id];
             delete userSpecial[socket.id];
         });
