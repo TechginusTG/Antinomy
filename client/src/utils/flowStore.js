@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { addEdge, applyNodeChanges, applyEdgeChanges } from 'reactflow';
 
-const initialNodes = [{ id: '1', position: { x: 10, y: 10 }, data: { label: 'Hello' } }, { id: '2', position: { x: 10, y: 100 }, data: { label: 'World' } }];
+const initialNodes = [{ id: '1', position: { x: 100, y: 100 }, data: { label: 'Hello' } }, { id: '2', position: { x: 200, y: 2시00 }, data: { label: 'World' } }];
 const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
 
 const useFlowStore = create((set, get) => ({
