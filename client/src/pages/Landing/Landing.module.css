@@ -11,6 +11,19 @@
     transition: background-image 0.4s ease-in-out;
 }
 
+.Title {
+  font-size: 2rem; /* 약 32px */
+  font-weight: 700;
+  color: #FCD34D; 
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  font-size: 1rem; /* 16px */
+  color: #555;
+  margin-bottom: 24px;
+}
+
 .overlay {
     position: absolute;
     top: 0;
@@ -26,17 +39,25 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 480px;
-    height: 360px;
-    border-radius: 25px;
+    width: 320px;
+    height: 240px;
+    border-radius: 16px;
     background: var(--background-secondary);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+
     z-index: 2;
 }
 
-.main-content Button {
-    margin-top: 5rem;
-    margin-bottom: auto;
-    background: var(--background-primary);
+.main-content Button  {
+    background-color: #A78BFA;
+    color: white;
+    font-size: 1rem; /* 16px */
+    padding: 12px 24px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.3s;
+    margin: auto auto;
 }
 
 .main-content Button :global(.atn-btn) {
