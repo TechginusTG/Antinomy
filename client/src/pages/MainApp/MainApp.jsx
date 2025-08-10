@@ -14,7 +14,11 @@ const { Content } = Layout;
 
 const MainApp = () => {
     const [theme, setTheme] = useState("light");
-    const { nodes, edges, onNodesChange, onEdgesChange, onConnect, undo, redo } = useFlowStore();
+    const { nodes, edges, onNodesChange, onEdgesChange, onConnect, undo, redo, save, loadFromHash } = useFlowStore();
+
+    useEffect(() => {
+        loadFromHash();
+    }, [loadFromHash]);
 
     useEffect(() => {
         const handleKeyDown = (event) => {
@@ -63,7 +67,7 @@ const MainApp = () => {
                             />
                         </div>
                         <div className={styles["tail-buttons"]}>
-                            <Button type="primary" icon={<SaveOutlined />}>
+                            <Button type="primary" icon={<SaveOutlined />} onClick={save}>
                                 Save
                             </Button>
                         </div>
