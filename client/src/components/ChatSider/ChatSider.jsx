@@ -14,6 +14,7 @@ const ChatSider = ({ className, chatWidth }) => {
         return savedMessages ? JSON.parse(savedMessages) : [];
     });
     const [inputValue, setInputValue] = useState("");
+    const [isTyping, setIsTyping] = useState(false);
 
     useEffect(() => {
         const handleStorageChange = () => {
@@ -31,6 +32,7 @@ const ChatSider = ({ className, chatWidth }) => {
 
     useEffect(() => {
         const handleNewMessage = (message) => {
+            setIsTyping(false);
             setMessages((prevMessages) => [
                 ...prevMessages,
                 { text: message, sender: "ai" },
@@ -54,6 +56,7 @@ const ChatSider = ({ className, chatWidth }) => {
             setMessages((prevMessages) => [...prevMessages, userMessage]);
             chatService.sendMessage(inputValue);
             setInputValue("");
+            setIsTyping(true);
         }
     };
 
@@ -79,6 +82,11 @@ const ChatSider = ({ className, chatWidth }) => {
                                 {msg.text}
                             </Bubble>
                         ))}
+                        {isTyping && (
+                            <Bubble className={`${styles.bubble} ${styles.ai}`}>
+                                AI가 생각중이에요...
+                            </Bubble>
+                        )}
                     </ul>
                 </div>
                 <div className={styles["chat-footer"]}>
