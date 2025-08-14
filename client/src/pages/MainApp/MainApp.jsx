@@ -7,6 +7,8 @@ import ExpBar from "../../components/exp-bar/exp-bar";
 import ReactFlow from "reactflow";
 import useFlowStore from "../../utils/flowStore";
 
+import { Slider } from "antd";
+
 import "reactflow/dist/style.css";
 import styles from "./MainApp.module.css";
 
@@ -15,6 +17,7 @@ const { Content } = Layout;
 const MainApp = () => {
     const [theme, setTheme] = useState("light");
     const { nodes, edges, onNodesChange, onEdgesChange, onConnect, undo, redo, save, loadFromHash } = useFlowStore();
+    const [chatWidth, setChatWidth] = useState(30);
 
     useEffect(() => {
         loadFromHash();
@@ -54,7 +57,7 @@ const MainApp = () => {
         <Layout style={{ height: "100vh" }}>
             <Header className={styles["header"]} />
             <Layout>
-                <ChatSider className={styles["chat-sider"]} />
+                <ChatSider className={styles["chat-sider"]} chatWidth={chatWidth} />
                 <Layout className={styles["content-layout"]}>
                     <Content className={styles["main-content"]}>
                         <div className={styles["react-flow-wrapper"]}>
@@ -151,6 +154,16 @@ const MainApp = () => {
                                         />
                                         Winter
                                     </label>
+                                </div>
+                                <div style={{ marginTop: 24 }}>
+                                    <p>채팅창 너비: <b>{chatWidth}%</b></p>
+                                    <Slider
+                                        min={20}
+                                        max={50}
+                                        value={chatWidth}
+                                        onChange={setChatWidth}
+                                        style={{ width: 200 }}
+                                    />
                                 </div>
                             </div>
                         </Modal>

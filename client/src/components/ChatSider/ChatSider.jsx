@@ -8,7 +8,7 @@ import chatService from "../../utils/chatService";
 
 const { Sider } = Layout;
 
-const ChatSider = ({ className }) => {
+const ChatSider = ({ className, chatWidth }) => {
     const [messages, setMessages] = useState(() => {
         const savedMessages = localStorage.getItem("chatLog");
         return savedMessages ? JSON.parse(savedMessages) : [];
@@ -49,7 +49,7 @@ const ChatSider = ({ className }) => {
     };
 
     return (
-        <Sider width="30%" theme="light" className={className}>
+        <Sider width={`${chatWidth}%`} theme="light" className={className}>
             <div className={styles.chat}>
                 <div className={styles["chat-header"]}>
                     <Button onClick={handleReset}>Reset</Button>
