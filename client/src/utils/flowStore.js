@@ -15,14 +15,31 @@ const useFlowStore = create((set, get) => ({
   historyIndex: 0,
 
   _updateHistory: (newState) => {
-    const { history, historyIndex } = get();
+    const { history, historyIndex, autoSaveToHash } = get();
     const newHistory = history.slice(0, historyIndex + 1);
     newHistory.push(newState);
-    return {
+    const stateToSet = {
       ...newState,
       history: newHistory,
       historyIndex: newHistory.length - 1,
     };
+    set(stateToSet);
+    autoSaveToHash();
+  },
+
+  autoSaveToHash: () => {
+    const { nodes, edges } = get();
+    const diagramData = { nodes, edges };
+    const diagramJsonString = JSON.stringify(diagramData);
+    const compressed = pako.deflate(diagramJsonString);
+    const base64 = btoa(String.fromCharCode.apply(null, compressed));
+    const safeEncodedData = base64
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=/g, "");
+    const hash = `#data=${safeEncodedData}`;
+    window.history.replaceState(null, null, hash);
+    localStorage.setItem("flow-hash", hash);
   },
 
   onNodesChange: (changes) => {
@@ -32,20 +49,20 @@ const useFlowStore = create((set, get) => ({
     if (isDragging) {
       set({ nodes: nextNodes });
     } else {
-      set(_updateHistory({ nodes: nextNodes, edges }));
+      _updateHistory({ nodes: nextNodes, edges });
     }
   },
 
   onEdgesChange: (changes) => {
     const { nodes, edges, _updateHistory } = get();
     const nextEdges = applyEdgeChanges(changes, edges);
-    set(_updateHistory({ nodes, edges: nextEdges }));
+    _updateHistory({ nodes, edges: nextEdges });
   },
 
   onConnect: (connection) => {
     const { nodes, edges, _updateHistory } = get();
     const nextEdges = addEdge(connection, edges);
-    set(_updateHistory({ nodes, edges: nextEdges }));
+    _updateHistory({ nodes, edges: nextEdges });
   },
 
   undo: () => {
@@ -53,6 +70,7 @@ const useFlowStore = create((set, get) => ({
     if (historyIndex > 0) {
       const prevState = history[historyIndex - 1];
       set({ ...prevState, historyIndex: historyIndex - 1 });
+      get().autoSaveToHash();
     }
   },
 
@@ -61,6 +79,7 @@ const useFlowStore = create((set, get) => ({
     if (historyIndex < history.length - 1) {
       const nextState = history[historyIndex + 1];
       set({ ...nextState, historyIndex: historyIndex + 1 });
+      get().autoSaveToHash();
     }
   },
 
@@ -91,16 +110,6 @@ const useFlowStore = create((set, get) => ({
       chatHistory,
     };
 
-    const jsonString = JSON.stringify(combinedData);
-    const diagramJsonString = JSON.stringify(diagramData);
-    const compressed = pako.deflate(diagramJsonString);
-    const base64 = btoa(String.fromCharCode.apply(null, compressed));
-    const safeEncodedData = base64
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=/g, "");
-    window.location.hash = `data=${safeEncodedData}`;
-
     const blob = new Blob([JSON.stringify(combinedData, null, 2)], {
       type: "application/json",
     });
@@ -114,15 +123,24 @@ const useFlowStore = create((set, get) => ({
     URL.revokeObjectURL(url);
   },
 
-  loadFromHash: () => {
+  loadFlow: () => {
+    let hash = window.location.hash;
+    if (!hash.startsWith("#data=")) {
+      const storedHash = localStorage.getItem("flow-hash");
+      if (storedHash && storedHash.startsWith("#data=")) {
+        hash = storedHash;
+        window.history.replaceState(null, null, hash);
+      } else {
+        return;
+      }
+    }
+
     try {
-      if (!window.location.hash.startsWith("#data=")) return;
+      if (!hash.startsWith("#data=")) return;
 
-      const safeEncodedData = window.location.hash.substring(6); // #data= is 6 chars
+      const safeEncodedData = hash.substring(6);
 
-      // Convert from URL/filename safe Base64 back to standard Base64
       let base64 = safeEncodedData.replace(/-/g, "+").replace(/_/g, "/");
-      // Add padding back for correct decoding
       while (base64.length % 4) {
         base64 += "=";
       }
@@ -135,10 +153,10 @@ const useFlowStore = create((set, get) => ({
       const flowData = JSON.parse(jsonString);
 
       get().setFlow(flowData);
-      window.history.replaceState(null, null, " ");
     } catch (error) {
-      console.error("Failed to load from URL hash:", error);
-      window.location.hash = ""; // Clear invalid hash
+      console.error("Failed to load from hash:", error);
+      window.location.hash = "";
+      localStorage.removeItem("flow-hash");
     }
   },
 }));

@@ -26,7 +26,7 @@ const MainApp = () => {
     undo,
     redo,
     save,
-    loadFromHash,
+    loadFlow,
     setFlow,
   } = useFlowStore();
 
@@ -34,8 +34,8 @@ const MainApp = () => {
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    loadFromHash();
-  }, [loadFromHash]);
+    loadFlow();
+  }, [loadFlow]);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
