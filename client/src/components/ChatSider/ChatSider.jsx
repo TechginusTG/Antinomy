@@ -16,6 +16,20 @@ const ChatSider = ({ className, chatWidth }) => {
     const [inputValue, setInputValue] = useState("");
 
     useEffect(() => {
+        const handleStorageChange = () => {
+            const savedMessages = localStorage.getItem("chatLog");
+            setMessages(savedMessages ? JSON.parse(savedMessages) : []);
+        };
+
+        window.addEventListener("storage", handleStorageChange);
+
+        // Clean up the event listener when the component unmounts
+        return () => {
+            window.removeEventListener("storage", handleStorageChange);
+        };
+    }, []);
+
+    useEffect(() => {
         const handleNewMessage = (message) => {
             setMessages((prevMessages) => [
                 ...prevMessages,

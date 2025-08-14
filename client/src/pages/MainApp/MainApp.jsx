@@ -1,12 +1,12 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
 import { Layout, Button, Modal } from "antd";
-import { SaveOutlined, SettingFilled, BulbOutlined } from "@ant-design/icons";
+import { SaveOutlined, FolderOpenOutlined, SettingFilled, BulbOutlined } from "@ant-design/icons";
 import ChatSider from "../../components/ChatSider/ChatSider";
 import Header from "../../components/HeaderBar/HeaderBar";
 import ExpBar from "../../components/exp-bar/exp-bar";
 import ReactFlow from "reactflow";
 import useFlowStore from "../../utils/flowStore";
-import chatService from "../../utils/chatService";
+// import chatService from "../../utils/chatService";
 
 import { Slider } from "antd";
 
@@ -27,11 +27,11 @@ const MainApp = () => {
     redo,
     save,
     loadFromHash,
+    setFlow,
   } = useFlowStore();
 
-  const { saveChatLog } = chatService;
-
   const [chatWidth, setChatWidth] = useState(30);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     loadFromHash();
@@ -67,6 +67,37 @@ const MainApp = () => {
   const openQuest = () => setIsQuestOpen(true);
   const closeQuest = () => setIsQuestOpen(false);
 
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target.result;
+        const data = JSON.parse(content);
+
+        if (data.diagramData && data.chatHistory) {
+          setFlow(data.diagramData);
+          localStorage.setItem("chatLog", JSON.stringify(data.chatHistory));
+          window.dispatchEvent(new Event("storage"));
+        } else {
+          alert("Invalid file format.");
+        }
+      } catch (error) {
+        console.error("Failed to load or parse file:", error);
+        alert("Failed to load file. It might be corrupted or not a valid JSON file.");
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleLoadClick = () => {
+    fileInputRef.current.click();
+  };
+
   return (
     <Layout style={{ height: "100vh" }}>
       <Header className={styles["header"]} />
@@ -84,6 +115,21 @@ const MainApp = () => {
               />
             </div>
             <div className={styles["tail-buttons"]}>
+              <input
+                type="file"
+                ref={fileInputRef}
+                style={{ display: "none" }}
+                onChange={handleFileSelect}
+                accept=".json"
+              />
+              <Button
+                type="default"
+                icon={<FolderOpenOutlined />}
+                onClick={handleLoadClick}
+                style={{ marginRight: 110 }}
+              >
+                Load
+              </Button>
               <Button
                 type="primary"
                 icon={<SaveOutlined />}
@@ -108,7 +154,6 @@ const MainApp = () => {
                   const diagramFilename = `${sanitizedFilenameBase}.json`;
 
                   save(diagramFilename);
-                  saveChatLog(diagramFilename);
                 }}
               >
                 Save

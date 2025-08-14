@@ -81,11 +81,19 @@ const useFlowStore = create((set, get) => ({
     }
 
     const { nodes, edges } = get();
-    const flowData = { nodes, edges };
-    const jsonString = JSON.stringify(flowData);
+    const diagramData = { nodes, edges };
 
-    // Keep the URL hash update logic for sharing
-    const compressed = pako.deflate(jsonString);
+    const chatLogString = localStorage.getItem("chatLog");
+    const chatHistory = chatLogString ? JSON.parse(chatLogString) : [];
+
+    const combinedData = {
+      diagramData,
+      chatHistory,
+    };
+
+    const jsonString = JSON.stringify(combinedData);
+    const diagramJsonString = JSON.stringify(diagramData);
+    const compressed = pako.deflate(diagramJsonString);
     const base64 = btoa(String.fromCharCode.apply(null, compressed));
     const safeEncodedData = base64
       .replace(/\+/g, "-")
@@ -93,8 +101,7 @@ const useFlowStore = create((set, get) => ({
       .replace(/=/g, "");
     window.location.hash = `data=${safeEncodedData}`;
 
-    // Save to file using the new filename
-    const blob = new Blob([JSON.stringify(flowData, null, 2)], {
+    const blob = new Blob([JSON.stringify(combinedData, null, 2)], {
       type: "application/json",
     });
     const url = URL.createObjectURL(blob);

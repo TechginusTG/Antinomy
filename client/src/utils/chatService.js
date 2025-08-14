@@ -44,43 +44,7 @@ class ChatService {
       this.socket.disconnect();
       this.socket = null;
     }
-  }
-
-  saveChatLog(filename) {
-    const chatLogString = localStorage.getItem("chatLog");
-    const chatLog = chatLogString ? JSON.parse(chatLogString) : [];
-
-    // 유효성 검사: 배열인지 확인하고, 각 항목이 {text, sender} 구조인지 (선택적)
-    if (!Array.isArray(chatLog)) {
-      console.error("chatLog is not an array");
-      return;
-    }
-
-    // JSON 문자열로 변환 (예쁘게 포맷팅)
-    const jsonContent = JSON.stringify(chatLog, null, 2);
-
-    // Blob 객체 생성
-    const blob = new Blob([jsonContent], { type: "application/json" });
-
-    // 다운로드 URL 생성
-    const url = URL.createObjectURL(blob);
-
-    // a 태그 생성 및 클릭 시뮬레이션으로 다운로드
-    const a = document.createElement("a");
-    a.href = url;
-    const chatLogFilename = filename
-      ? filename.replace(/\.json$/i, "-chat.json")
-      : "chatLog.json";
-    a.download = chatLogFilename; // 파일 이름 설정
-    document.body.appendChild(a);
-    a.click();
-
-    // 정리
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-
-    console.log(`chatLog가 ${chatLogFilename} 파일로 저장되었습니다!`);
-  }
+  } 
 }
 
 const chatService = new ChatService();
