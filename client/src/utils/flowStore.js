@@ -1,4 +1,4 @@
-smport { create } from "zustand";
+import { create } from "zustand";
 import { addEdge, applyNodeChanges, applyEdgeChanges } from "reactflow";
 import pako from "pako";
 
