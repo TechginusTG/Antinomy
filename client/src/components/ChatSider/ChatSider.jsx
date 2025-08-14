@@ -49,7 +49,7 @@ const ChatSider = ({ className }) => {
     };
 
     return (
-        <Sider width={300} theme="light" className={className}>
+        <Sider width="30%" theme="light" className={className}>
             <div className={styles.chat}>
                 <div className={styles["chat-header"]}>
                     <Button onClick={handleReset}>Reset</Button>
