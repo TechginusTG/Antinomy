@@ -3,8 +3,8 @@ import { addEdge, applyNodeChanges, applyEdgeChanges } from "reactflow";
 import pako from "pako";
 
 const initialNodes = [
-  { id: "1", position: { x: 100, y: 100 }, data: { label: "Hello" } },
-  { id: "2", position: { x: 200, y: 200 }, data: { label: "World" } },
+  { id: "1", type: 'custom', position: { x: 100, y: 100 }, data: { label: "Hello" } },
+  { id: "2", type: 'custom', position: { x: 200, y: 200 }, data: { label: "World" } },
 ];
 const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
 
@@ -76,6 +76,30 @@ const useFlowStore = create((set, get) => ({
     const { nodes, edges, _updateHistory } = get();
     const nextEdges = addEdge(connection, edges);
     _updateHistory({ nodes, edges: nextEdges });
+  },
+
+  addNode: () => {
+    const { nodes, edges, _updateHistory } = get();
+    const newNodeId = (Math.max(...nodes.map((n) => parseInt(n.id))) + 1).toString();
+    const newNode = {
+      id: newNodeId,
+      type: 'custom',
+      position: { x: Math.random() * 500, y: Math.random() * 500 },
+      data: { label: "New Node" },
+    };
+    const nextNodes = [...nodes, newNode];
+    _updateHistory({ nodes: nextNodes, edges });
+  },
+
+  updateNodeLabel: (nodeId, label) => {
+    const { nodes, edges, _updateHistory } = get();
+    const nextNodes = nodes.map((node) => {
+      if (node.id === nodeId) {
+        return { ...node, data: { ...node.data, label } };
+      }
+      return node;
+    });
+    _updateHistory({ nodes: nextNodes, edges });
   },
 
   undo: () => {

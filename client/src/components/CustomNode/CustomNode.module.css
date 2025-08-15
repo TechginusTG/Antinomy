@@ -1,0 +1,19 @@
+.customNode {
+  background: #fff;
+  border: 1px solid #1a192b;
+  border-radius: 2px;
+  padding: 10px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.input {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 2px;
+}
+
+.label {
+  padding: 4px 8px;
+}

@@ -1,11 +1,12 @@
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import { Layout, Button, Modal } from "antd";
-import { SaveOutlined, FolderOpenOutlined, SettingFilled, BulbOutlined } from "@ant-design/icons";
+import { SaveOutlined, FolderOpenOutlined, SettingFilled, BulbOutlined, PlusOutlined } from "@ant-design/icons";
 import ChatSider from "../../components/ChatSider/ChatSider";
 import Header from "../../components/HeaderBar/HeaderBar";
 import ExpBar from "../../components/exp-bar/exp-bar";
 import ReactFlow from "reactflow";
 import useFlowStore from "../../utils/flowStore";
+import CustomNode from '../../components/CustomNode/CustomNode';
 // import chatService from "../../utils/chatService";
 
 import { Slider } from "antd";
@@ -14,6 +15,8 @@ import "reactflow/dist/style.css";
 import styles from "./MainApp.module.css";
 
 const { Content } = Layout;
+
+const nodeTypes = { custom: CustomNode };
 
 const MainApp = () => {
   const [theme, setTheme] = useState("light");
@@ -28,6 +31,8 @@ const MainApp = () => {
     save,
     loadFlow,
     setFlow,
+    addNode,
+    updateNodeLabel,
   } = useFlowStore();
 
   const [chatLog, setChatLog] = useState([]);
@@ -121,6 +126,7 @@ const MainApp = () => {
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
+                nodeTypes={nodeTypes}
               />
             </div>
             <div className={styles["tail-buttons"]}>
@@ -135,7 +141,7 @@ const MainApp = () => {
                 type="default"
                 icon={<FolderOpenOutlined />}
                 onClick={handleLoadClick}
-                style={{ marginRight: 110 }}
+                style={{ marginRight: 10 }}
               >
                 Load
               </Button>
@@ -164,8 +170,16 @@ const MainApp = () => {
 
                   save(diagramFilename);
                 }}
+                style={{ marginRight: 10 }}
               >
                 Save
+              </Button>
+              <Button
+                type="default"
+                icon={<PlusOutlined />}
+                onClick={addNode}
+              >
+                Add Node
               </Button>
             </div>
             <div className={styles["settings-button"]}>
