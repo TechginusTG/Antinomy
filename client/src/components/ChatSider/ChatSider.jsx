@@ -5,30 +5,14 @@ import React, { useState, useEffect } from "react";
 import Bubble from "../ChatBubble/Bubble";
 import styles from "./ChatSider.module.css";
 import chatService from "../../utils/chatService";
+import useFlowStore from "../../utils/flowStore";
 
 const { Sider } = Layout;
 
-const ChatSider = ({ className, chatWidth }) => {
-    const [messages, setMessages] = useState(() => {
-        const savedMessages = localStorage.getItem("chatLog");
-        return savedMessages ? JSON.parse(savedMessages) : [];
-    });
+const ChatSider = ({ className, chatWidth, messages, setMessages }) => {
     const [inputValue, setInputValue] = useState("");
     const [isTyping, setIsTyping] = useState(false);
-
-    useEffect(() => {
-        const handleStorageChange = () => {
-            const savedMessages = localStorage.getItem("chatLog");
-            setMessages(savedMessages ? JSON.parse(savedMessages) : []);
-        };
-
-        window.addEventListener("storage", handleStorageChange);
-
-        // Clean up the event listener when the component unmounts
-        return () => {
-            window.removeEventListener("storage", handleStorageChange);
-        };
-    }, []);
+    const updateUrlHash = useFlowStore((state) => state.updateUrlHash);
 
     useEffect(() => {
         const handleNewMessage = (message) => {
@@ -44,11 +28,14 @@ const ChatSider = ({ className, chatWidth }) => {
         return () => {
             chatService.disconnect();
         };
-    }, []);
+    }, [setMessages]);
 
     useEffect(() => {
         localStorage.setItem("chatLog", JSON.stringify(messages));
-    }, [messages]);
+        if (updateUrlHash) {
+            updateUrlHash();
+        }
+    }, [messages, updateUrlHash]);
 
     const sendMessage = () => {
         if (inputValue.trim()) {

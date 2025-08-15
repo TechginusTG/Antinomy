@@ -30,11 +30,15 @@ const MainApp = () => {
     setFlow,
   } = useFlowStore();
 
+  const [chatLog, setChatLog] = useState([]);
   const [chatWidth, setChatWidth] = useState(30);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
-    loadFlow();
+    const initialChat = loadFlow();
+    if (initialChat) {
+      setChatLog(initialChat);
+    }
   }, [loadFlow]);
 
   useEffect(() => {
@@ -81,8 +85,8 @@ const MainApp = () => {
 
         if (data.diagramData && data.chatHistory) {
           setFlow(data.diagramData);
+          setChatLog(data.chatHistory);
           localStorage.setItem("chatLog", JSON.stringify(data.chatHistory));
-          window.dispatchEvent(new Event("storage"));
         } else {
           alert("Invalid file format.");
         }
@@ -102,7 +106,12 @@ const MainApp = () => {
     <Layout style={{ height: "100vh" }}>
       <Header className={styles["header"]} />
       <Layout>
-        <ChatSider className={styles["chat-sider"]} chatWidth={chatWidth} />
+        <ChatSider
+          className={styles["chat-sider"]}
+          chatWidth={chatWidth}
+          messages={chatLog}
+          setMessages={setChatLog}
+        />
         <Layout className={styles["content-layout"]}>
           <Content className={styles["main-content"]}>
             <div className={styles["react-flow-wrapper"]}>

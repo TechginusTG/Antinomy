@@ -27,11 +27,20 @@ const useFlowStore = create((set, get) => ({
     autoSaveToHash();
   },
 
-  autoSaveToHash: () => {
+  updateUrlHash: () => {
     const { nodes, edges } = get();
     const diagramData = { nodes, edges };
-    const diagramJsonString = JSON.stringify(diagramData);
-    const compressed = pako.deflate(diagramJsonString);
+
+    const chatLogString = localStorage.getItem("chatLog");
+    const chatHistory = chatLogString ? JSON.parse(chatLogString) : [];
+
+    const combinedData = {
+      diagramData,
+      chatHistory,
+    };
+
+    const jsonString = JSON.stringify(combinedData);
+    const compressed = pako.deflate(jsonString);
     const base64 = btoa(String.fromCharCode.apply(null, compressed));
     const safeEncodedData = base64
       .replace(/\+/g, "-")
@@ -40,6 +49,10 @@ const useFlowStore = create((set, get) => ({
     const hash = `#data=${safeEncodedData}`;
     window.history.replaceState(null, null, hash);
     localStorage.setItem("flow-hash", hash);
+  },
+
+  autoSaveToHash: () => {
+    get().updateUrlHash();
   },
 
   onNodesChange: (changes) => {
@@ -131,12 +144,12 @@ const useFlowStore = create((set, get) => ({
         hash = storedHash;
         window.history.replaceState(null, null, hash);
       } else {
-        return;
+        return null;
       }
     }
 
     try {
-      if (!hash.startsWith("#data=")) return;
+      if (!hash.startsWith("#data=")) return null;
 
       const safeEncodedData = hash.substring(6);
 
@@ -150,13 +163,21 @@ const useFlowStore = create((set, get) => ({
         decodedData.charCodeAt(i)
       );
       const jsonString = pako.inflate(compressed, { to: "string" });
-      const flowData = JSON.parse(jsonString);
+      const data = JSON.parse(jsonString);
 
-      get().setFlow(flowData);
+      if (data.diagramData && data.chatHistory) {
+        get().setFlow(data.diagramData);
+        localStorage.setItem("chatLog", JSON.stringify(data.chatHistory));
+        return data.chatHistory;
+      } else {
+        get().setFlow(data);
+        return null;
+      }
     } catch (error) {
       console.error("Failed to load from hash:", error);
       window.location.hash = "";
       localStorage.removeItem("flow-hash");
+      return null;
     }
   },
 }));
