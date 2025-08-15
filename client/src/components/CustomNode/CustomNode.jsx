@@ -3,7 +3,7 @@ import { Handle, Position } from 'reactflow';
 import useFlowStore from '../../utils/flowStore';
 import styles from './CustomNode.module.css';
 
-const CustomNode = ({ id, data }) => {
+const CustomNode = ({ id, data, selected }) => {
   const { updateNodeLabel } = useFlowStore();
   const [isEditing, setIsEditing] = useState(false);
   const [label, setLabel] = useState(data.label);
@@ -29,7 +29,7 @@ const CustomNode = ({ id, data }) => {
   };
 
   return (
-    <div className={styles.customNode} onDoubleClick={handleDoubleClick}>
+    <div className={`${styles.customNode} ${selected ? styles.selected : ''}`} onDoubleClick={handleDoubleClick}>
       <Handle type="target" position={Position.Top} />
       <div>
         {isEditing ? (

@@ -7,6 +7,7 @@ import ExpBar from "../../components/exp-bar/exp-bar";
 import ReactFlow from "reactflow";
 import useFlowStore from "../../utils/flowStore";
 import CustomNode from '../../components/CustomNode/CustomNode';
+import ContextMenu from '../../components/ContextMenu/ContextMenu';
 // import chatService from "../../utils/chatService";
 
 import { Slider } from "antd";
@@ -40,6 +41,7 @@ const MainApp = () => {
 
   const [chatLog, setChatLog] = useState([]);
   const fileInputRef = useRef(null);
+  const [contextMenu, setContextMenu] = useState(null);
 
   useEffect(() => {
     const initialChat = loadFlow();
@@ -117,6 +119,16 @@ const MainApp = () => {
     fileInputRef.current.click();
   };
 
+  const handleContextMenu = (event) => {
+    event.preventDefault();
+    setContextMenu({
+      x: event.clientX,
+      y: event.clientY,
+    });
+  };
+
+  const onPaneClick = useCallback(() => setContextMenu(null), []);
+
   return (
     <Layout style={{ height: "100vh" }}>
       <Header className={styles["header"]} />
@@ -129,7 +141,10 @@ const MainApp = () => {
         />
         <Layout className={styles["content-layout"]}>
           <Content className={styles["main-content"]}>
-            <div className={styles["react-flow-wrapper"]}>
+            <div
+              className={styles["react-flow-wrapper"]}
+              onContextMenu={handleContextMenu}
+            >
               <ReactFlow
                 nodes={nodes}
                 edges={edges}
@@ -137,6 +152,7 @@ const MainApp = () => {
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
                 nodeTypes={nodeTypes}
+                onPaneClick={onPaneClick}
               />
             </div>
             <div className={styles["tail-buttons"]}>
@@ -302,6 +318,14 @@ const MainApp = () => {
           </Content>
         </Layout>
       </Layout>
+      {contextMenu && (
+        <ContextMenu
+          x={contextMenu.x}
+          y={contextMenu.y}
+          onAddNode={addNode}
+          onClose={() => setContextMenu(null)}
+        />
+      )}
     </Layout>
   );
 };

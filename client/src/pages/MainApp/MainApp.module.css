@@ -70,7 +70,7 @@ body {
 
 .add-node-button :global(.ant-btn) {
     position: absolute;
-    bottom: 130px; /* Higher than the other buttons */
+    bottom: 130px;
     right: 15px;
     height: 40px;
     padding: 4px 20px;
