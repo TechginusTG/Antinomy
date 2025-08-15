@@ -151,7 +151,7 @@ const MainApp = () => {
                 type="default"
                 icon={<FolderOpenOutlined />}
                 onClick={handleLoadClick}
-                style={{ marginRight: 10 }}
+                style={{ right: "120px" }}
               >
                 Load
               </Button>
@@ -180,17 +180,19 @@ const MainApp = () => {
 
                   save(diagramFilename);
                 }}
-                style={{ marginRight: 10 }}
+                style={{ right: "15px" }}
               >
                 Save
               </Button>
-              <Button
-                type="default"
-                icon={<PlusOutlined />}
-                onClick={addNode}
-              >
-                Add Node
-              </Button>
+              <div className={styles["add-node-button"]}>
+                <Button
+                  type="default"
+                  icon={<PlusOutlined />}
+                  onClick={addNode}
+                >
+                  Add Node
+                </Button>
+              </div>
             </div>
             <div className={styles["settings-button"]}>
               <Button

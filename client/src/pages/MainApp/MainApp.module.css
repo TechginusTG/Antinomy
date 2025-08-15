@@ -62,6 +62,15 @@ body {
 .tail-buttons :global(.ant-btn) {
     position: absolute;
     bottom: 80px;
+    height: 40px;
+    padding: 4px 20px;
+    font-size: 16px;
+    z-index: 10;
+}
+
+.add-node-button :global(.ant-btn) {
+    position: absolute;
+    bottom: 130px; /* Higher than the other buttons */
     right: 15px;
     height: 40px;
     padding: 4px 20px;
