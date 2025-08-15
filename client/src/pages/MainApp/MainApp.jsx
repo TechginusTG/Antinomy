@@ -19,7 +19,10 @@ const { Content } = Layout;
 const nodeTypes = { custom: CustomNode };
 
 const MainApp = () => {
-  const [theme, setTheme] = useState("light");
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
+  const [chatWidth, setChatWidth] = useState(
+    () => parseInt(localStorage.getItem("chatWidth"), 10) || 30
+  );
   const {
     nodes,
     edges,
@@ -36,7 +39,6 @@ const MainApp = () => {
   } = useFlowStore();
 
   const [chatLog, setChatLog] = useState([]);
-  const [chatWidth, setChatWidth] = useState(30);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -63,9 +65,17 @@ const MainApp = () => {
     };
   }, [undo, redo]);
 
+  useEffect(() => {
+    localStorage.setItem("theme", theme);
+    document.body.setAttribute("data-theme", theme);
+  }, [theme]);
+
+  useEffect(() => {
+    localStorage.setItem("chatWidth", chatWidth);
+  }, [chatWidth]);
+
   const themeChange = (e) => {
     setTheme(e.target.value);
-    document.body.setAttribute("data-theme", e.target.value);
   };
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
