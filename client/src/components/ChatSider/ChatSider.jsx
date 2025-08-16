@@ -13,6 +13,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages }) => {
     const [inputValue, setInputValue] = useState("");
     const [isTyping, setIsTyping] = useState(false);
     const updateUrlHash = useFlowStore((state) => state.updateUrlHash);
+    const resetFlow = useFlowStore((state) => state.resetFlow);
 
     useEffect(() => {
         const handleNewMessage = (message) => {
@@ -50,6 +51,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages }) => {
     const handleReset = () => {
         setMessages([]);
         localStorage.removeItem("chatLog");
+        resetFlow();
     };
 
     return (

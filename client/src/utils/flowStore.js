@@ -3,10 +3,14 @@ import { addEdge, applyNodeChanges, applyEdgeChanges } from "reactflow";
 import pako from "pako";
 
 const initialNodes = [
-  { id: "1", type: 'custom', position: { x: 100, y: 100 }, data: { label: "Hello" } },
-  { id: "2", type: 'custom', position: { x: 200, y: 200 }, data: { label: "World" } },
+  { id: "1", type: 'custom', position: { x: 100, y: 150 }, data: { label: "문제" } },
+  { id: "2", type: 'custom', position: { x: 300, y: 150 }, data: { label: "과정" } },
+  { id: "3", type: 'custom', position: { x: 500, y: 150 }, data: { label: "해결" } },
 ];
-const initialEdges = [{ id: "e1-2", source: "1", target: "2" }];
+const initialEdges = [
+    { id: "e1-2", source: "1", target: "2" },
+    { id: "e2-3", source: "2", target: "3" }
+];
 
 const useFlowStore = create((set, get) => ({
   nodes: initialNodes,
@@ -128,6 +132,11 @@ const useFlowStore = create((set, get) => ({
       history: [newState],
       historyIndex: 0,
     });
+  },
+
+  resetFlow: () => {
+    const { _updateHistory } = get();
+    _updateHistory({ nodes: initialNodes, edges: initialEdges });
   },
 
   save: (finalFilename) => {
