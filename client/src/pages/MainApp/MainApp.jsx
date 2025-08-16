@@ -39,9 +39,11 @@ const MainApp = () => {
     updateNodeLabel,
   } = useFlowStore();
 
+  const reactFlowWrapper = useRef(null);
   const [chatLog, setChatLog] = useState([]);
   const fileInputRef = useRef(null);
   const [contextMenu, setContextMenu] = useState(null);
+  const [reactFlowInstance, setReactFlowInstance] = useState(null);
 
   useEffect(() => {
     const initialChat = loadFlow();
@@ -129,6 +131,18 @@ const MainApp = () => {
 
   const onPaneClick = useCallback(() => setContextMenu(null), []);
 
+  const onAddNode = useCallback(() => {
+    if (contextMenu && reactFlowInstance && reactFlowWrapper.current) {
+      const bounds = reactFlowWrapper.current.getBoundingClientRect();
+      const position = reactFlowInstance.project({
+        x: contextMenu.x - bounds.left,
+        y: contextMenu.y - bounds.top,
+      });
+      addNode(position);
+      setContextMenu(null);
+    }
+  }, [reactFlowInstance, contextMenu, addNode]);
+
   return (
     <Layout style={{ height: "100vh" }}>
       <Header className={styles["header"]} />
@@ -142,6 +156,7 @@ const MainApp = () => {
         <Layout className={styles["content-layout"]}>
           <Content className={styles["main-content"]}>
             <div
+              ref={reactFlowWrapper}
               className={styles["react-flow-wrapper"]}
               onContextMenu={handleContextMenu}
             >
@@ -153,6 +168,7 @@ const MainApp = () => {
                 onConnect={onConnect}
                 nodeTypes={nodeTypes}
                 onPaneClick={onPaneClick}
+                onInit={setReactFlowInstance}
               />
             </div>
             <div className={styles["tail-buttons"]}>
@@ -185,7 +201,7 @@ const MainApp = () => {
                     return;
                   }
 
-                  const filenameBase = 
+                  const filenameBase =
                     userInput.trim() === "" ? defaultName : userInput.trim();
 
                   const sanitizedFilenameBase = filenameBase
@@ -200,15 +216,6 @@ const MainApp = () => {
               >
                 Save
               </Button>
-              <div className={styles["add-node-button"]}>
-                <Button
-                  type="default"
-                  icon={<PlusOutlined />}
-                  onClick={addNode}
-                >
-                  Add Node
-                </Button>
-              </div>
             </div>
             <div className={styles["settings-button"]}>
               <Button
@@ -322,7 +329,7 @@ const MainApp = () => {
         <ContextMenu
           x={contextMenu.x}
           y={contextMenu.y}
-          onAddNode={addNode}
+          onAddNode={onAddNode}
           onClose={() => setContextMenu(null)}
         />
       )}

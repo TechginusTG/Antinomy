@@ -82,13 +82,13 @@ const useFlowStore = create((set, get) => ({
     _updateHistory({ nodes, edges: nextEdges });
   },
 
-  addNode: () => {
+  addNode: (position) => {
     const { nodes, edges, _updateHistory } = get();
     const newNodeId = (Math.max(...nodes.map((n) => parseInt(n.id))) + 1).toString();
     const newNode = {
       id: newNodeId,
       type: 'custom',
-      position: { x: Math.random() * 500, y: Math.random() * 500 },
+      position,
       data: { label: "New Node" },
     };
     const nextNodes = [...nodes, newNode];
