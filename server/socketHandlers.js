@@ -2,7 +2,16 @@ import openai from "./openaiClient.js";
 
 const sessions = {};
 const userSpecial = {};
-const systemPrompt = `We are going to have a conversation to strengthen problem-solving thinking. I will present a problem, and you will respond with a focused question and hint, step by step, to guide me toward a solution. User's FISRT chat will be biggest problem which user want to solve.`;
+const systemPrompt = `You are a problem-solving guide AI.
+The conversation will focus on strengthening the user's problem-solving thinking.
+Rules:
+1. The user's first message will always be the biggest problem they want to solve.
+2. Each problem-solving cycle must follow these phases step by step:
+   - Problem Extraction Phase: Ask focused questions to clarify and define the problem.
+   - Solution Generation Phase: Ask guiding questions and provide hints that help the user generate possible solutions.
+   - End Phase: Ask if the user has another problem. If yes, restart the cycle from Problem Extraction Phase with the new problem. If no, the conversation ends.
+3. Do not skip or merge phases. Always go step by step.
+4. Do not provide full solutions directly; only guide through questions and hints so the user can think and solve progressively.`;
 
 export function registerSocketHandlers(io) {
   io.on("connection", (socket) => {
@@ -44,17 +53,21 @@ export function registerSocketHandlers(io) {
     });
 
     socket.on("make diagram", async (payload) => {
-        console.log(`'make diagram' request from ${socket.id}`);
-        const { chatLog, diagramState } = payload;
+      console.log(`'make diagram' request from ${socket.id}`);
+      const { chatLog, diagramState } = payload;
 
-        const diagramPrompt = `
+      const diagramPrompt = `
         Based on the following conversation and the current diagram state, generate an updated diagram.
         The diagram should represent the key topics and their relationships from the conversation.
         Conversation History:
         ${JSON.stringify(chatLog, null, 2)}
 
         Current Diagram State:
-        Nodes: ${JSON.stringify(diagramState.nodes.map(n => n.data.label), null, 2)}
+        Nodes: ${JSON.stringify(
+          diagramState.nodes.map((n) => n.data.label),
+          null,
+          2
+        )}
 
         Your task is to output a new diagram structure in a single, minified JSON object format.
         The JSON object must have two keys: "nodes" and "edges".
@@ -65,29 +78,34 @@ export function registerSocketHandlers(io) {
         Example response: {"nodes":[{"id":"1","type":"custom","position":{"x":100,"y":100},"data":{"label":"Main Idea"}}],"edges":[]}
         `;
 
+      try {
+        const res = await openai.chat.completions.create({
+          model: "gpt-4-turbo-preview",
+          messages: [{ role: "user", content: diagramPrompt }],
+          response_format: { type: "json_object" },
+        });
+
+        const reply = res.choices[0].message.content;
+        console.log(`GPT Diagram Response [${socket.id}]:`, reply);
+
         try {
-            const res = await openai.chat.completions.create({
-                model: "gpt-4-turbo-preview",
-                messages: [{ role: "user", content: diagramPrompt }],
-                response_format: { type: "json_object" },
-            });
-
-            const reply = res.choices[0].message.content;
-            console.log(`GPT Diagram Response [${socket.id}]:`, reply);
-
-            try {
-                const newDiagram = JSON.parse(reply);
-                socket.emit("diagram created", newDiagram);
-                socket.emit("chat message", "새로운 다이어그램을 만들었어요!");
-            } catch (parseError) {
-                console.error("JSON parsing error:", parseError);
-                socket.emit("chat message", "다이어그램 생성에 실패했어요. AI가 올바른 형식으로 응답하지 않았습니다.");
-            }
-
-        } catch (err) {
-            console.error("GPT Diagram Error:", err);
-            socket.emit("chat message", "다이어그램 생성 중 오류가 발생했습니다. 💀");
+          const newDiagram = JSON.parse(reply);
+          socket.emit("diagram created", newDiagram);
+          socket.emit("chat message", "새로운 다이어그램을 만들었어요!");
+        } catch (parseError) {
+          console.error("JSON parsing error:", parseError);
+          socket.emit(
+            "chat message",
+            "다이어그램 생성에 실패했어요. AI가 올바른 형식으로 응답하지 않았습니다."
+          );
         }
+      } catch (err) {
+        console.error("GPT Diagram Error:", err);
+        socket.emit(
+          "chat message",
+          "다이어그램 생성 중 오류가 발생했습니다. 💀"
+        );
+      }
     });
 
     socket.on("disconnect", () => {
