@@ -79,7 +79,18 @@ export function registerSocketHandlers(io) {
         )}
 
         Your task is to output a new diagram structure in a single, minified JSON object format.
-        The JSON object must have two keys: "nodes" and "edges".
+
+        **Layout Rules:**
+        - **Hierarchical & Sequential Structure:** Identify main topics and sub-topics from the conversation. Arrange nodes in a top-down hierarchy.
+            - Place broad, high-level topics higher up.
+            - Position related, more specific sub-topics below their parent.
+            - **If sub-topics under the same parent have a clear sequence (like steps in a process or a timeline), arrange them sequentially (e.g., top-to-bottom) to show the order.**
+            - The overall layout should visually represent both inclusion and sequential relationships.
+        - **Avoid Overlap:** When calculating the 'position' for each node, you MUST consider that the node's size depends on the length of its text label. Arrange the nodes so they are spaciously distributed and DO NOT overlap.
+        - **Readability:** Ensure there is sufficient distance between all nodes for a clear and readable layout.
+
+        **Output Format:**
+        - The JSON object must have two keys: "nodes" and "edges".
         - "nodes" should be an array of objects, each with "id", "type" (use 'custom'), "position", and "data" ({ "label": "..." }).
         - "edges" should be an array of objects, each with "id", "source" (source node id), and "target" (target node id).
         Make sure the node and edge IDs are unique strings.
