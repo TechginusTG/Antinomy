@@ -12,13 +12,13 @@ const initialNodes = [
   {
     id: "2",
     type: "custom",
-    position: { x: 300, y: 200 },
+    position: { x: 200, y: 250 },
     data: { label: "과정" },
   },
   {
     id: "3",
     type: "custom",
-    position: { x: 500, y: 300 },
+    position: { x: 300, y: 350 },
     data: { label: "해결" },
   },
 ];
