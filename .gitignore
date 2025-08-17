@@ -79,7 +79,7 @@ web_modules/
 out
 
 # Vite / React build output
-/dist/
+dist/
 /build/
 
 # Nuxt.js build / generate output
