@@ -47,11 +47,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages }) => {
             const userMessage = { text: inputValue, sender: "user" };
             setMessages((prevMessages) => [...prevMessages, userMessage]);
 
-            const payload = {
-                message: inputValue,
-                history: messages, 
-            };
-            chatService.sendMessage(payload);
+            chatService.sendMessage(inputValue);
 
             setInputValue("");
             setIsTyping(true);
