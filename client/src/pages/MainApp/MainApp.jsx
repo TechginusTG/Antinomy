@@ -112,6 +112,11 @@ const MainApp = () => {
       } catch (error) {
         console.error("Failed to load or parse file:", error);
         alert("Failed to load file. It might be corrupted or not a valid JSON file.");
+      } finally {
+        // Reset the file input to allow reloading the same file.
+        if (fileInputRef.current) {
+          fileInputRef.current.value = null;
+        }
       }
     };
     reader.readAsText(file);
