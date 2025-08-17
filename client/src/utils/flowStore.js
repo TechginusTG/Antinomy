@@ -3,13 +3,28 @@ import { addEdge, applyNodeChanges, applyEdgeChanges } from "reactflow";
 import pako from "pako";
 
 const initialNodes = [
-  { id: "1", type: 'custom', position: { x: 100, y: 150 }, data: { label: "문제" } },
-  { id: "2", type: 'custom', position: { x: 300, y: 150 }, data: { label: "과정" } },
-  { id: "3", type: 'custom', position: { x: 500, y: 150 }, data: { label: "해결" } },
+  {
+    id: "1",
+    type: "custom",
+    position: { x: 100, y: 150 },
+    data: { label: "문제" },
+  },
+  {
+    id: "2",
+    type: "custom",
+    position: { x: 300, y: 200 },
+    data: { label: "과정" },
+  },
+  {
+    id: "3",
+    type: "custom",
+    position: { x: 500, y: 300 },
+    data: { label: "해결" },
+  },
 ];
 const initialEdges = [
-    { id: "e1-2", source: "1", target: "2" },
-    { id: "e2-3", source: "2", target: "3" }
+  { id: "e1-2", source: "1", target: "2" },
+  { id: "e2-3", source: "2", target: "3" },
 ];
 
 const useFlowStore = create((set, get) => {
@@ -67,7 +82,9 @@ const useFlowStore = create((set, get) => {
     onNodesChange: (changes) => {
       const { nodes, edges, _updateHistory } = get();
       const nextNodes = applyNodeChanges(changes, nodes);
-      const isDragging = changes.some((c) => c.type === "position" && c.dragging);
+      const isDragging = changes.some(
+        (c) => c.type === "position" && c.dragging
+      );
       if (isDragging) {
         set({ nodes: nextNodes });
       } else {
@@ -89,10 +106,12 @@ const useFlowStore = create((set, get) => {
 
     addNode: (position) => {
       const { nodes, edges, _updateHistory } = get();
-      const newNodeId = (nodes.length > 0 ? Math.max(...nodes.map((n) => parseInt(n.id))) : 0) + 1;
+      const newNodeId =
+        (nodes.length > 0 ? Math.max(...nodes.map((n) => parseInt(n.id))) : 0) +
+        1;
       const newNode = {
         id: newNodeId.toString(),
-        type: 'custom',
+        type: "custom",
         position,
         data: { label: "New Node" },
       };
@@ -141,9 +160,9 @@ const useFlowStore = create((set, get) => {
 
     resetFlow: () => {
       const { _updateHistory } = get();
-      _updateHistory({ 
-        nodes: JSON.parse(JSON.stringify(initialNodes)), 
-        edges: JSON.parse(JSON.stringify(initialEdges)) 
+      _updateHistory({
+        nodes: JSON.parse(JSON.stringify(initialNodes)),
+        edges: JSON.parse(JSON.stringify(initialEdges)),
       });
     },
 
@@ -223,7 +242,7 @@ const useFlowStore = create((set, get) => {
         return null;
       }
     },
-  }
+  };
 });
 
 export default useFlowStore;

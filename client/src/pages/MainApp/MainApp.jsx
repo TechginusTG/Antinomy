@@ -50,7 +50,7 @@ const MainApp = () => {
     if (initialChat) {
       setChatLog(initialChat);
     }
-  }, [loadFlow]);
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event) => {
