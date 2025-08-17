@@ -36,7 +36,7 @@ app.use(express.json());
 // 프로덕션 환경에서 React 앱 서빙
 if (process.env.NODE_ENV === "production") {
   // 클라이언트 빌드 디렉토리 경로를 수정해야 할 수 있습니다.
-  const buildPath = path.join(__dirname, "..", "client", "dist");
+  const buildPath = path.join(__dirname, "..", "dist");
   app.use(express.static(buildPath));
 
   app.get("*", (req, res) => {
