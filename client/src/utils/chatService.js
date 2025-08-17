@@ -7,7 +7,7 @@ const SOCKET_URL = "http://localhost:3000";
 class ChatService {
   socket = null;
 
-  connect(onMessageCallback) {
+  connect(onMessageCallback, onDiagramCreatedCallback) {
     this.socket = io(SOCKET_URL, {
       transports: ["websocket"],
     });
@@ -20,10 +20,15 @@ class ChatService {
       console.log("서버에서 연결이 끊어졌습니다.");
     });
 
-    // 서버로부터 'chat message' 이벤트를 수신합니다.
     this.socket.on("chat message", (msg) => {
       if (onMessageCallback) {
         onMessageCallback(msg);
+      }
+    });
+
+    this.socket.on("diagram created", (diagram) => {
+      if (onDiagramCreatedCallback) {
+        onDiagramCreatedCallback(diagram);
       }
     });
 
@@ -34,8 +39,13 @@ class ChatService {
 
   sendMessage(message) {
     if (this.socket) {
-      // 서버로 'chat message' 이벤트를 보냅니다.
       this.socket.emit("chat message", message);
+    }
+  }
+
+  makeDiagram(payload) {
+    if (this.socket) {
+      this.socket.emit("make diagram", payload);
     }
   }
 

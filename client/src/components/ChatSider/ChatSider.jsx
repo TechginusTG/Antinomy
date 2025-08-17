@@ -12,8 +12,7 @@ const { Sider } = Layout;
 const ChatSider = ({ className, chatWidth, messages, setMessages }) => {
     const [inputValue, setInputValue] = useState("");
     const [isTyping, setIsTyping] = useState(false);
-    const updateUrlHash = useFlowStore((state) => state.updateUrlHash);
-    const resetFlow = useFlowStore((state) => state.resetFlow);
+    const { nodes, edges, setFlow } = useFlowStore();
 
     useEffect(() => {
         const handleNewMessage = (message) => {
@@ -24,18 +23,21 @@ const ChatSider = ({ className, chatWidth, messages, setMessages }) => {
             ]);
         };
 
-        chatService.connect(handleNewMessage);
+        const handleDiagramCreated = (diagram) => {
+            console.log("Diagram created:", diagram);
+            setFlow(diagram);
+        };
+
+        chatService.connect(handleNewMessage, handleDiagramCreated);
 
         return () => {
             chatService.disconnect();
         };
-    }, [setMessages]);
+    }, [setMessages, setFlow]);
 
     useEffect(() => {
         localStorage.setItem("chatLog", JSON.stringify(messages));
-        if (updateUrlHash) {
-            updateUrlHash();
-        }
+        updateUrlHash();
     }, [messages, updateUrlHash]);
 
     const sendMessage = () => {
@@ -54,12 +56,21 @@ const ChatSider = ({ className, chatWidth, messages, setMessages }) => {
         resetFlow();
     };
 
+    const handleMakeDiagram = () => {
+        const payload = {
+            chatLog: messages,
+            diagramState: { nodes, edges },
+        };
+        chatService.makeDiagram(payload);
+        setIsTyping(true); // AI가 다이어그램을 만드는 동안에도 "생각중"을 표시
+    };
+
     return (
         <Sider width={`${chatWidth}%`} theme="light" className={className}>
             <div className={styles.chat}>
                 <div className={styles["chat-header"]}>
                     <Button onClick={handleReset}>Reset</Button>
-                    <Button>Make Diagram</Button>
+                    <Button onClick={handleMakeDiagram}>Make Diagram</Button>
                 </div>
                 <div className={styles["chat-log"]}>
                     <ul>
