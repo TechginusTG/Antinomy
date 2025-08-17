@@ -37,9 +37,9 @@ class ChatService {
     });
   }
 
-  sendMessage(message) {
+  sendMessage(payload) {
     if (this.socket) {
-      this.socket.emit("chat message", message);
+      this.socket.emit("chat message", payload);
     }
   }
 
