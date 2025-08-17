@@ -12,7 +12,8 @@ const { Sider } = Layout;
 const ChatSider = ({ className, chatWidth, messages, setMessages }) => {
     const [inputValue, setInputValue] = useState("");
     const [isTyping, setIsTyping] = useState(false);
-    const { nodes, edges, setFlow } = useFlowStore();
+    const [isDiagramMaking, setIsDiagramMaking] = useState(false);
+    const { nodes, edges, setFlow, updateUrlHash, resetFlow } = useFlowStore();
 
     useEffect(() => {
         const handleNewMessage = (message) => {
@@ -26,6 +27,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages }) => {
         const handleDiagramCreated = (diagram) => {
             console.log("Diagram created:", diagram);
             setFlow(diagram);
+            setIsDiagramMaking(false); // 다이어그램 생성 완료
         };
 
         chatService.connect(handleNewMessage, handleDiagramCreated);
@@ -57,6 +59,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages }) => {
     };
 
     const handleMakeDiagram = () => {
+        setIsDiagramMaking(true); // 다이어그램 생성 시작
         const payload = {
             chatLog: messages,
             diagramState: { nodes, edges },
@@ -70,7 +73,9 @@ const ChatSider = ({ className, chatWidth, messages, setMessages }) => {
             <div className={styles.chat}>
                 <div className={styles["chat-header"]}>
                     <Button onClick={handleReset}>Reset</Button>
-                    <Button onClick={handleMakeDiagram}>Make Diagram</Button>
+                    <Button onClick={handleMakeDiagram} disabled={isDiagramMaking}>
+                        {isDiagramMaking ? "Making..." : "Make Diagram"}
+                    </Button>
                 </div>
                 <div className={styles["chat-log"]}>
                     <ul>
