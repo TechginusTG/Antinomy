@@ -4,7 +4,7 @@ import { MenuOutlined } from "@ant-design/icons";
 import ConnectionStatus from "../ConnectionStatus/ConnectionStatus";
 import styles from "./HeaderBar.module.css";
 
-const HeaderBar = ({ className }) => {
+const HeaderBar = ({ className, toggleSider }) => {
   return (
     <Layout.Header className={`${styles.header} ${className}`}>
       <Button
