@@ -67,7 +67,24 @@
 }
 
 .ai {
-    align-self: flex-start;
     background-color: var(--bubble-ai-bg);
-    border-bottom-left-radius: 0px;
+    font-style: italic;
+}
+
+.resetContainer {
+    position: relative;
+}
+
+.hiddenButtons {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: -25px;
+    z-index: 1;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.resetContainer:hover .hiddenButtons {
+    display: flex;
 }

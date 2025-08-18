@@ -47,25 +47,27 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
         }
     };
 
-    const handleResetChat = () => {
-        setMessages([]);
-        localStorage.removeItem("chatLog");
-    };
-
     const handleResetDiagram = () => {
         resetFlow();
     };
 
-    const handleReset = () => {
-        handleResetChat();
-        handleResetDiagram();
+    const handleResetAll = () => {
+        setMessages([]);
+        localStorage.removeItem("chatLog");
+        resetFlow();
     };
 
     return (
         <Sider width={`${chatWidth}%`} theme="light" className={className}>
             <div className={styles.chat}>
                 <div className={styles["chat-header"]}>
-                    <Button onClick={handleReset}>Reset</Button>
+                    <div className={styles.resetContainer}>
+                        <Button>Reset</Button>
+                        <div className={styles.hiddenButtons}>
+                            <Button onClick={handleResetDiagram}>Diagram</Button>
+                            <Button onClick={handleResetAll}>All</Button>
+                        </div>
+                    </div>
                     <Button onClick={onGenerateDiagram} disabled={isDiagramMaking}>
                         {isDiagramMaking ? "Making..." : "Make Diagram"}
                     </Button>
