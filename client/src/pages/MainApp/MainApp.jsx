@@ -1,20 +1,24 @@
 import React, { useCallback, useState, useEffect, useRef } from "react";
-import { Layout, Button, Modal, Checkbox } from "antd";
-import { SaveOutlined, FolderOpenOutlined, SettingFilled, BulbOutlined, PlusOutlined } from "@ant-design/icons";
+import { Layout, Button, Modal, Checkbox, Slider } from "antd";
+import {
+  SaveOutlined,
+  FolderOpenOutlined,
+  SettingFilled,
+  BulbOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import ChatSider from "../../components/ChatSider/ChatSider";
 import Header from "../../components/HeaderBar/HeaderBar";
 import ExpBar from "../../components/exp-bar/exp-bar";
 import ReactFlow from "reactflow";
 import useFlowStore from "../../utils/flowStore";
-import CustomNode from '../../components/CustomNode/CustomNode';
-import ContextMenu from '../../components/ContextMenu/ContextMenu';
-import DiagramMessage from '../../components/DiagramMessage/DiagramMessage';
+import CustomNode from "../../components/CustomNode/CustomNode";
+import ContextMenu from "../../components/ContextMenu/ContextMenu";
+import DiagramMessage from "../../components/DiagramMessage/DiagramMessage";
 import chatService from "../../utils/chatService";
 
-import SettingsModal from '../../components/SettingsModal/SettingsModal';
-import QuestModal from '../../components/QuestModal/QuestModal';
-
-import { Slider } from "antd";
+import SettingsModal from "../../components/SettingsModal/SettingsModal";
+import QuestModal from "../../components/QuestModal/QuestModal";
 
 import "reactflow/dist/style.css";
 import styles from "./MainApp.module.css";
@@ -24,10 +28,6 @@ const { Content } = Layout;
 const nodeTypes = { custom: CustomNode };
 
 const MainApp = () => {
-  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
-  const [chatWidth, setChatWidth] = useState(
-    () => parseInt(localStorage.getItem("chatWidth"), 10) || 30
-  );
   const {
     nodes,
     edges,
@@ -40,16 +40,18 @@ const MainApp = () => {
     loadFlow,
     setFlow,
     addNode,
-    theme,
-    setTheme,
-    chatWidth,
-    setChatWidth,
     isSettingsOpen,
     setIsSettingsOpen,
     isQuestOpen,
     setIsQuestOpen,
   } = useFlowStore();
 
+  const [theme, setTheme] = useState(
+    () => localStorage.getItem("theme") || "light"
+  );
+  const [chatWidth, setChatWidth] = useState(
+    () => parseInt(localStorage.getItem("chatWidth"), 10) || 30
+  );
   const reactFlowWrapper = useRef(null);
   const [chatLog, setChatLog] = useState([]);
   const fileInputRef = useRef(null);
@@ -66,12 +68,11 @@ const MainApp = () => {
   };
   const [completedQuests, setCompletedQuests] = useState([]);
 
-
   const handleResetQuests = () => {
     setQuests([]);
     setCompletedQuests([]);
-  }
-  
+  };
+
   const handleQuestChange = (index, checked) => {
     if (checked) {
       setCompletedQuests([...completedQuests, index]);
@@ -106,8 +107,6 @@ const MainApp = () => {
     };
   }, [undo, redo]);
 
-  
-
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (!file) {
@@ -129,7 +128,9 @@ const MainApp = () => {
         }
       } catch (error) {
         console.error("Failed to load or parse file:", error);
-        alert("Failed to load file. It might be corrupted or not a valid JSON file.");
+        alert(
+          "Failed to load file. It might be corrupted or not a valid JSON file."
+        );
       } finally {
         // Reset the file input to allow reloading the same file.
         if (fileInputRef.current) {
@@ -168,7 +169,9 @@ const MainApp = () => {
 
   const handleGenerateDiagram = () => {
     if (chatLog.length === 0) {
-      alert("아직 아무런 대화도 하지 않았어요. 다이어그램을 생성하려면 먼저 AI와 대화를 시작하세요.");
+      alert(
+        "아직 아무런 대화도 하지 않았어요. 다이어그램을 생성하려면 먼저 AI와 대화를 시작하세요."
+      );
       return;
     }
     setDiagramMessage("다이어그램 생성 중...");
@@ -195,7 +198,9 @@ const MainApp = () => {
       <Header className={styles["header"]} toggleSider={toggleSider} />
       <Layout>
         <ChatSider
-          className={`${styles["chat-sider"]} ${isSiderVisible ? styles.visible : ''}`}
+          className={`${styles["chat-sider"]} ${
+            isSiderVisible ? styles.visible : ""
+          }`}
           chatWidth={chatWidth}
           messages={chatLog}
           setMessages={setChatLog}
@@ -285,7 +290,7 @@ const MainApp = () => {
             <ExpBar />
 
             <SettingsModal />
-            <QuestModal 
+            <QuestModal
               quests={quests}
               completedQuests={completedQuests}
               handleQuestChange={handleQuestChange}
