@@ -62,7 +62,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
             <div className={styles.chat}>
                 <div className={styles["chat-header"]}>
                     <div className={styles.resetContainer}>
-                        <Button>Reset</Button>
+                        <span className={styles.resetText}>Reset</span>
                         <div className={styles.hiddenButtons}>
                             <Button onClick={handleResetDiagram}>Diagram</Button>
                             <Button onClick={handleResetAll}>All</Button>
