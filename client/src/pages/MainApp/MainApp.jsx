@@ -24,6 +24,10 @@ const { Content } = Layout;
 const nodeTypes = { custom: CustomNode };
 
 const MainApp = () => {
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
+  const [chatWidth, setChatWidth] = useState(
+    () => parseInt(localStorage.getItem("chatWidth"), 10) || 30
+  );
   const {
     nodes,
     edges,
@@ -54,7 +58,14 @@ const MainApp = () => {
   const [diagramMessage, setDiagramMessage] = useState(null);
   const [isDiagramMaking, setIsDiagramMaking] = useState(false);
   const [quests, setQuests] = useState([]);
+
+  const [isSiderVisible, setIsSiderVisible] = useState(false);
+
+  const toggleSider = () => {
+    setIsSiderVisible(!isSiderVisible);
+  };
   const [completedQuests, setCompletedQuests] = useState([]);
+
 
   const handleResetQuests = () => {
     setQuests([]);
@@ -181,10 +192,10 @@ const MainApp = () => {
 
   return (
     <Layout style={{ height: "100vh" }}>
-      <Header className={styles["header"]} />
+      <Header className={styles["header"]} toggleSider={toggleSider} />
       <Layout>
         <ChatSider
-          className={styles["chat-sider"]}
+          className={`${styles["chat-sider"]} ${isSiderVisible ? styles.visible : ''}`}
           chatWidth={chatWidth}
           messages={chatLog}
           setMessages={setChatLog}
@@ -223,7 +234,7 @@ const MainApp = () => {
                 type="default"
                 icon={<FolderOpenOutlined />}
                 onClick={handleLoadClick}
-                style={{ right: "120px" }}
+                style={{ right: "7.5rem" }}
               >
                 Load
               </Button>
@@ -252,7 +263,7 @@ const MainApp = () => {
 
                   save(diagramFilename);
                 }}
-                style={{ right: "15px" }}
+                style={{ right: "0.9375rem" }}
               >
                 Save
               </Button>
@@ -272,6 +283,7 @@ const MainApp = () => {
               />
             </div>
             <ExpBar />
+
             <SettingsModal />
             <QuestModal 
               quests={quests}
