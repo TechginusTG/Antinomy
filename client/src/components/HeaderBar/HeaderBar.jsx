@@ -3,6 +3,7 @@ import { Layout, Button } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import ConnectionStatus from "../ConnectionStatus/ConnectionStatus";
 import styles from "./HeaderBar.module.css";
+import logo from "../../assets/img/logo.png"; // Adjust the path as necessary
 
 const HeaderBar = ({ className, toggleSider }) => {
   return (
@@ -13,11 +14,7 @@ const HeaderBar = ({ className, toggleSider }) => {
         onClick={toggleSider}
       />
       <div className={styles.titleContainer}>
-        <img
-          src="/images/logo.png"
-          alt="Antinomy Logo"
-          className={styles.logo}
-        />
+        <img src={logo} alt="Antinomy Logo" className={styles.logo} />
         <h2 className={styles.title}>ANTINOMY</h2>
         <ConnectionStatus />
       </div>
