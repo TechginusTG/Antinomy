@@ -1,5 +1,8 @@
+
 import { Layout, Button } from "antd";
 import { MenuOutlined } from '@ant-design/icons';
+import React from 'react';
+import { Layout } from "antd";
 import styles from "./HeaderBar.module.css";
 
 const HeaderBar = ({ className, toggleSider }) => {
@@ -11,4 +14,4 @@ const HeaderBar = ({ className, toggleSider }) => {
     );
 };
 
-export default HeaderBar;
+export default React.memo(HeaderBar);

@@ -93,7 +93,7 @@ export function registerSocketHandlers(io) {
         - The JSON object must have two keys: "nodes" and "edges".
         - "nodes" should be an array of objects, each with "id", "type" (use 'custom'), "position", and "data" ({ "label": "..." }).
         - "edges" should be an array of objects, each with "id", "source" (source node id), and "target" (target node id).
-        - **Challenge Generation:** Based on the conversation and the generated diagram, create 2-3 simple challenges or quests for the user. These challenges should be related to the topics in the diagram and encourage the user to think more deeply about the problem. The challenges should be returned in the JSON object under a new key called "quests". "quests" should be an array of strings.
+        - **Challenge Generation:** Based on the conversation and the generated diagram, create 2-3 simple and concise challenges or quests for the user. Each quest should be a short sentence in the '-하기' style (e.g., "문제 원인 분석하기"). These challenges should be related to the topics in the diagram and encourage the user to think more deeply about the problem. The challenges should be returned in the JSON object under a new key called "quests". "quests" should be an array of strings.
         Make sure the node and edge IDs are unique strings.
         Do not include any explanations, comments, or any text outside of the single JSON object.
         Example response: {"nodes":[{"id":"1","type":"custom","position":{"x":100,"y":100},"data":{"label":"Main Idea"}}],"edges":[],"quests":["Challenge 1", "Challenge 2"]}
