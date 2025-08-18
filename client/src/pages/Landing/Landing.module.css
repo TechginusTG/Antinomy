@@ -15,13 +15,13 @@
   font-size: 2rem; /* 약 32px */
   font-weight: 700;
   color: #FCD34D; 
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .subtitle {
   font-size: 1rem; /* 16px */
   color: #555;
-  margin-bottom: 24px;
+  margin-bottom: 1.5rem;
 }
 
 .overlay {
@@ -31,7 +31,7 @@
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.3); /* Adjust opacity as needed */
-    backdrop-filter: blur(10px); /* Adjust blur radius as needed */
+    backdrop-filter: blur(0.625rem); /* Adjust blur radius as needed */
     z-index: 1;
 }
 
@@ -39,11 +39,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 320px;
-    height: 240px;
-    border-radius: 16px;
+    width: 20rem;
+    height: 15rem;
+    border-radius: 1rem;
     background: var(--background-secondary);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.1);
 
     z-index: 2;
 }
@@ -52,8 +52,8 @@
     background-color: #A78BFA;
     color: white;
     font-size: 1rem; /* 16px */
-    padding: 12px 24px;
-    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
     border: none;
     cursor: pointer;
     transition: background 0.3s;

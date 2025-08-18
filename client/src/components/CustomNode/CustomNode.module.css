@@ -1,24 +1,24 @@
 .customNode {
   background: #fff;
-  border: 1px solid #1a192b;
-  border-radius: 2px;
-  padding: 10px;
-  font-size: 12px;
+  border: 0.0625rem solid #1a192b;
+  border-radius: 0.125rem;
+  padding: 0.625rem;
+  font-size: 0.75rem;
   text-align: center;
 }
 
 .customNode.selected {
-  border: 1px solid #007bff; 
-  box-shadow: 0 0 0 1px #007bff; 
+  border: 0.0625rem solid #007bff; 
+  box-shadow: 0 0 0 0.0625rem #007bff; 
 }
 
 .input {
   width: 100%;
-  padding: 4px 8px;
-  border: 1px solid #ddd;
-  border-radius: 2px;
+  padding: 0.25rem 0.5rem;
+  border: 0.0625rem solid #ddd;
+  border-radius: 0.125rem;
 }
 
 .label {
-  padding: 4px 8px;
+  padding: 0.25rem 0.5rem;
 }

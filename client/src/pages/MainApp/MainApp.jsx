@@ -25,6 +25,7 @@ const MainApp = () => {
   const [chatWidth, setChatWidth] = useState(
     () => parseInt(localStorage.getItem("chatWidth"), 10) || 30
   );
+  
   const {
     nodes,
     edges,
@@ -48,6 +49,11 @@ const MainApp = () => {
   const [diagramMessage, setDiagramMessage] = useState(null);
   const [isDiagramMaking, setIsDiagramMaking] = useState(false);
   const [quests, setQuests] = useState([]);
+  const [isSiderVisible, setIsSiderVisible] = useState(false);
+
+  const toggleSider = () => {
+    setIsSiderVisible(!isSiderVisible);
+  };
 
   const handleResetQuests = () => {
     setQuests([]);
@@ -182,10 +188,10 @@ const MainApp = () => {
 
   return (
     <Layout style={{ height: "100vh" }}>
-      <Header className={styles["header"]} />
+      <Header className={styles["header"]} toggleSider={toggleSider} />
       <Layout>
         <ChatSider
-          className={styles["chat-sider"]}
+          className={`${styles["chat-sider"]} ${isSiderVisible ? styles.visible : ''}`}
           chatWidth={chatWidth}
           messages={chatLog}
           setMessages={setChatLog}
@@ -224,7 +230,7 @@ const MainApp = () => {
                 type="default"
                 icon={<FolderOpenOutlined />}
                 onClick={handleLoadClick}
-                style={{ right: "120px" }}
+                style={{ right: "7.5rem" }}
               >
                 Load
               </Button>
@@ -253,7 +259,7 @@ const MainApp = () => {
 
                   save(diagramFilename);
                 }}
-                style={{ right: "15px" }}
+                style={{ right: "0.9375rem" }}
               >
                 Save
               </Button>
@@ -291,7 +297,7 @@ const MainApp = () => {
                     />
                     Light
                   </label>
-                  <label style={{ marginLeft: 16 }}>
+                  <label style={{ marginLeft: '1rem' }}>
                     <input
                       type="radio"
                       value="dark"
@@ -311,7 +317,7 @@ const MainApp = () => {
                     />
                     Spring
                   </label>
-                  <label style={{ marginLeft: 7 }}>
+                  <label style={{ marginLeft: '0.4375rem' }}>
                     <input
                       type="radio"
                       value="natsu"
@@ -320,7 +326,7 @@ const MainApp = () => {
                     />
                     Summer
                   </label>
-                  <label style={{ marginLeft: 7 }}>
+                  <label style={{ marginLeft: '0.4375rem' }}>
                     <input
                       type="radio"
                       value="aki"
@@ -329,7 +335,7 @@ const MainApp = () => {
                     />
                     Autumn
                   </label>
-                  <label style={{ marginLeft: 7 }}>
+                  <label style={{ marginLeft: '0.4375rem' }}>
                     <input
                       type="radio"
                       value="fuyu"
@@ -339,7 +345,7 @@ const MainApp = () => {
                     Winter
                   </label>
                 </div>
-                <div style={{ marginTop: 24 }}>
+                <div style={{ marginTop: '1.5rem' }}>
                   <p>
                     채팅창 너비: <b>{chatWidth}%</b>
                   </p>
@@ -348,7 +354,7 @@ const MainApp = () => {
                     max={50}
                     value={chatWidth}
                     onChange={setChatWidth}
-                    style={{ width: 200 }}
+                    style={{ width: '12.5rem' }}
                   />
                 </div>
               </div>

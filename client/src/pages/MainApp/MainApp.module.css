@@ -3,12 +3,11 @@ body {
     margin: 0;
     padding: 0;
     height: 100%;
-    overflow: hidden;
 }
 
 .header {
-    padding: 0 24px;
-    border-bottom: 2px solid var(--border-color);
+    padding: 0 1.5rem;
+    border-bottom: 0.125rem solid var(--border-color);
     display: flex;
     align-items: center;
 }
@@ -35,6 +34,7 @@ body {
     flex-direction: column;
     height: 100%;
     position: relative;
+    overflow-y: auto;
 }
 
 .react-flow-wrapper {
@@ -49,7 +49,7 @@ body {
 }
 
 .chat-sider {
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0.125rem 0 0.5rem rgba(0, 0, 0, 0.15);
     z-index: 1000; /* Ensure it is above other content */
 }
 /* Ant Design Overrides */
@@ -61,35 +61,35 @@ body {
 
 .tail-buttons :global(.ant-btn) {
     position: absolute;
-    bottom: 80px;
-    height: 40px;
-    padding: 4px 20px;
-    font-size: 16px;
+    bottom: 5rem;
+    height: 2.5rem;
+    padding: 0.25rem 1.25rem;
+    font-size: 1rem;
     z-index: 10;
 }
 
 .settings-button :global(.ant-btn) {
     position: absolute;
-    top: 10px;
-    right: 15px;
-    width: 50px;
-    height: 50px;
+    top: 0.625rem;
+    right: 0.9375rem;
+    width: 3.125rem;
+    height: 3.125rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    font-size: 1.75rem;
 }
 
 .quest-button :global(.ant-btn) {
     position: absolute;
-    top: 70px;
-    right: 15px;
-    width: 50px;
-    height: 50px;
+    top: 4.375rem;
+    right: 0.9375rem;
+    width: 3.125rem;
+    height: 3.125rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 28px;
+    font-size: 1.75rem;
 }
 
 /* ===== theme apply ===== */
@@ -107,4 +107,36 @@ body {
 
 .react-flow-wrapper {
     background: var(--background-flow-wrapper);
+}
+
+
+
+@media (max-width: 768px) {
+  .chat-sider {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: 1001;
+    flex-basis: 100%;
+    max-width: 100%;
+  }
+
+  .chat-sider.visible {
+    display: flex;
+  }
+
+  .tail-buttons :global(.ant-btn) {
+    bottom: 1rem;
+  }
+
+  .settings-button :global(.ant-btn) {
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .quest-button :global(.ant-btn) {
+    top: 4rem;
+    right: 0.5rem;
+  }
 }
