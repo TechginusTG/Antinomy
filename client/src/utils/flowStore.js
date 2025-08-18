@@ -220,9 +220,11 @@ const useFlowStore = create((set, get) => {
         }
 
         const decodedData = atob(base64);
-        const compressed = new Uint8Array(decodedData.length).map((_, i) =>
-          decodedData.charCodeAt(i)
-        );
+        const len = decodedData.length;
+        const compressed = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            compressed[i] = decodedData.charCodeAt(i);
+        }
         const jsonString = pako.inflate(compressed, { to: "string" });
         const data = JSON.parse(jsonString);
 
