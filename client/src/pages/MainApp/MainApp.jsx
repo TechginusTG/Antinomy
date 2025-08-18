@@ -44,13 +44,11 @@ const MainApp = () => {
     setIsSettingsOpen,
     isQuestOpen,
     setIsQuestOpen,
+    chatWidth,
   } = useFlowStore();
 
   const [theme, setTheme] = useState(
     () => localStorage.getItem("theme") || "light"
-  );
-  const [chatWidth, setChatWidth] = useState(
-    () => parseInt(localStorage.getItem("chatWidth"), 10) || 30
   );
   const reactFlowWrapper = useRef(null);
   const [chatLog, setChatLog] = useState([]);
