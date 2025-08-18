@@ -47,6 +47,7 @@ const MainApp = () => {
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [diagramMessage, setDiagramMessage] = useState(null);
   const [isDiagramMaking, setIsDiagramMaking] = useState(false);
+  const [quests, setQuests] = useState([]);
 
   useEffect(() => {
     const initialChat = loadFlow();
@@ -160,6 +161,9 @@ const MainApp = () => {
     };
     chatService.makeDiagram(payload, (diagram) => {
       setFlow(diagram);
+      if (diagram.quests) {
+        setQuests(diagram.quests);
+      }
       setDiagramMessage("다이어그램을 생성했습니다.");
       setIsDiagramMaking(false);
       setTimeout(() => {
@@ -347,7 +351,15 @@ const MainApp = () => {
               onOk={closeQuest}
             >
               <div>
-                <p>퀘스트 내용</p>
+                {quests.length > 0 ? (
+                  <ul>
+                    {quests.map((quest, index) => (
+                      <li key={index}>{quest}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>퀘스트 내용</p>
+                )}
               </div>
             </Modal>
           </Content>
