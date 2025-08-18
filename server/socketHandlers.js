@@ -111,7 +111,6 @@ export function registerSocketHandlers(io) {
         try {
           const newDiagram = JSON.parse(reply);
           socket.emit("diagram created", newDiagram);
-          socket.emit("chat message", "새로운 다이어그램을 만들었어요!");
         } catch (parseError) {
           console.error("JSON parsing error:", parseError);
           socket.emit(

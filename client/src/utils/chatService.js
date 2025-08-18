@@ -7,7 +7,7 @@ const SOCKET_URL = "http://localhost:3000";
 class ChatService {
   socket = null;
 
-  connect(onMessageCallback, onDiagramCreatedCallback) {
+  connect(onMessageCallback) {
     this.socket = io(SOCKET_URL, {
       transports: ["websocket"],
     });
@@ -26,12 +26,6 @@ class ChatService {
       }
     });
 
-    this.socket.on("diagram created", (diagram) => {
-      if (onDiagramCreatedCallback) {
-        onDiagramCreatedCallback(diagram);
-      }
-    });
-
     this.socket.on("connect_error", (err) => {
       console.error("연결 에러:", err);
     });
@@ -43,9 +37,14 @@ class ChatService {
     }
   }
 
-  makeDiagram(payload) {
+  makeDiagram(payload, onDiagramCreatedCallback) {
     if (this.socket) {
       this.socket.emit("make diagram", payload);
+      this.socket.once("diagram created", (diagram) => {
+        if (onDiagramCreatedCallback) {
+          onDiagramCreatedCallback(diagram);
+        }
+      });
     }
   }
 

@@ -8,7 +8,8 @@ import ReactFlow from "reactflow";
 import useFlowStore from "../../utils/flowStore";
 import CustomNode from '../../components/CustomNode/CustomNode';
 import ContextMenu from '../../components/ContextMenu/ContextMenu';
-// import chatService from "../../utils/chatService";
+import DiagramMessage from '../../components/DiagramMessage/DiagramMessage';
+import chatService from "../../utils/chatService";
 
 import { Slider } from "antd";
 
@@ -44,6 +45,8 @@ const MainApp = () => {
   const fileInputRef = useRef(null);
   const [contextMenu, setContextMenu] = useState(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
+  const [diagramMessage, setDiagramMessage] = useState(null);
+  const [isDiagramMaking, setIsDiagramMaking] = useState(false);
 
   useEffect(() => {
     const initialChat = loadFlow();
@@ -148,6 +151,23 @@ const MainApp = () => {
     }
   }, [reactFlowInstance, contextMenu, addNode]);
 
+  const handleGenerateDiagram = () => {
+    setDiagramMessage("다이어그램 생성 중...");
+    setIsDiagramMaking(true);
+    const payload = {
+      chatLog: chatLog,
+      diagramState: { nodes, edges },
+    };
+    chatService.makeDiagram(payload, (diagram) => {
+      setFlow(diagram);
+      setDiagramMessage("다이어그램을 생성했습니다.");
+      setIsDiagramMaking(false);
+      setTimeout(() => {
+        setDiagramMessage(null);
+      }, 3000);
+    });
+  };
+
   return (
     <Layout style={{ height: "100vh" }}>
       <Header className={styles["header"]} />
@@ -157,6 +177,8 @@ const MainApp = () => {
           chatWidth={chatWidth}
           messages={chatLog}
           setMessages={setChatLog}
+          onGenerateDiagram={handleGenerateDiagram}
+          isDiagramMaking={isDiagramMaking}
         />
         <Layout className={styles["content-layout"]}>
           <Content className={styles["main-content"]}>
@@ -165,6 +187,7 @@ const MainApp = () => {
               className={styles["react-flow-wrapper"]}
               onContextMenu={handleContextMenu}
             >
+              <DiagramMessage message={diagramMessage} />
               <ReactFlow
                 nodes={nodes}
                 edges={edges}
