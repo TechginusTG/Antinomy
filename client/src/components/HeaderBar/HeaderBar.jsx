@@ -13,7 +13,12 @@ const HeaderBar = ({ className, toggleSider }) => {
         onClick={toggleSider}
       />
       <div className={styles.titleContainer}>
-        <h2>ANTINOMY</h2>
+        <img
+          src="/images/logo.png"
+          alt="Antinomy Logo"
+          className={styles.logo}
+        />
+        <h2 className={styles.title}>ANTINOMY</h2>
         <ConnectionStatus />
       </div>
     </Layout.Header>
