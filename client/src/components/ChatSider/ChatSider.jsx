@@ -32,8 +32,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
 
     useEffect(() => {
         localStorage.setItem("chatLog", JSON.stringify(messages));
-        updateUrlHash();
-    }, [messages, updateUrlHash]);
+    }, [messages]);
 
     const sendMessage = () => {
         if (inputValue.trim()) {
