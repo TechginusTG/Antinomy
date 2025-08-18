@@ -9,6 +9,11 @@
     margin: 0;
 }
 
+.titleContainer {
+    display: flex;
+    align-items: center;
+}
+
 .menuButton {
     display: none;
     background: transparent;

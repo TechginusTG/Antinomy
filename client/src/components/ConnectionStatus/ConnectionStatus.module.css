@@ -1,0 +1,17 @@
+.statusIndicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-left: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.connected {
+  background-color: #4caf50; /* Green */
+  box-shadow: 0 0 8px #4caf50;
+}
+
+.disconnected {
+  background-color: #f44336; /* Red */
+  box-shadow: 0 0 8px #f44336;
+}

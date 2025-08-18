@@ -41,7 +41,9 @@ const useFlowStore = create((set, get) => {
     chatWidth: parseInt(localStorage.getItem("chatWidth"), 10) || 30,
     isSettingsOpen: false,
     isQuestOpen: false,
+    isConnected: false,
 
+    setIsConnected: (isConnected) => set({ isConnected }),
     setTheme: (theme) => {
       set({ theme });
       localStorage.setItem("theme", theme);

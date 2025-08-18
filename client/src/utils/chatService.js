@@ -1,4 +1,5 @@
 import { io } from "socket.io-client";
+import useFlowStore from "./flowStore";
 
 // 서버가 로컬에서 실행 중이라고 가정합니다. 포트가 다른 경우 이 URL을 수정하세요.
 // 예를 들어, Vite 개발 서버를 사용하는 경우 프록시 설정이 필요할 수 있습니다.
@@ -12,12 +13,16 @@ class ChatService {
       transports: ["websocket"],
     });
 
+    const { setIsConnected } = useFlowStore.getState();
+
     this.socket.on("connect", () => {
       console.log("서버에 연결되었습니다:", this.socket.id);
+      setIsConnected(true);
     });
 
     this.socket.on("disconnect", () => {
       console.log("서버에서 연결이 끊어졌습니다.");
+      setIsConnected(false);
     });
 
     this.socket.on("chat message", (msg) => {
@@ -28,6 +33,7 @@ class ChatService {
 
     this.socket.on("connect_error", (err) => {
       console.error("연결 에러:", err);
+      setIsConnected(false);
     });
   }
 
