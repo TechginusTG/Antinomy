@@ -47,10 +47,18 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
         }
     };
 
-    const handleReset = () => {
+    const handleResetChat = () => {
         setMessages([]);
         localStorage.removeItem("chatLog");
+    };
+
+    const handleResetDiagram = () => {
         resetFlow();
+    };
+
+    const handleReset = () => {
+        handleResetChat();
+        handleResetDiagram();
     };
 
     return (
