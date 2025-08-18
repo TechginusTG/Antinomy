@@ -49,6 +49,10 @@ const MainApp = () => {
   const [isDiagramMaking, setIsDiagramMaking] = useState(false);
   const [quests, setQuests] = useState([]);
 
+  const handleResetQuests = () => {
+    setQuests([]);
+  };
+
   useEffect(() => {
     const initialChat = loadFlow();
     if (initialChat) {
@@ -153,6 +157,10 @@ const MainApp = () => {
   }, [reactFlowInstance, contextMenu, addNode]);
 
   const handleGenerateDiagram = () => {
+    if (chatLog.length === 0) {
+      alert("아직 아무런 대화도 하지 않았어요. 다이어그램을 생성하려면 먼저 AI와 대화를 시작하세요.");
+      return;
+    }
     setDiagramMessage("다이어그램 생성 중...");
     setIsDiagramMaking(true);
     const payload = {
@@ -183,6 +191,7 @@ const MainApp = () => {
           setMessages={setChatLog}
           onGenerateDiagram={handleGenerateDiagram}
           isDiagramMaking={isDiagramMaking}
+          onResetQuests={handleResetQuests}
         />
         <Layout className={styles["content-layout"]}>
           <Content className={styles["main-content"]}>
@@ -358,7 +367,7 @@ const MainApp = () => {
                     ))}
                   </ul>
                 ) : (
-                  <p>퀘스트 내용</p>
+                  <p>아직 퀘스트가 생성되지 않았습니다. </p>
                 )}
               </div>
             </Modal>

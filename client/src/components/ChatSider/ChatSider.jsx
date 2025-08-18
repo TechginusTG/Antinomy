@@ -9,7 +9,7 @@ import useFlowStore from "../../utils/flowStore";
 
 const { Sider } = Layout;
 
-const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiagram, isDiagramMaking }) => {
+const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiagram, isDiagramMaking, onResetQuests }) => {
     const [inputValue, setInputValue] = useState("");
     const [isTyping, setIsTyping] = useState(false);
     const { updateUrlHash, resetFlow } = useFlowStore();
@@ -54,6 +54,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
         setMessages([]);
         localStorage.removeItem("chatLog");
         resetFlow();
+        onResetQuests();
     };
 
     return (
