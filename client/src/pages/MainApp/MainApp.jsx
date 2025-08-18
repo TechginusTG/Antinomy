@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect, useRef } from "react";
-import { Layout, Button, Modal } from "antd";
+import { Layout, Button, Modal, Checkbox } from "antd";
 import { SaveOutlined, FolderOpenOutlined, SettingFilled, BulbOutlined, PlusOutlined } from "@ant-design/icons";
 import ChatSider from "../../components/ChatSider/ChatSider";
 import Header from "../../components/HeaderBar/HeaderBar";
@@ -48,9 +48,19 @@ const MainApp = () => {
   const [diagramMessage, setDiagramMessage] = useState(null);
   const [isDiagramMaking, setIsDiagramMaking] = useState(false);
   const [quests, setQuests] = useState([]);
+  const [completedQuests, setCompletedQuests] = useState([]);
 
   const handleResetQuests = () => {
     setQuests([]);
+    setCompletedQuests([]);
+  }
+  
+  const handleQuestChange = (index, checked) => {
+    if (checked) {
+      setCompletedQuests([...completedQuests, index]);
+    } else {
+      setCompletedQuests(completedQuests.filter((i) => i !== index));
+    }
   };
 
   useEffect(() => {
@@ -363,7 +373,13 @@ const MainApp = () => {
                 {quests.length > 0 ? (
                   <ul>
                     {quests.map((quest, index) => (
-                      <li key={index}>{quest}</li>
+                      <li key={index}>
+                        <Checkbox
+                          checked={completedQuests.includes(index)}
+                          onChange={(e) => handleQuestChange(index, e.target.checked)}
+                        />
+                        <span style={{ marginLeft: 8 }}>{quest}</span>
+                      </li>
                     ))}
                   </ul>
                 ) : (
