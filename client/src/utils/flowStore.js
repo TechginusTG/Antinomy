@@ -37,6 +37,22 @@ const useFlowStore = create((set, get) => {
     edges,
     history: [{ nodes, edges }],
     historyIndex: 0,
+    theme: localStorage.getItem("theme") || "light",
+    chatWidth: parseInt(localStorage.getItem("chatWidth"), 10) || 30,
+    isSettingsOpen: false,
+    isQuestOpen: false,
+
+    setTheme: (theme) => {
+      set({ theme });
+      localStorage.setItem("theme", theme);
+      document.body.setAttribute("data-theme", theme);
+    },
+    setChatWidth: (width) => {
+      set({ chatWidth: width });
+      localStorage.setItem("chatWidth", width);
+    },
+    setIsSettingsOpen: (isOpen) => set({ isSettingsOpen: isOpen }),
+    setIsQuestOpen: (isOpen) => set({ isQuestOpen: isOpen }),
 
     _updateHistory: (newState) => {
       const { history, historyIndex, autoSaveToHash } = get();

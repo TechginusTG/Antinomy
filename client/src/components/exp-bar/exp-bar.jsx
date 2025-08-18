@@ -39,4 +39,4 @@ const ExpBar = () => {
     );
 };
 
-export default ExpBar;
+export default React.memo(ExpBar);

@@ -1,4 +1,5 @@
-import { Layout, Button } from "antd";
+import React from 'react';
+import { Layout } from "antd";
 
 import styles from "./HeaderBar.module.css";
 
@@ -10,4 +11,4 @@ const HeaderBar = ({ className }) => {
     );
 };
 
-export default HeaderBar;
+export default React.memo(HeaderBar);

@@ -11,6 +11,9 @@ import ContextMenu from '../../components/ContextMenu/ContextMenu';
 import DiagramMessage from '../../components/DiagramMessage/DiagramMessage';
 import chatService from "../../utils/chatService";
 
+import SettingsModal from '../../components/SettingsModal/SettingsModal';
+import QuestModal from '../../components/QuestModal/QuestModal';
+
 import { Slider } from "antd";
 
 import "reactflow/dist/style.css";
@@ -21,10 +24,6 @@ const { Content } = Layout;
 const nodeTypes = { custom: CustomNode };
 
 const MainApp = () => {
-  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "light");
-  const [chatWidth, setChatWidth] = useState(
-    () => parseInt(localStorage.getItem("chatWidth"), 10) || 30
-  );
   const {
     nodes,
     edges,
@@ -37,7 +36,14 @@ const MainApp = () => {
     loadFlow,
     setFlow,
     addNode,
-    updateNodeLabel,
+    theme,
+    setTheme,
+    chatWidth,
+    setChatWidth,
+    isSettingsOpen,
+    setIsSettingsOpen,
+    isQuestOpen,
+    setIsQuestOpen,
   } = useFlowStore();
 
   const reactFlowWrapper = useRef(null);
@@ -68,6 +74,8 @@ const MainApp = () => {
     if (initialChat) {
       setChatLog(initialChat);
     }
+    // Set initial theme
+    document.body.setAttribute("data-theme", theme);
   }, []);
 
   useEffect(() => {
@@ -87,26 +95,7 @@ const MainApp = () => {
     };
   }, [undo, redo]);
 
-  useEffect(() => {
-    localStorage.setItem("theme", theme);
-    document.body.setAttribute("data-theme", theme);
-  }, [theme]);
-
-  useEffect(() => {
-    localStorage.setItem("chatWidth", chatWidth);
-  }, [chatWidth]);
-
-  const themeChange = (e) => {
-    setTheme(e.target.value);
-  };
-
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [isQuestOpen, setIsQuestOpen] = useState(false);
-
-  const openSettings = () => setIsSettingsOpen(true);
-  const closeSettings = () => setIsSettingsOpen(false);
-  const openQuest = () => setIsQuestOpen(true);
-  const closeQuest = () => setIsQuestOpen(false);
+  
 
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
@@ -272,121 +261,23 @@ const MainApp = () => {
               <Button
                 type="default"
                 icon={<SettingFilled />}
-                onClick={openSettings}
+                onClick={() => setIsSettingsOpen(true)}
               />
             </div>
             <div className={styles["quest-button"]}>
               <Button
                 type="default"
                 icon={<BulbOutlined />}
-                onClick={openQuest}
+                onClick={() => setIsQuestOpen(true)}
               />
             </div>
             <ExpBar />
-            <Modal
-              title="Settings"
-              open={isSettingsOpen}
-              onCancel={closeSettings}
-              onOk={closeSettings}
-            >
-              <div>
-                <p>Choose your Theme:</p>
-                <div>
-                  <label>
-                    <input
-                      type="radio"
-                      value="light"
-                      checked={theme === "light"}
-                      onChange={themeChange}
-                    />
-                    Light
-                  </label>
-                  <label style={{ marginLeft: 16 }}>
-                    <input
-                      type="radio"
-                      value="dark"
-                      checked={theme === "dark"}
-                      onChange={themeChange}
-                    />
-                    Dark
-                  </label>
-                </div>
-                <div>
-                  <label>
-                    <input
-                      type="radio"
-                      value="haru"
-                      checked={theme === "haru"}
-                      onChange={themeChange}
-                    />
-                    Spring
-                  </label>
-                  <label style={{ marginLeft: 7 }}>
-                    <input
-                      type="radio"
-                      value="natsu"
-                      checked={theme === "natsu"}
-                      onChange={themeChange}
-                    />
-                    Summer
-                  </label>
-                  <label style={{ marginLeft: 7 }}>
-                    <input
-                      type="radio"
-                      value="aki"
-                      checked={theme === "aki"}
-                      onChange={themeChange}
-                    />
-                    Autumn
-                  </label>
-                  <label style={{ marginLeft: 7 }}>
-                    <input
-                      type="radio"
-                      value="fuyu"
-                      checked={theme === "fuyu"}
-                      onChange={themeChange}
-                    />
-                    Winter
-                  </label>
-                </div>
-                <div style={{ marginTop: 24 }}>
-                  <p>
-                    채팅창 너비: <b>{chatWidth}%</b>
-                  </p>
-                  <Slider
-                    min={20}
-                    max={50}
-                    value={chatWidth}
-                    onChange={setChatWidth}
-                    style={{ width: 200 }}
-                  />
-                </div>
-              </div>
-            </Modal>
-            <Modal
-              title="Quest"
-              open={isQuestOpen}
-              onCancel={closeQuest}
-              onOk={closeQuest}
-            >
-              <div>
-                {quests.length > 0 ? (
-                  <ul>
-                    {quests.map((quest, index) => (
-                      <li key={index}>
-                        <Checkbox
-                          checked={completedQuests.includes(index)}
-                          onChange={(e) => handleQuestChange(index, e.target.checked)}
-                        />
-                        <span style={{ marginLeft: 8 }}>{quest}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>아직 퀘스트가 생성되지 않았습니다. </p>
-                )}
-              </div>
-            </Modal>
+            <SettingsModal />
+            <QuestModal 
+              quests={quests}
+              completedQuests={completedQuests}
+              handleQuestChange={handleQuestChange}
+            />
           </Content>
         </Layout>
       </Layout>
