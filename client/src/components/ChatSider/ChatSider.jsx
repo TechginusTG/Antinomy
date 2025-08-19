@@ -1,5 +1,5 @@
-import { Layout, Button, Input } from "antd";
-import { SendOutlined } from "@ant-design/icons";
+import { Layout, Button, Input, Modal, Checkbox } from "antd"; 
+import { SendOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import React, { useState, useEffect } from "react";
 
 import Bubble from "../ChatBubble/Bubble";
@@ -12,7 +12,10 @@ const { Sider } = Layout;
 const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiagram, isDiagramMaking, onResetQuests }) => {
     const [inputValue, setInputValue] = useState("");
     const [isTyping, setIsTyping] = useState(false);
-    const { updateUrlHash, resetFlow } = useFlowStore();
+    const { resetFlow } = useFlowStore();
+
+    const [diagramResetModal, setDiagramResetModal] = useState({ visible: false, dontShowAgain: false });
+    const [allResetModal, setAllResetModal] = useState({ visible: false, dontShowAgain: false });
 
     useEffect(() => {
         const handleNewMessage = (message) => {
@@ -38,24 +41,68 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
         if (inputValue.trim()) {
             const userMessage = { text: inputValue, sender: "user" };
             setMessages((prevMessages) => [...prevMessages, userMessage]);
-
             chatService.sendMessage(inputValue);
-
             setInputValue("");
             setIsTyping(true);
         }
     };
 
-    const handleResetDiagram = () => {
-        resetFlow();
+    const runDiagramReset = () => resetFlow();
+
+    const handleDiagramResetClick = () => {
+        if (sessionStorage.getItem('suppressDiagramResetConfirm') === 'true') {
+            runDiagramReset();
+        } else {
+            setDiagramResetModal({ visible: true, dontShowAgain: false });
+        }
     };
 
-    const handleResetAll = () => {
+    const handleDiagramResetOk = () => {
+        if (diagramResetModal.dontShowAgain) {
+            sessionStorage.setItem('suppressDiagramResetConfirm', 'true');
+        }
+        runDiagramReset();
+        setDiagramResetModal({ visible: false, dontShowAgain: false });
+    };
+
+    const handleDiagramResetCancel = () => {
+        setDiagramResetModal({ visible: false, dontShowAgain: false });
+    };
+
+    const runAllReset = () => {
         setMessages([]);
-        localStorage.removeItem("chatLog");
+        sessionStorage.removeItem("chatLog");
         resetFlow();
         onResetQuests();
     };
+
+    const handleAllResetClick = () => {
+        if (sessionStorage.getItem('suppressAllResetConfirm') === 'true') {
+            runAllReset();
+        } else {
+            setAllResetModal({ visible: true, dontShowAgain: false });
+        }
+    };
+
+    const handleAllResetOk = () => {
+        if (allResetModal.dontShowAgain) {
+            sessionStorage.setItem('suppressAllResetConfirm', 'true');
+        }
+        runAllReset();
+        setAllResetModal({ visible: false, dontShowAgain: false });
+    };
+
+    const handleAllResetCancel = () => {
+        setAllResetModal({ visible: false, dontShowAgain: false });
+    };
+
+    const modalTitle = (text) => (
+        <div style={{ display: 'flex', alignItems: 'center'}}>
+            <ExclamationCircleFilled style={{ color: '#faad14', marginRight: '8px', fontSize: '22px'}} />
+            <span>{text}</span>
+        </div>
+    );
+
 
     return (
         <Sider width={`${chatWidth}%`} theme="light" className={className}>
@@ -64,8 +111,8 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
                     <div className={styles.resetContainer}>
                         <span className={styles.resetText}>Reset</span>
                         <div className={styles.hiddenButtons}>
-                            <Button onClick={handleResetDiagram}>Diagram</Button>
-                            <Button onClick={handleResetAll}>All</Button>
+                            <Button onClick={handleDiagramResetClick}>Diagram</Button>
+                            <Button onClick={handleAllResetClick}>All</Button>
                         </div>
                     </div>
                     <Button onClick={onGenerateDiagram} disabled={isDiagramMaking}>
@@ -75,10 +122,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
                 <div className={styles["chat-log"]}>
                     <ul>
                         {messages.map((msg, index) => (
-                            <Bubble
-                                key={index}
-                                className={`${styles.bubble} ${styles[msg.sender]}`}
-                            >
+                            <Bubble key={index} className={`${styles.bubble} ${styles[msg.sender]}`}>
                                 {msg.text}
                             </Bubble>
                         ))}
@@ -102,13 +146,45 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
                             }
                         }}
                     />
-                    <Button
-                        icon={<SendOutlined />}
-                        type="primary"
-                        onClick={sendMessage}
-                    />
+                    <Button icon={<SendOutlined />} type="primary" onClick={sendMessage} />
                 </div>
             </div>
+
+            <Modal
+                title={modalTitle("다이어그램을 리셋하시겠습니까?")}
+                open={diagramResetModal.visible}
+                onOk={handleDiagramResetOk}
+                onCancel={handleDiagramResetCancel}
+                okText="리셋"
+                cancelText="취소"
+                okType="danger"
+            >
+                <p>현재 다이어그램의 모든 노드와 연결이 삭제됩니다. 이 작업은 되돌릴 수 없습니다. 우측 하단의 Save를 통해 저장할 수 있습니다. </p>
+                <Checkbox 
+                    checked={diagramResetModal.dontShowAgain}
+                    onChange={(e) => setDiagramResetModal({ ...diagramResetModal, dontShowAgain: e.target.checked })}
+                >
+                    다시 표시하지 않음
+                </Checkbox>
+            </Modal>
+
+            <Modal
+                title={modalTitle("모든 내용을 리셋하시겠습니까?")}
+                open={allResetModal.visible}
+                onOk={handleAllResetOk}
+                onCancel={handleAllResetCancel}
+                okText="모두 리셋"
+                cancelText="취소"
+                okType="danger"
+            >
+                <p>채팅 기록, 다이어그램, 퀘스트 등 모든 데이터가 삭제됩니다. 이 작업은 되돌릴 수 없습니다. 우측 하단의 Save를 통해 저장할 수 있습니다. </p>
+                <Checkbox 
+                    checked={allResetModal.dontShowAgain}
+                    onChange={(e) => setAllResetModal({ ...allResetModal, dontShowAgain: e.target.checked })}
+                >
+                    다시 표시하지 않음
+                </Checkbox>
+            </Modal>
         </Sider>
     );
 };
