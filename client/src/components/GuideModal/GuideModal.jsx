@@ -15,7 +15,7 @@ const guidePages = [
   {
     title: '1. Antinomy와 대화하기',
     content: '왼쪽 채팅창에서 AI와 자유롭게 대화하세요. Antinomy는 당신의 문제 해결 도우미입니다. ',
-    image: img1,
+    image: null,
   },
   {
     title: '2. 다이어그램 생성',
