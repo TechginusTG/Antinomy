@@ -24,7 +24,9 @@ const SettingsModal = () => {
       onOk={() => setIsSettingsOpen(false)}
     >
       <div>
-        <p>Choose your Theme:</p>
+        <p>
+          테마 선택: <b style={{ textTransform: 'uppercase' }}>{theme}</b>
+        </p>
         <div>
           <label>
             <input
