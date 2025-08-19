@@ -5,6 +5,7 @@ import {
   FolderOpenOutlined,
   SettingFilled,
   BulbOutlined,
+  QuestionCircleOutlined,
   PlusOutlined,
 } from "@ant-design/icons";
 import ChatSider from "../../components/ChatSider/ChatSider";
@@ -19,6 +20,7 @@ import chatService from "../../utils/chatService";
 
 import SettingsModal from "../../components/SettingsModal/SettingsModal";
 import QuestModal from "../../components/QuestModal/QuestModal";
+import GuideModal from "../../components/GuideModal/GuideModal";
 
 import "reactflow/dist/style.css";
 import styles from "./MainApp.module.css";
@@ -60,6 +62,7 @@ const MainApp = () => {
   const [quests, setQuests] = useState([]);
 
   const [isSiderVisible, setIsSiderVisible] = useState(false);
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   const toggleSider = () => {
     setIsSiderVisible(!isSiderVisible);
@@ -87,6 +90,10 @@ const MainApp = () => {
     // Set initial theme
     document.body.setAttribute("data-theme", theme);
   }, []);
+
+  const handleCloseGuide = () => {
+    setIsGuideOpen(false);
+  };
 
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -255,11 +262,11 @@ const MainApp = () => {
                     return;
                   }
 
-                  const filenameBase =
+                  const filenameBase = 
                     userInput.trim() === "" ? defaultName : userInput.trim();
 
                   const sanitizedFilenameBase = filenameBase
-                    .replace(/[\\/:*?"<>|]/g, "_")
+                    .replace(/[\\/:*?'"<>|]/g, "_")
                     .replace(/\.json$/i, "");
 
                   const diagramFilename = `${sanitizedFilenameBase}.json`;
@@ -285,6 +292,13 @@ const MainApp = () => {
                 onClick={() => setIsQuestOpen(true)}
               />
             </div>
+            <div className={styles["guide-button"]}>
+              <Button
+                type="default"
+                icon={<QuestionCircleOutlined />}
+                onClick={() => setIsGuideOpen(true)}
+              />
+            </div>
             <ExpBar />
 
             <SettingsModal />
@@ -304,6 +318,7 @@ const MainApp = () => {
           onClose={() => setContextMenu(null)}
         />
       )}
+      <GuideModal isOpen={isGuideOpen} onClose={handleCloseGuide} />
     </Layout>
   );
 };

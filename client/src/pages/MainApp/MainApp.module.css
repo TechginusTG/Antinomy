@@ -92,6 +92,18 @@ body {
     font-size: 1.75rem;
 }
 
+.guide-button :global(.ant-btn) {
+    position: absolute;
+    top: 8.125rem; 
+    right: 0.9375rem;
+    width: 3.125rem;
+    height: 3.125rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+}
+
 /* ===== theme apply ===== */
 .header,
 .ant-layout-header {
