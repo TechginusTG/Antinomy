@@ -15,7 +15,7 @@
   background: white;
   padding: 2rem;
   border-radius: 8px;
-  max-width: 500px;
+  max-width: 500px; 
   width: 90%;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   color: #333;
@@ -29,7 +29,15 @@
 
 .modal p {
     flex-grow: 1;
-    min-height: 100px; 
+    min-height: 50px; 
+}
+
+.guideImage {
+    width: 10%;
+    max-height: 250px; 
+    object-fit: cover; 
+    border-radius: 8px;
+    margin: 0.5rem 0 1rem 0; 
 }
 
 .footer {
