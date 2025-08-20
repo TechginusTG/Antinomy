@@ -21,7 +21,13 @@ const QuestModal = ({ quests, completedQuests, handleQuestChange }) => {
                   checked={completedQuests.includes(index)}
                   onChange={(e) => handleQuestChange(index, e.target.checked)}
                 />
-                <span style={{ marginLeft: 8 }}>{quest}</span>
+                <span style={{
+                  marginLeft: 8,
+                  textDecoration: completedQuests.includes(index) ? 'line-through' : 'none',
+                  color: completedQuests.includes(index) ? '#888' : 'inherit'
+                }}>
+                  {quest}
+                </span>
               </li>
             ))}
           </ul>
