@@ -12,7 +12,7 @@ const { Sider } = Layout;
 const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiagram, isDiagramMaking, onResetQuests }) => {
     const [inputValue, setInputValue] = useState("");
     const [isTyping, setIsTyping] = useState(false);
-    const { resetFlow } = useFlowStore();
+    const { resetFlow, increaseExp } = useFlowStore();
     const chatLogRef = useRef(null); 
 
     const [diagramResetModal, setDiagramResetModal] = useState({ visible: false, dontShowAgain: false });
@@ -51,6 +51,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
             chatService.sendMessage(inputValue);
             setInputValue("");
             setIsTyping(true);
+            increaseExp(5); 
         }
     };
 

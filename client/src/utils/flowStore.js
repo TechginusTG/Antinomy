@@ -43,6 +43,24 @@ const useFlowStore = create((set, get) => {
     isQuestOpen: false,
     isConnected: false,
 
+    currentExp: 0,
+    maxExp: 100, 
+    level: 1,
+
+    increaseExp: (amount) => set((state) => {
+      const newExp = state.currentExp + amount;
+      if (newExp >= state.maxExp) {
+        return {
+          currentExp: newExp - state.maxExp,
+          level: state.level + 1,
+          maxExp: state.maxExp + 50, 
+        };
+      }
+      return { currentExp: newExp };
+    }),
+    decreaseExp: (amount) => set((state) => ({ currentExp: Math.max(0, state.currentExp - amount) })),
+    setLevel: (newLevel) => set({ level: newLevel }),
+
     setIsConnected: (isConnected) => set({ isConnected }),
     setTheme: (theme) => {
       set({ theme });
