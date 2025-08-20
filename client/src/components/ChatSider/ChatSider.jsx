@@ -1,6 +1,6 @@
-import { Layout, Button, Input, Modal, Checkbox } from "antd"; 
+import { Layout, Button, Input, Modal, Checkbox } from "antd";
 import { SendOutlined, ExclamationCircleFilled } from "@ant-design/icons";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react"; 
 
 import Bubble from "../ChatBubble/Bubble";
 import styles from "./ChatSider.module.css";
@@ -13,6 +13,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
     const [inputValue, setInputValue] = useState("");
     const [isTyping, setIsTyping] = useState(false);
     const { resetFlow } = useFlowStore();
+    const chatLogRef = useRef(null); 
 
     const [diagramResetModal, setDiagramResetModal] = useState({ visible: false, dontShowAgain: false });
     const [allResetModal, setAllResetModal] = useState({ visible: false, dontShowAgain: false });
@@ -32,6 +33,12 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
             chatService.disconnect();
         };
     }, [setMessages]);
+
+    useEffect(() => {
+        if (chatLogRef.current) {
+            chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
+        }
+    }, [messages]);
 
     useEffect(() => {
         localStorage.setItem("chatLog", JSON.stringify(messages));
@@ -71,7 +78,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
 
     const runAllReset = () => {
         setMessages([]);
-        sessionStorage.removeItem("chatLog");
+        localStorage.removeItem("chatLog");
         resetFlow();
         onResetQuests();
     };
@@ -119,7 +126,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
                         {isDiagramMaking ? "Making..." : "Make Diagram"}
                     </Button>
                 </div>
-                <div className={styles["chat-log"]}>
+                <div className={styles["chat-log"]} ref={chatLogRef}>
                     <ul>
                         {messages.map((msg, index) => (
                             <Bubble key={index} className={`${styles.bubble} ${styles[msg.sender]}`}>
@@ -159,7 +166,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
                 cancelText="취소"
                 okType="danger"
             >
-                <p>현재 다이어그램의 모든 노드와 연결이 삭제됩니다. 이 작업은 되돌릴 수 없습니다. 우측 하단의 Save를 통해 저장할 수 있습니다. </p>
+                <p>현재 다이어그램의 모든 노드와 연결이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.</p>
                 <Checkbox 
                     checked={diagramResetModal.dontShowAgain}
                     onChange={(e) => setDiagramResetModal({ ...diagramResetModal, dontShowAgain: e.target.checked })}
@@ -177,7 +184,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
                 cancelText="취소"
                 okType="danger"
             >
-                <p>채팅 기록, 다이어그램, 퀘스트 등 모든 데이터가 삭제됩니다. 이 작업은 되돌릴 수 없습니다. 우측 하단의 Save를 통해 저장할 수 있습니다. </p>
+                <p>채팅 기록, 다이어그램, 퀘스트 등 모든 데이터가 삭제됩니다. 이 작업은 되돌릴 수 없습니다.</p>
                 <Checkbox 
                     checked={allResetModal.dontShowAgain}
                     onChange={(e) => setAllResetModal({ ...allResetModal, dontShowAgain: e.target.checked })}
