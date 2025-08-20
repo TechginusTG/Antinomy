@@ -262,14 +262,14 @@ const MainApp = () => {
                     return;
                   }
 
-                  const filenameBase = 
+                  const filenameBase =
                     userInput.trim() === "" ? defaultName : userInput.trim();
 
                   const sanitizedFilenameBase = filenameBase
                     .replace(/[\\/:*?'"<>|]/g, "_")
                     .replace(/\.json$/i, "");
 
-                  const diagramFilename = `${sanitizedFilenameBase}.json`;
+                  const diagramFilename = `${sanitizedFilenameBase}.antinomy.json`;
 
                   save(diagramFilename);
                 }}
