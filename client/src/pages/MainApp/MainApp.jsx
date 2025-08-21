@@ -346,7 +346,7 @@ const MainApp = () => {
       {contextMenu && (
         <ContextMenu
           x={contextMenu.x}
-          y={contextM.y}
+          y={contextMenu.y}
           onAddNode={onAddNode}
           onClose={() => setContextMenu(null)}
         />
