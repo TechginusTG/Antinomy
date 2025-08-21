@@ -18,7 +18,7 @@ const HeaderBar = ({ className, toggleSider }) => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          https://techginus.tistory.com/
+          https://cinqro.tistory.com/
         </a>
       </p>
       <p>
