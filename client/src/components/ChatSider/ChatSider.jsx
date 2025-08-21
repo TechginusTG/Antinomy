@@ -1,6 +1,7 @@
 import { Layout, Button, Input, Modal, Checkbox } from "antd";
 import { SendOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import React, { useState, useEffect, useRef } from "react";
+import ReactMarkdown from "react-markdown";
 
 import Bubble from "../ChatBubble/Bubble";
 import styles from "./ChatSider.module.css";
@@ -196,7 +197,11 @@ const ChatSider = ({
                 onDelete={onDelete}
                 onEdit={() => handleOpenEditModal(msg)}
               >
-                {msg.content}
+                {msg.sender === "ai" ? (
+                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                ) : (
+                  msg.content
+                )}
               </Bubble>
             ))}
             {isTyping && (
