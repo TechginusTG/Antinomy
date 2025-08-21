@@ -231,11 +231,12 @@ const MainApp = () => {
   };
 
   return (
-    <Layout style={{ height: "100vh" }}>
+    <Layout style={{ height: "100dvh" }}>
       <Header className={styles["header"]} toggleSider={toggleSider} />
       <Layout>
         <ChatSider
           className={`${styles["chat-sider"]} ${isSiderVisible ? styles.visible : ""}`}
+          isSiderVisible={isSiderVisible}
           chatWidth={chatWidth}
           messages={chatLog}
           setMessages={setChatLog}

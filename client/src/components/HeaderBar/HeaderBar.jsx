@@ -11,20 +11,20 @@ const HeaderBar = ({ className, toggleSider }) => {
 
   return (
     <Layout.Header className={`${styles.header} ${className}`}>
-      <Button
-        className={styles.menuButton}
-        icon={<MenuOutlined />}
-        onClick={toggleSider}
-      />
-      <div className={styles.titleContainer}>
+      <div className={styles.leftSection}>
+        <Button
+          className={`${styles.menuButton} ${theme === 'dark' ? styles.darkThemeMenuButton : ''}`}
+          icon={<MenuOutlined />}
+          onClick={toggleSider}
+        />
         <img 
           src={logo} 
           alt="Antinomy Logo" 
           className={`${styles.logo} ${theme === 'dark' ? styles.darkThemeLogo : ''}`} 
         />
         <h2 className={styles.title}>ANTINOMY</h2>
-        <ConnectionStatus />
       </div>
+      <ConnectionStatus />
     </Layout.Header>
   );
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Slider } from 'antd';
 import useFlowStore from '../../utils/flowStore';
 
@@ -11,6 +11,17 @@ const SettingsModal = () => {
     isSettingsOpen,
     setIsSettingsOpen,
   } = useFlowStore();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const handleThemeChange = (e) => {
     setTheme(e.target.value);
@@ -85,18 +96,20 @@ const SettingsModal = () => {
             Winter
           </label>
         </div>
-        <div style={{ marginTop: 24 }}>
-          <p>
-            채팅창 너비: <b>{chatWidth}%</b>
-          </p>
-          <Slider
-            min={20}
-            max={50}
-            value={chatWidth}
-            onChange={setChatWidth}
-            style={{ width: 200 }}
-          />
-        </div>
+        {!isMobile && (
+          <div style={{ marginTop: 24 }}>
+            <p>
+              채팅창 너비: <b>{chatWidth}%</b>
+            </p>
+            <Slider
+              min={20}
+              max={50}
+              value={chatWidth}
+              onChange={setChatWidth}
+              style={{ width: 200 }}
+            />
+          </div>
+        )}
       </div>
     </Modal>
   );

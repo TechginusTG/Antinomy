@@ -19,7 +19,7 @@ body {
 
 /* ===== MainApp Component Styles ===== */
 .main-layout {
-    height: 100vh;
+    height: 100dvh;
     overflow: hidden;
     position: relative;
 }
@@ -125,21 +125,24 @@ body {
 
 @media (max-width: 768px) {
   .chat-sider {
-    display: none;
-    position: absolute;
-    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
     height: 100%;
+    width: 100%;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
     z-index: 1001;
     flex-basis: 100%;
     max-width: 100%;
   }
 
   .chat-sider.visible {
-    display: flex;
+    transform: translateX(0);
   }
 
   .tail-buttons :global(.ant-btn) {
-    bottom: 1rem;
+    bottom: 3.5rem;
   }
 
   .settings-button :global(.ant-btn) {
