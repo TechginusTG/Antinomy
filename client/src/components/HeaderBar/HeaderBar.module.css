@@ -10,6 +10,18 @@
   gap: 0.5rem;
 }
 
+.rightSection {
+  display: flex;
+  align-items: center;
+}
+
+.teamInfo {
+  font-style: italic;
+  cursor: pointer;
+  color: var(--text-primary);
+  margin: 0;
+}
+
 .title {
   color: var(--text-primary);
   margin: 0;

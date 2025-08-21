@@ -7,6 +7,16 @@ export default defineConfig({
   root: 'client',
   build: {
     outDir: '../dist',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'antd-vendor': ['antd'],
+          'reactflow-vendor': ['reactflow'],
+          'vendor': ['react-router-dom', 'zustand', 'dagre']
+        }
+      }
+    }
   },
   publicDir: 'assets',
   server: {
