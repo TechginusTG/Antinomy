@@ -114,25 +114,17 @@ export function registerSocketHandlers(io) {
           2
         )}
 
-        Your task is to output a new diagram structure in a single, minified JSON object format.
-
-        **Layout Rules:**
-        - **Hierarchical & Sequential Structure:** Identify main topics and sub-topics from the conversation. Arrange nodes in a top-down hierarchy.
-            - Place broad, high-level topics higher up.
-            - Position related, more specific sub-topics below their parent.
-            - **If sub-topics under the same parent have a clear sequence (like steps in a process or a timeline), arrange them sequentially (e.g., top-to-bottom) to show the order.**
-            - The overall layout should visually represent both inclusion and sequential relationships.
-        - **Avoid Overlap:** When calculating the 'position' for each node, you MUST consider that the node's size depends on the length of its text label. Arrange the nodes so they are spaciously distributed and DO NOT overlap.
-        - **Readability:** Ensure there is sufficient distance between all nodes for a clear and readable layout.
+        Your task is to output a new diagram structure in a single, minified JSON object format. Do not calculate node positions.
 
         **Output Format:**
-        - The JSON object must have two keys: "nodes" and "edges".
-        - "nodes" should be an array of objects, each with "id", "type" (use 'custom'), "position", and "data" ({ "label": "..." }).
+        - The JSON object must have three keys: "nodes", "edges", and "quests".
+        - "nodes" should be an array of objects, each with "id", "type" (use 'custom'), and "data" ({ "label": "..." }). Do NOT include a "position" key.
         - "edges" should be an array of objects, each with "id", "source" (source node id), and "target" (target node id).
-        - **Challenge Generation:** Based on the conversation and the generated diagram, create 2-3 simple and concise challenges or quests for the user. Each quest should be a short sentence in the '-하기' style (e.g., "문제 원인 분석하기"). These challenges should be related to the topics in the diagram and encourage the user to think more deeply about the problem. The challenges should be returned in the JSON object under a new key called "quests". "quests" should be an array of strings.
-        Make sure the node and edge IDs are unique strings.
+        - **Challenge Generation:** Based on the conversation, create 2-3 simple, concise challenges for the user in the '-하기' style (e.g., "문제 원인 분석하기"). These should be returned in the "quests" key as an array of strings.
+        
+        Make sure all IDs are unique strings.
         Do not include any explanations, comments, or any text outside of the single JSON object.
-        Example response: {"nodes":[{"id":"1","type":"custom","position":{"x":100,"y":100},"data":{"label":"Main Idea"}}],"edges":[],"quests":["Challenge 1", "Challenge 2"]}
+        Example response: {"nodes":[{"id":"1","type":"custom","data":{"label":"Main Idea"}}],"edges":[],"quests":["Challenge 1", "Challenge 2"]}
         `;
 
       try {

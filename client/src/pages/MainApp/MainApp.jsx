@@ -17,6 +17,7 @@ import ContextMenu from "../../components/ContextMenu/ContextMenu";
 import DiagramMessage from "../../components/DiagramMessage/DiagramMessage";
 import chatService from "../../utils/chatService";
 
+import { getLayoutedElements } from "../../utils/prettyDia.js";
 import SettingsModal from "../../components/SettingsModal/SettingsModal";
 import QuestModal from "../../components/QuestModal/QuestModal";
 import GuideModal from "../../components/GuideModal/GuideModal";
@@ -191,7 +192,13 @@ const MainApp = () => {
       diagramState: { nodes, edges },
     };
     chatService.makeDiagram(payload, (diagram) => {
-      setFlow(diagram);
+      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+        diagram.nodes,
+        diagram.edges
+      );
+      
+      setFlow({ nodes: layoutedNodes, edges: layoutedEdges });
+
       if (diagram.quests) {
         setQuests(diagram.quests);
       }
