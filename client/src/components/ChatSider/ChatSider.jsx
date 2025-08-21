@@ -55,6 +55,11 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
         }
     };
 
+    const handleEditMessage = (messageId, newText) => {
+        setIsTyping(true);
+        onEdit(messageId, newText);
+    };
+
     const runDiagramReset = () => resetFlow();
 
     const handleDiagramResetClick = () => {
@@ -136,7 +141,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
                                 className={`${styles.bubble} ${styles[msg.sender]}`}
                                 isUser={msg.sender === "user"}
                                 onDelete={onDelete}
-                                onEdit={onEdit}
+                                onEdit={handleEditMessage}
                             >
                                 {msg.content}
                             </Bubble>
