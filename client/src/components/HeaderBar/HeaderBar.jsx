@@ -23,8 +23,8 @@ const HeaderBar = ({ className, toggleSider }) => {
           className={`${styles.logo} ${theme === 'dark' ? styles.darkThemeLogo : ''}`} 
         />
         <h2 className={styles.title}>ANTINOMY</h2>
+        <ConnectionStatus />
       </div>
-      <ConnectionStatus />
     </Layout.Header>
   );
 };
