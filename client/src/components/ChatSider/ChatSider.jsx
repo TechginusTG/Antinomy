@@ -18,6 +18,9 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
     const [diagramResetModal, setDiagramResetModal] = useState({ visible: false, dontShowAgain: false });
     const [allResetModal, setAllResetModal] = useState({ visible: false, dontShowAgain: false });
 
+    const [editingMessage, setEditingMessage] = useState(null);
+    const [editingText, setEditingText] = useState("");
+
     useEffect(() => {
         const handleNewMessage = (message) => {
             setIsTyping(false);
@@ -55,9 +58,22 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
         }
     };
 
-    const handleEditMessage = (messageId, newText) => {
+    const handleOpenEditModal = (message) => {
+        setEditingMessage(message);
+        setEditingText(message.content);
+    };
+
+    const handleModalEditSave = () => {
+        if (!editingMessage) return;
         setIsTyping(true);
-        onEdit(messageId, newText);
+        onEdit(editingMessage.id, editingText);
+        setEditingMessage(null);
+        setEditingText("");
+    };
+
+    const handleModalCancel = () => {
+        setEditingMessage(null);
+        setEditingText("");
     };
 
     const runDiagramReset = () => resetFlow();
@@ -141,7 +157,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
                                 className={`${styles.bubble} ${styles[msg.sender]}`}
                                 isUser={msg.sender === "user"}
                                 onDelete={onDelete}
-                                onEdit={handleEditMessage}
+                                onEdit={() => handleOpenEditModal(msg)}
                             >
                                 {msg.content}
                             </Bubble>
@@ -169,6 +185,27 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
                     <Button icon={<SendOutlined />} type="primary" onClick={sendMessage} />
                 </div>
             </div>
+
+            <Modal
+                title="메시지 수정"
+                open={!!editingMessage}
+                onOk={handleModalEditSave}
+                onCancel={handleModalCancel}
+                okText="수정"
+                cancelText="취소"
+            >
+                <Input.TextArea
+                    value={editingText}
+                    onChange={(e) => setEditingText(e.target.value)}
+                    autoSize={{ minRows: 5, maxRows: 15 }}
+                    onPressEnter={(e) => {
+                        if (!e.shiftKey) {
+                            e.preventDefault();
+                            handleModalEditSave();
+                        }
+                    }}
+                />
+            </Modal>
 
             <Modal
                 title={modalTitle("다이어그램을 리셋하시겠습니까?")}
