@@ -54,6 +54,12 @@ class ChatService {
     }
   }
 
+  loadChatHistory(chatHistory) {
+    if (this.socket) {
+      this.socket.emit("load chat history", chatHistory);
+    }
+  }
+
   makeDiagram(payload, onDiagramCreatedCallback) {
     if (this.socket) {
       this.socket.emit("make diagram", payload);

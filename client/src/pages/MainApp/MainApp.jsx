@@ -87,6 +87,7 @@ const MainApp = () => {
     const initialChat = loadFlow();
     if (initialChat) {
       setChatLog(initialChat);
+      chatService.loadChatHistory(initialChat);
     }
 
     const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
@@ -144,6 +145,7 @@ const MainApp = () => {
           setFlow(data.diagramData);
           setChatLog(data.chatHistory);
           localStorage.setItem("chatLog", JSON.stringify(data.chatHistory));
+          chatService.loadChatHistory(data.chatHistory);
         } else {
           alert("Invalid file format.");
         }
@@ -343,7 +345,7 @@ const MainApp = () => {
       {contextMenu && (
         <ContextMenu
           x={contextMenu.x}
-          y={contextMenu.y}
+          y={contextM.y}
           onAddNode={onAddNode}
           onClose={() => setContextMenu(null)}
         />

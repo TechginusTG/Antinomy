@@ -21,7 +21,12 @@ Conversation Rules:
       - Ask if there is another problem. If yes, start a new cycle.
 3. Always proceed step by step, never skip questions.
 4. Each answer from the AI should include **only one question or prompt** until the user responds.
-5. Detect the language used by the user and respond in the same language.`;
+5. Always respond in polite, formal Korean (존댓말).
+
+**Formatting Rule:**
+- Please format your responses using Markdown.
+- Use line breaks, lists, bolding, and other formatting to improve readability and structure.
+- For example, use bullet points (-) for lists.`;
 
 export function registerSocketHandlers(io) {
   io.on("connection", (socket) => {
@@ -61,13 +66,34 @@ export function registerSocketHandlers(io) {
       }
     });
 
+    socket.on("load chat history", (chatHistory) => {
+      console.log(`'load chat history' request from ${socket.id}`);
+      const special = userSpecial[socket.id] || [];
+      const specialString = Array.isArray(special)
+        ? special.join(", ")
+        : special.toString();
+      
+      const newSession = [
+        {
+          role: "system",
+          content: `${systemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
+        },
+      ];
+
+      chatHistory.forEach((msg) => {
+        newSession.push({ role: msg.sender === 'user' ? 'user' : 'assistant', content: msg.content });
+      });
+
+      sessions[socket.id] = newSession;
+      console.log(`Session for ${socket.id} has been replaced with loaded history.`);
+    });
+
     socket.on("resubmit chat", async (chatHistory) => {
       console.log(`'resubmit chat' request from ${socket.id}`);
       const special = userSpecial[socket.id] || [];
       const specialString = Array.isArray(special)
         ? special.join(", ")
         : special.toString();
-
       const newSession = [
         {
           role: "system",
