@@ -128,7 +128,16 @@ const MainApp = () => {
     reader.onload = (e) => {
       try {
         const content = e.target.result;
-        const data = JSON.parse(content);
+        let data = JSON.parse(content);
+
+        // Check for old format and migrate
+        if (data.chatHistory && data.chatHistory.length > 0 && data.chatHistory[0].text !== undefined) {
+          data.chatHistory = data.chatHistory.map((msg, index) => ({
+            id: msg.id || Date.now() + index, // Use existing id or create new one
+            content: msg.text,
+            sender: msg.sender,
+          }));
+        }
 
         if (data.diagramData && data.chatHistory) {
           setFlow(data.diagramData);
@@ -217,9 +226,7 @@ const MainApp = () => {
       <Header className={styles["header"]} toggleSider={toggleSider} />
       <Layout>
         <ChatSider
-          className={`${styles["chat-sider"]} ${
-            isSiderVisible ? styles.visible : ""
-          }`}
+          className={`${styles["chat-sider"]} ${isSiderVisible ? styles.visible : ""}`}
           chatWidth={chatWidth}
           messages={chatLog}
           setMessages={setChatLog}
@@ -278,7 +285,7 @@ const MainApp = () => {
                     return;
                   }
 
-                  const filenameBase = 
+                  const filenameBase =
                     userInput.trim() === "" ? defaultName : userInput.trim();
 
                   const sanitizedFilenameBase = filenameBase
