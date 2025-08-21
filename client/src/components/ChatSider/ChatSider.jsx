@@ -9,7 +9,7 @@ import useFlowStore from "../../utils/flowStore";
 
 const { Sider } = Layout;
 
-const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiagram, isDiagramMaking, onResetQuests }) => {
+const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiagram, isDiagramMaking, onResetQuests, onDelete, onEdit }) => {
     const [inputValue, setInputValue] = useState("");
     const [isTyping, setIsTyping] = useState(false);
     const { resetFlow, increaseExp } = useFlowStore();
@@ -23,11 +23,11 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
             setIsTyping(false);
             setMessages((prevMessages) => [
                 ...prevMessages,
-                { text: message, sender: "ai" },
+                { id: Date.now(), content: message, sender: "ai" },
             ]);
         };
 
-        chatService.connect(handleNewMessage, () => {});
+        chatService.connect(handleNewMessage);
 
         return () => {
             chatService.disconnect();
@@ -46,7 +46,7 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
 
     const sendMessage = () => {
         if (inputValue.trim()) {
-            const userMessage = { text: inputValue, sender: "user" };
+            const userMessage = { id: Date.now(), content: inputValue, sender: "user" };
             setMessages((prevMessages) => [...prevMessages, userMessage]);
             chatService.sendMessage(inputValue);
             setInputValue("");
@@ -129,9 +129,16 @@ const ChatSider = ({ className, chatWidth, messages, setMessages, onGenerateDiag
                 </div>
                 <div className={styles["chat-log"]} ref={chatLogRef}>
                     <ul>
-                        {messages.map((msg, index) => (
-                            <Bubble key={index} className={`${styles.bubble} ${styles[msg.sender]}`}>
-                                {msg.text}
+                        {messages.map((msg) => (
+                            <Bubble 
+                                key={msg.id} 
+                                id={msg.id} 
+                                className={`${styles.bubble} ${styles[msg.sender]}`}
+                                isUser={msg.sender === "user"}
+                                onDelete={onDelete}
+                                onEdit={onEdit}
+                            >
+                                {msg.content}
                             </Bubble>
                         ))}
                         {isTyping && (

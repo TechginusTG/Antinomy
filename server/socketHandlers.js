@@ -61,6 +61,42 @@ export function registerSocketHandlers(io) {
       }
     });
 
+    socket.on("resubmit chat", async (chatHistory) => {
+      console.log(`'resubmit chat' request from ${socket.id}`);
+      const special = userSpecial[socket.id] || [];
+      const specialString = Array.isArray(special)
+        ? special.join(", ")
+        : special.toString();
+
+      const newSession = [
+        {
+          role: "system",
+          content: `${systemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
+        },
+      ];
+
+      chatHistory.forEach((msg) => {
+        newSession.push({ role: msg.sender === 'user' ? 'user' : 'assistant', content: msg.content });
+      });
+
+      sessions[socket.id] = newSession;
+
+      try {
+        const res = await openai.chat.completions.create({
+          model: "gpt-5",
+          messages: sessions[socket.id],
+        });
+
+        const reply = res.choices[0].message.content;
+        sessions[socket.id].push({ role: "assistant", content: reply });
+        console.log(`GPT 응답 [${socket.id}]:`, reply);
+        socket.emit("chat message", reply);
+      } catch (err) {
+        console.error("GPT 에러:", err);
+        socket.emit("chat message", "GPT 고장 💀");
+      }
+    });
+
     socket.on("make diagram", async (payload) => {
       console.log(`'make diagram' request from ${socket.id}`);
       const { chatLog, diagramState } = payload;

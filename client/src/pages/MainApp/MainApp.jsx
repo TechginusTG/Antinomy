@@ -47,6 +47,8 @@ const MainApp = () => {
     isQuestOpen,
     setIsQuestOpen,
     chatWidth,
+    deleteMessage,
+    editMessage,
   } = useFlowStore();
 
   const [theme, setTheme] = useState(
@@ -212,6 +214,8 @@ const MainApp = () => {
           onGenerateDiagram={handleGenerateDiagram}
           isDiagramMaking={isDiagramMaking}
           onResetQuests={handleResetQuests}
+          onDelete={(messageId) => deleteMessage(messageId, setChatLog)}
+          onEdit={(messageId, newText) => editMessage(messageId, newText, setChatLog)}
         />
         <Layout className={styles["content-layout"]}>
           <Content className={styles["main-content"]}>

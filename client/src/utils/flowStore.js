@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { addEdge, applyNodeChanges, applyEdgeChanges } from "reactflow";
 import pako from "pako";
+import chatService from "./chatService";
 
 const initialNodes = [
   {
@@ -280,6 +281,44 @@ const useFlowStore = create((set, get) => {
         return null;
       }
     },
+
+    deleteMessage: (messageId, setChatLog) => {
+      const chatLogString = localStorage.getItem("chatLog");
+      let chatHistory = chatLogString ? JSON.parse(chatLogString) : [];
+      const messageIndex = chatHistory.findIndex((msg) => msg.id === messageId);
+      
+      if (messageIndex > -1) {
+        chatHistory.splice(messageIndex);
+        localStorage.setItem("chatLog", JSON.stringify(chatHistory));
+        setChatLog(chatHistory);
+        get().autoSaveToHash();
+      }
+    },
+
+    editMessage: (messageId, newText, setChatLog) => {
+      const chatLogString = localStorage.getItem("chatLog");
+      let chatHistory = chatLogString ? JSON.parse(chatLogString) : [];
+      const messageIndex = chatHistory.findIndex((msg) => msg.id === messageId);
+
+      if (messageIndex > -1) {
+        chatHistory[messageIndex].content = newText;
+        chatHistory.splice(messageIndex + 1);
+
+        setChatLog(chatHistory);
+        localStorage.setItem("chatLog", JSON.stringify(chatHistory));
+        get().autoSaveToHash();
+
+        chatService.resubmit(chatHistory, (reply) => {
+          const newChatLog = [
+            ...chatHistory,
+            { id: Date.now(), sender: "ai", content: reply },
+          ];
+          setChatLog(newChatLog);
+          localStorage.setItem("chatLog", JSON.stringify(newChatLog));
+          get().autoSaveToHash();
+        });
+      }
+    }
   };
 });
 

@@ -43,6 +43,17 @@ class ChatService {
     }
   }
 
+  resubmit(chatHistory, onMessageCallback) {
+    if (this.socket) {
+      this.socket.emit("resubmit chat", chatHistory);
+      this.socket.once("chat message", (msg) => {
+        if (onMessageCallback) {
+          onMessageCallback(msg);
+        }
+      });
+    }
+  }
+
   makeDiagram(payload, onDiagramCreatedCallback) {
     if (this.socket) {
       this.socket.emit("make diagram", payload);
