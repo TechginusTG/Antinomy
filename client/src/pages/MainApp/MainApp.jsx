@@ -1,12 +1,11 @@
 import React, { useCallback, useState, useEffect, useRef } from "react";
-import { Layout, Button, Modal, Checkbox, Slider } from "antd";
+import { Layout, Button, Modal } from "antd";
 import {
   SaveOutlined,
   FolderOpenOutlined,
   SettingFilled,
   BulbOutlined,
   QuestionCircleOutlined,
-  PlusOutlined,
 } from "@ant-design/icons";
 import ChatSider from "../../components/ChatSider/ChatSider";
 import Header from "../../components/HeaderBar/HeaderBar";
@@ -42,9 +41,7 @@ const MainApp = () => {
     loadFlow,
     setFlow,
     addNode,
-    isSettingsOpen,
     setIsSettingsOpen,
-    isQuestOpen,
     setIsQuestOpen,
     chatWidth,
     deleteMessage,
@@ -65,6 +62,7 @@ const MainApp = () => {
 
   const [isSiderVisible, setIsSiderVisible] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
+  const [isWelcomeModalVisible, setIsWelcomeModalVisible] = useState(false);
 
   const toggleSider = () => {
     setIsSiderVisible(!isSiderVisible);
@@ -89,7 +87,13 @@ const MainApp = () => {
     if (initialChat) {
       setChatLog(initialChat);
     }
-    // Set initial theme
+
+    const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
+    if (!hasVisitedBefore) {
+      setIsWelcomeModalVisible(true);
+      localStorage.setItem('hasVisitedBefore', 'true');
+    }
+
     document.body.setAttribute("data-theme", theme);
   }, []);
 
@@ -139,7 +143,6 @@ const MainApp = () => {
           "Failed to load file. It might be corrupted or not a valid JSON file."
         );
       } finally {
-        // Reset the file input to allow reloading the same file.
         if (fileInputRef.current) {
           fileInputRef.current.value = null;
         }
@@ -198,6 +201,15 @@ const MainApp = () => {
         setDiagramMessage(null);
       }, 3000);
     });
+  };
+
+  const handleWelcomeOk = () => {
+    setIsWelcomeModalVisible(false);
+    setIsGuideOpen(true);
+  };
+
+  const handleWelcomeCancel = () => {
+    setIsWelcomeModalVisible(false);
   };
 
   return (
@@ -266,7 +278,7 @@ const MainApp = () => {
                     return;
                   }
 
-                  const filenameBase =
+                  const filenameBase = 
                     userInput.trim() === "" ? defaultName : userInput.trim();
 
                   const sanitizedFilenameBase = filenameBase
@@ -323,6 +335,18 @@ const MainApp = () => {
         />
       )}
       <GuideModal isOpen={isGuideOpen} onClose={handleCloseGuide} />
+
+      <Modal
+        title="Antinomy에 오신 것을 환영합니다!"
+        open={isWelcomeModalVisible}
+        onOk={handleWelcomeOk}
+        onCancel={handleWelcomeCancel}
+        okText="가이드 보기"
+        cancelText="닫기"
+      >
+        <p>Antinomy는 문제 해결을 위한 아이디어를 시각적으로 정리하고 발전시키는 데 도움을 주는 AI입니다.</p>
+        <p>사용법이 궁금하신가요? 가이드를 확인해 보세요.</p>
+      </Modal>
     </Layout>
   );
 };
