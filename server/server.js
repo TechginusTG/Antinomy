@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3000;
 const corsOptions = {
   origin:
     process.env.NODE_ENV === "production"
-      ? "YOUR_PRODUCTION_URL"
+      ? "https://tg-antinomy.kro.kr"
       : "http://localhost:5173",
   methods: ["GET", "POST"],
   credentials: true,
