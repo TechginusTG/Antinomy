@@ -311,21 +311,17 @@ const MainApp = () => {
                 Save
               </Button>
             </div>
-            <div className={styles["settings-button"]}>
+            <div className={styles["action-buttons"]}>
               <Button
                 type="default"
                 icon={<SettingFilled />}
                 onClick={() => setIsSettingsOpen(true)}
               />
-            </div>
-            <div className={styles["quest-button"]}>
               <Button
                 type="default"
                 icon={<BulbOutlined />}
                 onClick={() => setIsQuestOpen(true)}
               />
-            </div>
-            <div className={styles["guide-button"]}>
               <Button
                 type="default"
                 icon={<QuestionCircleOutlined />}

@@ -68,34 +68,17 @@ body {
     z-index: 10;
 }
 
-.settings-button :global(.ant-btn) {
+.action-buttons {
     position: absolute;
     top: 0.625rem;
     right: 0.9375rem;
-    width: 3.125rem;
-    height: 3.125rem;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.75rem;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 10;
 }
 
-.quest-button :global(.ant-btn) {
-    position: absolute;
-    top: 4.375rem;
-    right: 0.9375rem;
-    width: 3.125rem;
-    height: 3.125rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.75rem;
-}
-
-.guide-button :global(.ant-btn) {
-    position: absolute;
-    top: 8.125rem; 
-    right: 0.9375rem;
+.action-buttons :global(.ant-btn) {
     width: 3.125rem;
     height: 3.125rem;
     display: flex;
@@ -145,13 +128,15 @@ body {
     bottom: 3.5rem;
   }
 
-  .settings-button :global(.ant-btn) {
+  .action-buttons {
     top: 0.5rem;
     right: 0.5rem;
+    gap: 0.5rem;
   }
 
-  .quest-button :global(.ant-btn) {
-    top: 4rem;
-    right: 0.5rem;
+  .action-buttons :global(.ant-btn) {
+    width: 2rem;
+    height: 2rem;
+    font-size: 1rem;
   }
 }
