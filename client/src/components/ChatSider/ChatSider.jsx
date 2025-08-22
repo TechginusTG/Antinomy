@@ -7,6 +7,7 @@ import Bubble from "../ChatBubble/Bubble";
 import styles from "./ChatSider.module.css";
 import chatService from "../../utils/chatService";
 import useFlowStore from "../../utils/flowStore";
+import ChatInput from "../ChatInput/ChatInput";
 
 const { Sider } = Layout;
 
@@ -22,7 +23,6 @@ const ChatSider = ({
   onEdit,
   isSiderVisible,
 }) => {
-  const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const { resetFlow, increaseExp } = useFlowStore();
   const chatLogRef = useRef(null);
@@ -72,19 +72,16 @@ const ChatSider = ({
     localStorage.setItem("chatLog", JSON.stringify(messages));
   }, [messages]);
 
-  const sendMessage = () => {
-    if (inputValue.trim()) {
-      const userMessage = {
-        id: Date.now(),
-        content: inputValue,
-        sender: "user",
-      };
-      setMessages((prevMessages) => [...prevMessages, userMessage]);
-      chatService.sendMessage(inputValue);
-      setInputValue("");
-      setIsTyping(true);
-      increaseExp(5);
-    }
+  const sendMessage = (message) => {
+    const userMessage = {
+      id: Date.now(),
+      content: message,
+      sender: "user",
+    };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    chatService.sendMessage(message);
+    setIsTyping(true);
+    increaseExp(5);
   };
 
   const handleOpenEditModal = (message) => {
@@ -212,23 +209,7 @@ const ChatSider = ({
           </ul>
         </div>
         <div className={styles["chat-footer"]}>
-          <Input.TextArea
-            autoSize={{ minRows: 1, maxRows: 5 }}
-            placeholder="Type a message..."
-            value={inputValue}
-            onChange={(e) => setInputValue(e.target.value)}
-            onPressEnter={(e) => {
-              if (!e.shiftKey) {
-                e.preventDefault();
-                sendMessage();
-              }
-            }}
-          />
-          <Button
-            icon={<SendOutlined />}
-            type="primary"
-            onClick={sendMessage}
-          />
+          <ChatInput onSendMessage={sendMessage} />
         </div>
       </div>
 

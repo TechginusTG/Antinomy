@@ -1,0 +1,12 @@
+
+.chat-footer {
+  display: flex;
+  padding: 10px;
+  border-top: 1px solid #444;
+  align-items: center;
+}
+
+.chat-footer > :first-child {
+  flex-grow: 1;
+  margin-right: 10px;
+}
