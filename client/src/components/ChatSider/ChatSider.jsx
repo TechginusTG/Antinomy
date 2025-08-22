@@ -127,6 +127,7 @@ const ChatSider = ({
   const runAllReset = () => {
     setMessages([]);
     localStorage.removeItem("chatLog");
+    chatService.resetChat();
     resetFlow();
     onResetQuests();
   };

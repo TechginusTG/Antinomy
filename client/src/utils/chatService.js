@@ -71,6 +71,12 @@ class ChatService {
     }
   }
 
+  resetChat() {
+    if (this.socket) {
+      this.socket.emit("reset chat");
+    }
+  }
+
   disconnect() {
     if (this.socket) {
       this.socket.disconnect();

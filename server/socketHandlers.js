@@ -182,6 +182,12 @@ export function registerSocketHandlers(io) {
       }
     });
 
+    socket.on("reset chat", () => {
+      console.log(`'reset chat' request from ${socket.id}`);
+      delete sessions[socket.id];
+      console.log(`Session for ${socket.id} has been reset.`);
+    });
+
     socket.on("disconnect", () => {
       console.log(`클라이언트 연결 해제: ${socket.id}`);
       delete sessions[socket.id];
