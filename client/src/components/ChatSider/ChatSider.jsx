@@ -161,7 +161,8 @@ const ChatSider = ({
     </div>
   );
 
-  const mobileClassName = isMobile && isSiderVisible ? styles.mobileVisible : "";
+  const mobileClassName =
+    isMobile && isSiderVisible ? styles.mobileVisible : "";
 
   return (
     <Sider
@@ -186,6 +187,9 @@ const ChatSider = ({
         </div>
         <div className={styles["chat-log"]} ref={chatLogRef}>
           <ul>
+            <li style={{ listStyle: "none" }}>
+              <i>해결하고픈 문제나, 고민, 하고싶은 일을 적어보세요</i>
+            </li>
             {messages.map((msg) => (
               <Bubble
                 key={msg.id}
