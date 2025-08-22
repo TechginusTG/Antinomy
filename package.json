@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm:dev:server\" \"npm:dev:client\"",
+    "dev": "npm install && concurrently \"npm:dev:server\" \"npm:dev:client\"",
     "dev:server": "nodemon server/server.js",
     "dev:client": "vite",
     "build": "vite build",
