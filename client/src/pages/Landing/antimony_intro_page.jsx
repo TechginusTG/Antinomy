@@ -33,7 +33,7 @@ export default function LandingPage() {
         <img
           src={logoUrl}
           alt="ANTINOMY Logo"
-          style={{ width: "120px", height: "120px", borderRadius: "50%", boxShadow: "0 4px 24px rgba(0,0,0,0.15)" }}
+          style={{ width: "140px", height: "140px", borderRadius: "20%", boxShadow: "0 4px 24px rgba(0,0,0,0.15)" }}
         />
       </motion.div>
 
@@ -52,7 +52,7 @@ export default function LandingPage() {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 1, duration: 1 }}
-        style={{ marginTop: "0.5rem", fontSize: "1.15rem", color: "#4b5563", maxWidth: "340px", textAlign: "center", marginBottom: "1.5rem" }}
+        style={{ marginTop: "0.5rem", fontSize: "1.15rem", color: "#4b5563", maxWidth: "420px", textAlign: "center", marginBottom: "1.5rem" }}
       >
         서로 다른 아이디어와 논리가 충돌하고 교차하는 공간.<br />
         다이어그램을 통해 복잡한 사고를 시각화하세요.
