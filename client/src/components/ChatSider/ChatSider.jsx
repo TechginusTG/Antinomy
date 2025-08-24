@@ -3,6 +3,7 @@ import { SendOutlined, ExclamationCircleFilled } from "@ant-design/icons";
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 
+import { motion } from "framer-motion";
 import Bubble from "../ChatBubble/Bubble";
 import styles from "./ChatSider.module.css";
 import chatService from "../../utils/chatService";
@@ -209,9 +210,15 @@ const ChatSider = ({
               </Bubble>
             ))}
             {isTyping && (
-              <Bubble className={`${styles.bubble} ${styles.ai}`}>
-                AI가 생각중이에요...
-              </Bubble>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
+              >
+                <Bubble className={`${styles.bubble} ${styles.ai}`}>
+                  AI가 생각중이에요...
+                </Bubble>
+              </motion.div>
             )}
           </ul>
         </div>
