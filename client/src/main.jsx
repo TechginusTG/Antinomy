@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import LandingPage from './pages/Landing/Landing.jsx';
+import LandingPage from './pages/Landing/antimony_intro_page.jsx';
 import MainApp from './pages/MainApp/MainApp.jsx';
 import './index.css'
 

@@ -1,16 +1,19 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import LoadingPage from "./antimony_intro_page"; // 인트로 컴포넌트 import
 import { motion } from "framer-motion";
-import Image from "next/image";
+import img from "../../assets/img/logo.png"; 
 
-export default function LoadingPage() {
+export default function LandingPage() {
   const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
+    // 기존 랜딩페이지 useEffect 유지
+    // 인트로 타이머 추가
     const timer = setTimeout(() => setShowIntro(false), 3000);
     return () => clearTimeout(timer);
   }, []);
 
-  if (!showIntro) return null;
+  if (showIntro) return <LoadingPage />; // 3초간 인트로 화면
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white text-black">
@@ -21,8 +24,8 @@ export default function LoadingPage() {
         transition={{ duration: 1 }}
         className="mb-6"
       >
-        <Image
-          src="/logo.png" // 로고 파일을 public 폴더에 넣고 이름 맞춰주세요
+        <img
+          src={img} // 로고 파일을 public 폴더에 넣고 이름 맞춰주세요
           alt="ANTINOMY Logo"
           width={150}
           height={150}
