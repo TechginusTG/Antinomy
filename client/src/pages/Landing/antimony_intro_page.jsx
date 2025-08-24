@@ -8,8 +8,7 @@ export default function LandingPage() {
   const navigate = useNavigate();
 
   const handleStartClick = () => {
-    // You might want to change this route to where your main app is.
-    navigate("/main");
+    navigate("/app");
   };
 
   return (
