@@ -4,6 +4,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .chat-header {
@@ -27,6 +28,7 @@
     overflow-y: auto; /* Enable vertical scroll on overflow */
     padding: 1rem; /* 16px */
     background: var(--background-primary);
+    position: relative;
 }
 
 .chat-log ul {
@@ -102,115 +104,6 @@
     opacity: 0;
     visibility: hidden;
 }
-
-
-
-/* ===== ChatSider Component Styles ===== */
-
-.chat {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.chat-header {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0.75rem 0.25rem; /* 12px 16px */
-    border-bottom: 0.125rem solid var(--border-color);
-    flex-shrink: 0; /* Prevent header from shrinking */
-    background: var(--background-primary);
-}
-
-.chat-header :global(.ant-btn) {
-    background: var(--background-tertiary);
-    color: var(--text-primary);
-    border: 0.125rem solid var(--border-color);
-}
-
-.chat-log {
-    flex-grow: 1; /* Grow to fill available space */
-    overflow-y: auto; /* Enable vertical scroll on overflow */
-    padding: 1rem; /* 16px */
-    background: var(--background-primary);
-}
-
-.chat-log ul {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding: 0;
-}
-
-.chat-footer {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem 1rem; /* 12px 16px */
-    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0));
-    border-top: 0.125rem solid var(--border-color);
-    flex-shrink: 0; /* Prevent footer from shrinking */
-    gap: 0.5rem; /* Use gap for spacing between children */
-    background: var(--background-secondary);
-}
-
-/* Bubble Component Styles */
-.bubble {
-    list-style: none;
-    padding: 1rem;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    border-radius: 3.125rem;
-    width: auto;
-    max-width: 70%;
-    box-shadow: 0.125rem 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
-    color: var(--text-primary);
-}
-
-.user {
-    align-self: flex-end;
-    background-color: var(--bubble-user-bg);
-    border-bottom-right-radius: 0;
-    text-align: end;
-}
-
-.ai {
-    background-color: var(--bubble-ai-bg);
-    font-style: italic;
-}
-
-.resetContainer {
-    position: relative;
-    width: 10rem; /* Adjusted to accommodate both buttons */
-    height: 2rem; /* Assuming the button height is around 32px */
-    overflow: hidden; /* Hide anything that overflows */
-}
-
-.resetText {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    background: var(--background-tertiary);
-    color: var(--text-primary);
-    border: 0.125rem solid var(--border-color);
-    border-radius: 0.375rem; /* To match Ant Design button's default border-radius */
-    cursor: default; /* Indicate it's not a clickable button */
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 1;
-    visibility: visible;
-}
-
-.resetContainer:hover .resetText {
-    opacity: 0;
-    visibility: hidden;
-}
-
-
 
 /* Style for the hidden buttons container */
 .hiddenButtons {
@@ -248,4 +141,11 @@
     z-index: 100;
     background: var(--background-primary);
     transition: none !important; /* Disable transition to avoid conflict with parent component's logic */
+}
+
+.scroll-to-bottom-button {
+  position: absolute;
+  bottom: 80px;
+  right: 20px;
+  z-index: 10;
 }

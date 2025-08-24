@@ -1,5 +1,5 @@
 import { Layout, Button, Input, Modal, Checkbox } from "antd";
-import { SendOutlined, ExclamationCircleFilled } from "@ant-design/icons";
+import { SendOutlined, ExclamationCircleFilled, DownOutlined } from "@ant-design/icons";
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 
@@ -40,6 +40,24 @@ const ChatSider = ({
   const [editingMessage, setEditingMessage] = useState(null);
   const [editingText, setEditingText] = useState("");
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+
+  const handleScroll = () => {
+    if (chatLogRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = chatLogRef.current;
+      setShowScrollToBottom(scrollTop + clientHeight < scrollHeight - 20);
+    }
+  };
+
+  useEffect(() => {
+    const chatLogElement = chatLogRef.current;
+    if (chatLogElement) {
+      chatLogElement.addEventListener('scroll', handleScroll);
+      return () => {
+        chatLogElement.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, []);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -222,6 +240,17 @@ const ChatSider = ({
             )}
           </ul>
         </div>
+        {showScrollToBottom && (
+          <Button
+            className={styles["scroll-to-bottom-button"]}
+            icon={<DownOutlined />}
+            onClick={() => {
+              if (chatLogRef.current) {
+                chatLogRef.current.scrollTop = chatLogRef.current.scrollHeight;
+              }
+            }}
+          />
+        )}
         <div className={styles["chat-footer"]}>
           <ChatInput onSendMessage={sendMessage} />
         </div>
