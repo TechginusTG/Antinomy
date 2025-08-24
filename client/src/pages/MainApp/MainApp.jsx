@@ -84,10 +84,16 @@ const MainApp = () => {
   };
 
   useEffect(() => {
-    const initialChat = loadFlow();
-    if (initialChat) {
-      setChatLog(initialChat);
-      chatService.loadChatHistory(initialChat);
+    const loadedData = loadFlow();
+    if (loadedData) {
+      setChatLog(loadedData.chatHistory);
+      chatService.loadChatHistory(loadedData.chatHistory);
+      if(loadedData.quests) {
+        setQuests(loadedData.quests);
+      }
+      if(loadedData.completedQuests) {
+        setCompletedQuests(loadedData.completedQuests);
+      }
     }
 
     const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
@@ -144,6 +150,12 @@ const MainApp = () => {
         if (data.diagramData && data.chatHistory) {
           setFlow(data.diagramData);
           setChatLog(data.chatHistory);
+          if (data.quests) {
+            setQuests(data.quests);
+          }
+          if (data.completedQuests) {
+            setCompletedQuests(data.completedQuests);
+          }
           localStorage.setItem("chatLog", JSON.stringify(data.chatHistory));
           chatService.loadChatHistory(data.chatHistory);
         } else {
@@ -304,7 +316,7 @@ const MainApp = () => {
 
                   const diagramFilename = `${sanitizedFilenameBase}.antinomy.json`;
 
-                  save(diagramFilename);
+                  save(diagramFilename, quests, completedQuests);
                 }}
                 style={{ right: "0.9375rem" }}
               >

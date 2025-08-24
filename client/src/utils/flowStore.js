@@ -207,7 +207,7 @@ const useFlowStore = create((set, get) => {
       });
     },
 
-    save: (finalFilename) => {
+    save: (finalFilename, quests, completedQuests) => {
       if (!finalFilename) {
         console.error("Save function called without a filename.");
         return;
@@ -222,6 +222,8 @@ const useFlowStore = create((set, get) => {
       const combinedData = {
         diagramData,
         chatHistory,
+        quests,
+        completedQuests,
       };
 
       const blob = new Blob([JSON.stringify(combinedData, null, 2)], {
@@ -272,7 +274,14 @@ const useFlowStore = create((set, get) => {
         if (data.diagramData && data.chatHistory) {
           get().setFlow(data.diagramData);
           localStorage.setItem("chatLog", JSON.stringify(data.chatHistory));
-          return data.chatHistory;
+          const returnData = { chatHistory: data.chatHistory };
+          if (data.quests) {
+            returnData.quests = data.quests;
+          }
+          if (data.completedQuests) {
+            returnData.completedQuests = data.completedQuests;
+          }
+          return returnData;
         } else {
           get().setFlow(data);
           return null;
