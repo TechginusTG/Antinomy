@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { addEdge, applyNodeChanges, applyEdgeChanges } from "reactflow";
 import pako from "pako";
 import chatService from "./chatService";
+import { getUnlockedThemes } from "./themeManager";
 
 const initialNodes = [
   {
@@ -47,20 +48,23 @@ const useFlowStore = create((set, get) => {
     currentExp: 0,
     maxExp: 100, 
     level: 1,
+    unlockedThemes: getUnlockedThemes(1),
 
     increaseExp: (amount) => set((state) => {
       const newExp = state.currentExp + amount;
       if (newExp >= state.maxExp) {
+        const newLevel = state.level + 1;
         return {
           currentExp: newExp - state.maxExp,
-          level: state.level + 1,
-          maxExp: state.maxExp + 50, 
+          level: newLevel,
+          maxExp: state.maxExp + 50,
+          unlockedThemes: getUnlockedThemes(newLevel),
         };
       }
       return { currentExp: newExp };
     }),
     decreaseExp: (amount) => set((state) => ({ currentExp: Math.max(0, state.currentExp - amount) })),
-    setLevel: (newLevel) => set({ level: newLevel }),
+    setLevel: (newLevel) => set({ level: newLevel, unlockedThemes: getUnlockedThemes(newLevel) }),
 
     setIsConnected: (isConnected) => set({ isConnected }),
     setTheme: (theme) => {

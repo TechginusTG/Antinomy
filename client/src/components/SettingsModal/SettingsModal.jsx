@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Slider } from 'antd';
 import useFlowStore from '../../utils/flowStore';
+import { themes } from '../../utils/themeManager';
 
 const SettingsModal = () => {
   const {
@@ -10,6 +11,7 @@ const SettingsModal = () => {
     setChatWidth,
     isSettingsOpen,
     setIsSettingsOpen,
+    level,
   } = useFlowStore();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -27,6 +29,9 @@ const SettingsModal = () => {
     setTheme(e.target.value);
   };
 
+  const basicThemes = themes.filter((t) => t.level === 1);
+  const specialThemes = themes.filter((t) => t.level > 1);
+
   return (
     <Modal
       title="Settings"
@@ -39,62 +44,32 @@ const SettingsModal = () => {
           테마 선택: <b style={{ textTransform: 'uppercase' }}>{theme}</b>
         </p>
         <div>
-          <label>
-            <input
-              type="radio"
-              value="light"
-              checked={theme === 'light'}
-              onChange={handleThemeChange}
-            />
-            Light
-          </label>
-          <label style={{ marginLeft: 16 }}>
-            <input
-              type="radio"
-              value="dark"
-              checked={theme === 'dark'}
-              onChange={handleThemeChange}
-            />
-            Dark
-          </label>
+          {basicThemes.map((t) => (
+            <label key={t.name} style={{ marginRight: '16px' }}>
+              <input
+                type="radio"
+                value={t.name}
+                checked={theme === t.name}
+                onChange={handleThemeChange}
+              />
+              {t.label}
+            </label>
+          ))}
         </div>
-        <div>
-          <label>
-            <input
-              type="radio"
-              value="haru"
-              checked={theme === 'haru'}
-              onChange={handleThemeChange}
-            />
-            Spring
-          </label>
-          <label style={{ marginLeft: 7 }}>
-            <input
-              type="radio"
-              value="natsu"
-              checked={theme === 'natsu'}
-              onChange={handleThemeChange}
-            />
-            Summer
-          </label>
-          <label style={{ marginLeft: 7 }}>
-            <input
-              type="radio"
-              value="aki"
-              checked={theme === 'aki'}
-              onChange={handleThemeChange}
-            />
-            Autumn
-          </label>
-          <label style={{ marginLeft: 7 }}>
-            <input
-              type="radio"
-              value="fuyu"
-              checked={theme === 'fuyu'}
-              onChange={handleThemeChange}
-            />
-            Winter
-          </label>
+        <div style={{ marginTop: '8px' }}>
+          {specialThemes.map((t) => (
+            <label key={t.name} style={{ marginRight: '16px' }}>
+              <input
+                type="radio"
+                value={t.name}
+                checked={theme === t.name}
+                onChange={handleThemeChange}
+                disabled={level < t.level}
+              />
+              {t.label}
+              {level < t.level && ` (Lv.${t.level})`}
+            </label>
+          ))}
         </div>
         {!isMobile && (
           <div style={{ marginTop: 24 }}>
