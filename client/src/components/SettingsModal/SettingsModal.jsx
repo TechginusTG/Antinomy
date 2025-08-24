@@ -38,6 +38,7 @@ const SettingsModal = () => {
       open={isSettingsOpen}
       onCancel={() => setIsSettingsOpen(false)}
       onOk={() => setIsSettingsOpen(false)}
+      width={600}
     >
       <div>
         <p>
@@ -58,7 +59,7 @@ const SettingsModal = () => {
         </div>
         <div style={{ marginTop: '8px' }}>
           {specialThemes.map((t) => (
-            <label key={t.name} style={{ marginRight: '16px' }}>
+            <label key={t.name} style={{ marginRight: '16px', display: 'inline-flex', alignItems: 'center' }}>
               <input
                 type="radio"
                 value={t.name}
@@ -66,8 +67,10 @@ const SettingsModal = () => {
                 onChange={handleThemeChange}
                 disabled={level < t.level}
               />
-              {t.label}
-              {level < t.level && ` (Lv.${t.level})`}
+              <span style={{ whiteSpace: 'nowrap' }}>
+                {t.label}
+                {level < t.level && ` (Lv.${t.level})`}
+              </span>
             </label>
           ))}
         </div>
