@@ -42,7 +42,16 @@ export default function LandingPage() {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.5, duration: 1 }}
-        style={{ fontSize: "2.8rem", fontWeight: "bold", letterSpacing: "0.15em", marginBottom: "0.7rem", textAlign: "center" }}
+        style={{
+          fontSize: "3.2rem",
+          fontWeight: 900,
+          letterSpacing: "0.18em",
+          marginBottom: "0.7rem",
+          textAlign: "center",
+          fontFamily: 'Orbitron, Bebas Neue, Nanum Gothic Coding, sans-serif',
+          color: "#2d3748",
+          textShadow: "0 2px 12px rgba(99,102,241,0.18), 0 1px 0 #fff",
+        }}
       >
         ANTINOMY
       </motion.h1>
@@ -58,15 +67,8 @@ export default function LandingPage() {
         다이어그램을 통해 복잡한 사고를 시각화하세요.
       </motion.p>
 
-      {/* Loading animation */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2, duration: 1, repeat: Infinity, repeatType: "reverse" }}
-        style={{ marginTop: "2.5rem", color: "#6366f1", fontSize: "1.1rem", fontWeight: "500" }}
-      >
-        Loading...
-      </motion.div>
+      
+      
 
       {/* 시작 버튼 */}
       <motion.button
