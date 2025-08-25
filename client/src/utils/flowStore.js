@@ -40,7 +40,18 @@ const useFlowStore = create((set, get) => {
     history: [{ nodes, edges }],
     historyIndex: 0,
     theme: localStorage.getItem("theme") || "light",
-    customThemeColor: localStorage.getItem("customThemeColor") || "#1677ff",
+    customThemeColors: JSON.parse(localStorage.getItem("customThemeColors")) || [
+      "#ffffff",
+      "#f0f2f5",
+      "#ffffff",
+      "#f1f1f1",
+      "#333333",
+      "#555555",
+      "#dddddd",
+      "#000000",
+      "antiquewhite",
+      "aquamarine",
+    ],
     chatWidth: parseInt(localStorage.getItem("chatWidth"), 10) || 30,
     isSettingsOpen: false,
     isQuestOpen: false,
@@ -74,11 +85,14 @@ const useFlowStore = create((set, get) => {
       localStorage.setItem("theme", theme);
       document.body.setAttribute("data-theme", theme);
     },
-    setCustomThemeColor: (color) => {
-      set({ customThemeColor: color });
-      localStorage.setItem("customThemeColor", color);
+    setCustomThemeColors: (index, color) => {
+      const { customThemeColors } = get();
+      const newColors = [...customThemeColors];
+      newColors[index] = color;
+      set({ customThemeColors: newColors });
+      localStorage.setItem("customThemeColors", JSON.stringify(newColors));
       if (get().theme === 'custom') {
-        document.documentElement.style.setProperty('--custom-theme-color', color);
+        document.documentElement.style.setProperty(get().getCustomColorVarName(index), color);
       }
     },
     setChatWidth: (width) => {
@@ -88,6 +102,22 @@ const useFlowStore = create((set, get) => {
     setIsSettingsOpen: (isOpen) => set({ isSettingsOpen: isOpen }),
     setIsQuestOpen: (isOpen) => set({ isQuestOpen: isOpen }),
     setEditingNodeId: (nodeId) => set({ editingNodeId: nodeId }),
+
+    getCustomColorVarName: (index) => {
+      const varNames = [
+        "--background-primary",
+        "--background-secondary",
+        "--background-header",
+        "--background-flow-wrapper",
+        "--text-primary",
+        "--text-secondary",
+        "--border-color",
+        "--header-title-color",
+        "--bubble-user-bg",
+        "--bubble-ai-bg",
+      ];
+      return varNames[index];
+    },
 
     _updateHistory: (newState) => {
       const { history, historyIndex, autoSaveToHash } = get();

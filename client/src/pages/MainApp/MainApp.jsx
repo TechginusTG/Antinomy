@@ -51,7 +51,8 @@ const MainApp = () => {
     setEditingNodeId,
     updateEdgeLabel,
     theme,
-    customThemeColor,
+    customThemeColors,
+    getCustomColorVarName,
   } = useFlowStore();
   const reactFlowWrapper = useRef(null);
   const [chatLog, setChatLog] = useState([]);
@@ -109,11 +110,15 @@ const MainApp = () => {
   useEffect(() => {
     document.body.setAttribute("data-theme", theme);
     if (theme === 'custom') {
-      document.documentElement.style.setProperty('--custom-theme-color', customThemeColor);
+      customThemeColors.forEach((color, index) => {
+        document.documentElement.style.setProperty(getCustomColorVarName(index), color);
+      });
     } else {
-      document.documentElement.style.removeProperty('--custom-theme-color');
+      customThemeColors.forEach((_, index) => {
+        document.documentElement.style.removeProperty(getCustomColorVarName(index));
+      });
     }
-  }, [theme, customThemeColor]);
+  }, [theme, customThemeColors, getCustomColorVarName]);
 
   const handleCloseGuide = () => {
     setIsGuideOpen(false);

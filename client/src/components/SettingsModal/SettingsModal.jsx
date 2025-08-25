@@ -12,8 +12,9 @@ const SettingsModal = () => {
     isSettingsOpen,
     setIsSettingsOpen,
     level,
-    customThemeColor,
-    setCustomThemeColor,
+    customThemeColors,
+    setCustomThemeColors,
+    getCustomColorVarName,
   } = useFlowStore();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -31,12 +32,25 @@ const SettingsModal = () => {
     setTheme(e.target.value);
   };
 
-  const handleColorChange = (color) => {
-    setCustomThemeColor(color.toHexString());
+  const handleColorChange = (index, color) => {
+    setCustomThemeColors(index, color.toHexString());
   };
 
   const basicThemes = themes.filter((t) => t.level === 1);
   const specialThemes = themes.filter((t) => t.level > 1);
+
+  const colorVarLabels = {
+    '--background-primary': '색상 1(전체 앱 배경)',
+    '--background-secondary': '색상 2(시작 페이지, 입력칸 배경)',
+    '--background-header': '색상 3(헤더)',
+    '--background-flow-wrapper': '색상 4(다이어그램 필드)',
+    '--text-primary': '색상 5(텍스트)',
+    '--text-secondary': '색상 6(서브 텍스트, 현재 미사용)',
+    '--border-color': '색상 7(테두리)',
+    '--header-title-color': '색상 8(헤더 제목)',
+    '--bubble-user-bg': '색상 9(사용자 말풍선)',
+    '--bubble-ai-bg': '색상 10(AI 말풍선)',
+  };
 
   return (
     <Modal
@@ -83,11 +97,18 @@ const SettingsModal = () => {
         {theme === 'custom' && (
           <div style={{ marginTop: '16px' }}>
             <p>커스텀 색상 선택:</p>
-            <ColorPicker
-              value={customThemeColor}
-              onChange={handleColorChange}
-              showText
-            />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
+              {customThemeColors.map((color, index) => (
+                <div key={index} style={{ display: 'flex', flexDirection: 'column' }}>
+                  <label style={{ marginBottom: '8px' }}>{colorVarLabels[getCustomColorVarName(index)]}</label>
+                  <ColorPicker
+                    value={color}
+                    onChange={(newColor) => handleColorChange(index, newColor)}
+                    showText
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         )}
         {!isMobile && (
