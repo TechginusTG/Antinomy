@@ -28,12 +28,11 @@ export default function LandingPage() {
         initial={{ scale: 0, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 1 }}
-        style={{ marginBottom: "2.5rem" }}
       >
         <img
           src={logoUrl}
           alt="ANTINOMY Logo"
-          style={{ width: "140px", height: "140px", borderRadius: "20%", boxShadow: "0 4px 24px rgba(0,0,0,0.15)" }}
+          style={{ width: "12.5rem", height: "12.5rem", borderRadius: "20%", boxShadow: "0 4px 18px rgba(0,0,0,0.06)" }}
         />
       </motion.div>
 
