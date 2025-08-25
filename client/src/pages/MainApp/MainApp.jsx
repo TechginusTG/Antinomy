@@ -50,11 +50,9 @@ const MainApp = () => {
     deleteNode,
     setEditingNodeId,
     updateEdgeLabel,
+    theme,
+    customThemeColor,
   } = useFlowStore();
-
-  const [theme, setTheme] = useState(
-    () => localStorage.getItem("theme") || "light"
-  );
   const reactFlowWrapper = useRef(null);
   const [chatLog, setChatLog] = useState([]);
   const fileInputRef = useRef(null);
@@ -86,6 +84,8 @@ const MainApp = () => {
     }
   };
 
+  
+
   useEffect(() => {
     const loadedData = loadFlow();
     if (loadedData) {
@@ -104,9 +104,16 @@ const MainApp = () => {
       setIsWelcomeModalVisible(true);
       localStorage.setItem('hasVisitedBefore', 'true');
     }
-
-    document.body.setAttribute("data-theme", theme);
   }, []);
+
+  useEffect(() => {
+    document.body.setAttribute("data-theme", theme);
+    if (theme === 'custom') {
+      document.documentElement.style.setProperty('--custom-theme-color', customThemeColor);
+    } else {
+      document.documentElement.style.removeProperty('--custom-theme-color');
+    }
+  }, [theme, customThemeColor]);
 
   const handleCloseGuide = () => {
     setIsGuideOpen(false);

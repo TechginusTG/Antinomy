@@ -5,6 +5,7 @@ export const themes = [
   { name: 'natsu', label: 'Summer', level: 5 },
   { name: 'aki', label: 'Autumn', level: 5 },
   { name: 'fuyu', label: 'Winter', level: 5 },
+  { name: 'custom', label: 'Custom', level: 1 },
 ];
 
 export const getUnlockedThemes = (level) => {

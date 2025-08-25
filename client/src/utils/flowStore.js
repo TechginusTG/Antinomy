@@ -40,6 +40,7 @@ const useFlowStore = create((set, get) => {
     history: [{ nodes, edges }],
     historyIndex: 0,
     theme: localStorage.getItem("theme") || "light",
+    customThemeColor: localStorage.getItem("customThemeColor") || "#1677ff",
     chatWidth: parseInt(localStorage.getItem("chatWidth"), 10) || 30,
     isSettingsOpen: false,
     isQuestOpen: false,
@@ -72,6 +73,13 @@ const useFlowStore = create((set, get) => {
       set({ theme });
       localStorage.setItem("theme", theme);
       document.body.setAttribute("data-theme", theme);
+    },
+    setCustomThemeColor: (color) => {
+      set({ customThemeColor: color });
+      localStorage.setItem("customThemeColor", color);
+      if (get().theme === 'custom') {
+        document.documentElement.style.setProperty('--custom-theme-color', color);
+      }
     },
     setChatWidth: (width) => {
       set({ chatWidth: width });

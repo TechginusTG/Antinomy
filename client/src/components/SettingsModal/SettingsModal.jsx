@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Slider } from 'antd';
+import { Modal, Slider, ColorPicker } from 'antd';
 import useFlowStore from '../../utils/flowStore';
 import { themes } from '../../utils/themeManager';
 
@@ -12,6 +12,8 @@ const SettingsModal = () => {
     isSettingsOpen,
     setIsSettingsOpen,
     level,
+    customThemeColor,
+    setCustomThemeColor,
   } = useFlowStore();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
@@ -27,6 +29,10 @@ const SettingsModal = () => {
 
   const handleThemeChange = (e) => {
     setTheme(e.target.value);
+  };
+
+  const handleColorChange = (color) => {
+    setCustomThemeColor(color.toHexString());
   };
 
   const basicThemes = themes.filter((t) => t.level === 1);
@@ -74,6 +80,16 @@ const SettingsModal = () => {
             </label>
           ))}
         </div>
+        {theme === 'custom' && (
+          <div style={{ marginTop: '16px' }}>
+            <p>커스텀 색상 선택:</p>
+            <ColorPicker
+              value={customThemeColor}
+              onChange={handleColorChange}
+              showText
+            />
+          </div>
+        )}
         {!isMobile && (
           <div style={{ marginTop: 24 }}>
             <p>
