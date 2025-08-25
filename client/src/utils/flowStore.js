@@ -103,6 +103,28 @@ const useFlowStore = create((set, get) => {
     setIsQuestOpen: (isOpen) => set({ isQuestOpen: isOpen }),
     setEditingNodeId: (nodeId) => set({ editingNodeId: nodeId }),
 
+    resetCustomThemeColors: () => {
+      const defaultColors = [
+        "#ffffff",
+        "#f0f2f5",
+        "#ffffff",
+        "#f1f1f1",
+        "#333333",
+        "#555555",
+        "#dddddd",
+        "#000000",
+        "antiquewhite",
+        "aquamarine",
+      ];
+      set({ customThemeColors: defaultColors });
+      localStorage.setItem("customThemeColors", JSON.stringify(defaultColors));
+      if (get().theme === 'custom') {
+        defaultColors.forEach((color, index) => {
+          document.documentElement.style.setProperty(get().getCustomColorVarName(index), color);
+        });
+      }
+    },
+
     getCustomColorVarName: (index) => {
       const varNames = [
         "--background-primary",
@@ -248,8 +270,17 @@ const useFlowStore = create((set, get) => {
     },
 
     setFlow: (flow) => {
-      const { nodes, edges } = flow;
+      const { nodes, edges, customThemeColors } = flow;
       const newState = { nodes, edges };
+      if (customThemeColors) {
+        set({ customThemeColors });
+        localStorage.setItem("customThemeColors", JSON.stringify(customThemeColors));
+        if (get().theme === 'custom') {
+          customThemeColors.forEach((color, index) => {
+            document.documentElement.style.setProperty(get().getCustomColorVarName(index), color);
+          });
+        }
+      }
       set({
         ...newState,
         history: [newState],
@@ -271,7 +302,7 @@ const useFlowStore = create((set, get) => {
         return;
       }
 
-      const { nodes, edges } = get();
+      const { nodes, edges, customThemeColors } = get();
       const diagramData = { nodes, edges };
 
       const chatLogString = localStorage.getItem("chatLog");
@@ -282,6 +313,7 @@ const useFlowStore = create((set, get) => {
         chatHistory,
         quests,
         completedQuests,
+        customThemeColors,
       };
 
       const blob = new Blob([JSON.stringify(combinedData, null, 2)], {
@@ -330,7 +362,11 @@ const useFlowStore = create((set, get) => {
         const data = JSON.parse(jsonString);
 
         if (data.diagramData && data.chatHistory) {
-          get().setFlow(data.diagramData);
+          const flowData = { ...data.diagramData };
+          if (data.customThemeColors) {
+            flowData.customThemeColors = data.customThemeColors;
+          }
+          get().setFlow(flowData);
           localStorage.setItem("chatLog", JSON.stringify(data.chatHistory));
           const returnData = { chatHistory: data.chatHistory };
           if (data.quests) {

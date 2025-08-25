@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Modal, Slider, ColorPicker } from 'antd';
+import React, { useState, useEffect, useRef } from 'react';
+import { Modal, Slider, ColorPicker, Button } from 'antd';
 import useFlowStore from '../../utils/flowStore';
 import { themes } from '../../utils/themeManager';
 
@@ -15,8 +15,12 @@ const SettingsModal = () => {
     customThemeColors,
     setCustomThemeColors,
     getCustomColorVarName,
+    resetCustomThemeColors,
+    save,
+    loadFlow,
   } = useFlowStore();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -34,6 +38,32 @@ const SettingsModal = () => {
 
   const handleColorChange = (index, color) => {
     setCustomThemeColors(index, color.toHexString());
+  };
+
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target.result;
+        let data = JSON.parse(content);
+        loadFlow(data);
+      } catch (error) {
+        console.error("Failed to load or parse file:", error);
+        alert(
+          "Failed to load file. It might be corrupted or not a valid JSON file."
+        );
+      } finally {
+        if (fileInputRef.current) {
+          fileInputRef.current.value = null;
+        }
+      }
+    };
+    reader.readAsText(file);
   };
 
   const basicThemes = themes.filter((t) => t.level === 1);
@@ -96,7 +126,42 @@ const SettingsModal = () => {
         </div>
         {theme === 'custom' && (
           <div style={{ marginTop: '16px' }}>
-            <p>커스텀 색상 선택:</p>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+              <p style={{ margin: 0 }}>커스텀 색상 선택:</p>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <Button onClick={resetCustomThemeColors}>Reset</Button>
+                <Button onClick={() => {
+                  const defaultName = "custom-theme";
+                  const userInput = prompt(
+                    "저장할 파일 이름을 입력하세요:",
+                    defaultName
+                  );
+
+                  if (userInput === null) {
+                    return;
+                  }
+
+                  const filenameBase = 
+                    userInput.trim() === "" ? defaultName : userInput.trim();
+
+                  const sanitizedFilenameBase = filenameBase
+                    .replace(/[\\/:*?'"<>|]/g, "_")
+                    .replace(/\.json$/i, "");
+
+                  const diagramFilename = `${sanitizedFilenameBase}.json`;
+
+                  save(diagramFilename);
+                }}>Save</Button>
+                <Button onClick={() => fileInputRef.current.click()}>Load</Button>
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  style={{ display: 'none' }}
+                  onChange={handleFileSelect}
+                  accept=".json"
+                />
+              </div>
+            </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '16px' }}>
               {customThemeColors.map((color, index) => (
                 <div key={index} style={{ display: 'flex', flexDirection: 'column' }}>
