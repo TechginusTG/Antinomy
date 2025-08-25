@@ -72,6 +72,11 @@
 .ai {
     background-color: var(--bubble-ai-bg);
     font-style: italic;
+    border-bottom-left-radius: 0;
+}
+
+.markdownContent li {
+    margin-left: 1.5rem;
 }
 
 .resetContainer {

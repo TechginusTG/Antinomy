@@ -221,7 +221,9 @@ const ChatSider = ({
                 onEdit={() => handleOpenEditModal(msg)}
               >
                 {msg.sender === "ai" ? (
-                  <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  <div className={styles.markdownContent}>
+                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                  </div>
                 ) : (
                   msg.content
                 )}
