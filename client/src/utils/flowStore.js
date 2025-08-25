@@ -270,17 +270,8 @@ const useFlowStore = create((set, get) => {
     },
 
     setFlow: (flow) => {
-      const { nodes, edges, customThemeColors } = flow;
+      const { nodes, edges } = flow;
       const newState = { nodes, edges };
-      if (customThemeColors) {
-        set({ customThemeColors });
-        localStorage.setItem("customThemeColors", JSON.stringify(customThemeColors));
-        if (get().theme === 'custom') {
-          customThemeColors.forEach((color, index) => {
-            document.documentElement.style.setProperty(get().getCustomColorVarName(index), color);
-          });
-        }
-      }
       set({
         ...newState,
         history: [newState],
@@ -302,7 +293,7 @@ const useFlowStore = create((set, get) => {
         return;
       }
 
-      const { nodes, edges, customThemeColors } = get();
+      const { nodes, edges } = get();
       const diagramData = { nodes, edges };
 
       const chatLogString = localStorage.getItem("chatLog");
@@ -313,7 +304,6 @@ const useFlowStore = create((set, get) => {
         chatHistory,
         quests,
         completedQuests,
-        customThemeColors,
       };
 
       const blob = new Blob([JSON.stringify(combinedData, null, 2)], {
@@ -327,6 +317,40 @@ const useFlowStore = create((set, get) => {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+    },
+
+    saveTheme: (finalFilename) => {
+      if (!finalFilename) {
+        console.error("Save function called without a filename.");
+        return;
+      }
+
+      const { customThemeColors } = get();
+
+      const blob = new Blob([JSON.stringify({ customThemeColors }, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = finalFilename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    },
+
+    loadTheme: (fileContent) => {
+      const { customThemeColors } = fileContent;
+      if (customThemeColors) {
+        set({ customThemeColors });
+        localStorage.setItem("customThemeColors", JSON.stringify(customThemeColors));
+        if (get().theme === 'custom') {
+          customThemeColors.forEach((color, index) => {
+            document.documentElement.style.setProperty(get().getCustomColorVarName(index), color);
+          });
+        }
+      }
     },
 
     loadFlow: () => {
@@ -362,11 +386,7 @@ const useFlowStore = create((set, get) => {
         const data = JSON.parse(jsonString);
 
         if (data.diagramData && data.chatHistory) {
-          const flowData = { ...data.diagramData };
-          if (data.customThemeColors) {
-            flowData.customThemeColors = data.customThemeColors;
-          }
-          get().setFlow(flowData);
+          get().setFlow(data.diagramData);
           localStorage.setItem("chatLog", JSON.stringify(data.chatHistory));
           const returnData = { chatHistory: data.chatHistory };
           if (data.quests) {

@@ -16,8 +16,8 @@ const SettingsModal = () => {
     setCustomThemeColors,
     getCustomColorVarName,
     resetCustomThemeColors,
-    save,
-    loadFlow,
+    saveTheme,
+    loadTheme,
   } = useFlowStore();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const fileInputRef = useRef(null);
@@ -51,7 +51,7 @@ const SettingsModal = () => {
       try {
         const content = e.target.result;
         let data = JSON.parse(content);
-        loadFlow(data);
+        loadTheme(data);
       } catch (error) {
         console.error("Failed to load or parse file:", error);
         alert(
@@ -150,7 +150,7 @@ const SettingsModal = () => {
 
                   const diagramFilename = `${sanitizedFilenameBase}.json`;
 
-                  save(diagramFilename);
+                  saveTheme(diagramFilename);
                 }}>Save</Button>
                 <Button onClick={() => fileInputRef.current.click()}>Load</Button>
                 <input
