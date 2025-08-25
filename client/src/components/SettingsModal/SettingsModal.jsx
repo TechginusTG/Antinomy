@@ -119,7 +119,7 @@ const SettingsModal = () => {
               />
               <span style={{ whiteSpace: 'nowrap' }}>
                 {t.label}
-                {level < t.level && ` (Lv.${t.level})`}
+                {level < t.level && ` (Lv.${t.level}↑)`}
               </span>
             </label>
           ))}
