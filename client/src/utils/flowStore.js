@@ -44,6 +44,7 @@ const useFlowStore = create((set, get) => {
     isSettingsOpen: false,
     isQuestOpen: false,
     isConnected: false,
+    editingNodeId: null,
 
     currentExp: 0,
     maxExp: 100, 
@@ -78,6 +79,7 @@ const useFlowStore = create((set, get) => {
     },
     setIsSettingsOpen: (isOpen) => set({ isSettingsOpen: isOpen }),
     setIsQuestOpen: (isOpen) => set({ isQuestOpen: isOpen }),
+    setEditingNodeId: (nodeId) => set({ editingNodeId: nodeId }),
 
     _updateHistory: (newState) => {
       const { history, historyIndex, autoSaveToHash } = get();
@@ -141,7 +143,7 @@ const useFlowStore = create((set, get) => {
 
     onConnect: (connection) => {
       const { nodes, edges, _updateHistory } = get();
-      const nextEdges = addEdge(connection, edges);
+      const nextEdges = addEdge({ ...connection, label: 'edge' }, edges);
       _updateHistory({ nodes, edges: nextEdges });
     },
 
@@ -169,6 +171,24 @@ const useFlowStore = create((set, get) => {
         return node;
       });
       _updateHistory({ nodes: nextNodes, edges });
+    },
+
+    deleteNode: (nodeId) => {
+      const { nodes, edges, _updateHistory } = get();
+      const nextNodes = nodes.filter((node) => node.id !== nodeId);
+      const nextEdges = edges.filter((edge) => edge.source !== nodeId && edge.target !== nodeId);
+      _updateHistory({ nodes: nextNodes, edges: nextEdges });
+    },
+
+    updateEdgeLabel: (edgeId, label) => {
+      const { nodes, edges, _updateHistory } = get();
+      const nextEdges = edges.map((edge) => {
+        if (edge.id === edgeId) {
+          return { ...edge, label };
+        }
+        return edge;
+      });
+      _updateHistory({ nodes, edges: nextEdges });
     },
 
     undo: () => {

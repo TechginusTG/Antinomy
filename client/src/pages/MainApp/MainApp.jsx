@@ -47,6 +47,9 @@ const MainApp = () => {
     chatWidth,
     deleteMessage,
     editMessage,
+    deleteNode,
+    setEditingNodeId,
+    updateEdgeLabel,
   } = useFlowStore();
 
   const [theme, setTheme] = useState(
@@ -182,10 +185,35 @@ const MainApp = () => {
   const handleContextMenu = (event) => {
     event.preventDefault();
     setContextMenu({
+      type: 'pane',
       x: event.clientX,
       y: event.clientY,
     });
   };
+
+  const onNodeContextMenu = useCallback(
+    (event, node) => {
+      event.preventDefault();
+      event.stopPropagation(); // Stop event from bubbling up to the pane
+      setContextMenu({
+        type: 'node',
+        nodeId: node.id,
+        x: event.clientX,
+        y: event.clientY,
+      });
+    },
+    [setContextMenu]
+  );
+
+  const onEdgeDoubleClick = useCallback(
+    (event, edge) => {
+      const newLabel = prompt('Enter new label for edge', edge.label);
+      if (newLabel !== null) {
+        updateEdgeLabel(edge.id, newLabel);
+      }
+    },
+    [updateEdgeLabel]
+  );
 
   const onPaneClick = useCallback(() => setContextMenu(null), []);
 
@@ -275,6 +303,8 @@ const MainApp = () => {
                 nodeTypes={nodeTypes}
                 onPaneClick={onPaneClick}
                 onInit={setReactFlowInstance}
+                onNodeContextMenu={onNodeContextMenu}
+                onEdgeDoubleClick={onEdgeDoubleClick}
               />
             </div>
             <div className={styles["tail-buttons"]}>
@@ -353,9 +383,16 @@ const MainApp = () => {
       </Layout>
       {contextMenu && (
         <ContextMenu
-          x={contextMenu.x}
-          y={contextMenu.y}
+          {...contextMenu}
           onAddNode={onAddNode}
+          onDeleteNode={(nodeId) => {
+            deleteNode(nodeId);
+            setContextMenu(null);
+          }}
+          onEditNode={(nodeId) => {
+            setEditingNodeId(nodeId);
+            setContextMenu(null);
+          }}
           onClose={() => setContextMenu(null)}
         />
       )}

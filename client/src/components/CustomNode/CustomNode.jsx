@@ -1,12 +1,18 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Handle, Position } from 'reactflow';
 import useFlowStore from '../../utils/flowStore';
 import styles from './CustomNode.module.css';
 
 const CustomNode = ({ id, data, selected }) => {
-  const { updateNodeLabel } = useFlowStore();
+  const { updateNodeLabel, editingNodeId, setEditingNodeId } = useFlowStore();
   const [isEditing, setIsEditing] = useState(false);
   const [label, setLabel] = useState(data.label);
+
+  useEffect(() => {
+    if (editingNodeId === id) {
+      setIsEditing(true);
+    }
+  }, [editingNodeId, id]);
 
   const handleDoubleClick = () => {
     setIsEditing(true);
@@ -15,6 +21,7 @@ const CustomNode = ({ id, data, selected }) => {
   const handleBlur = () => {
     setIsEditing(false);
     updateNodeLabel(id, label);
+    setEditingNodeId(null); // Clear editing state
   };
 
   const handleChange = (evt) => {
