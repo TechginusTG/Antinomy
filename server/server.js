@@ -5,6 +5,7 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import { registerSocketHandlers } from "./socketHandlers.js";
+import helmet from "helmet";
 
 // ESM에서 __dirname을 사용하기 위한 설정
 const __filename = fileURLToPath(import.meta.url);
@@ -38,16 +39,20 @@ const allowedOrigins = [
   "https://tg-antinomy.kro.kr",
   "https://tg-antinomy.p-e.kr",
   "https://syncro.tg-antinomy.p-e.kr",
-  "http://localhost:5173"
+  "http://localhost:5173",
 ];
 
 const corsOptions = {
   origin: (origin, callback) => {
     // 개발 환경이거나 origin이 없는 경우(예: Postman) 또는 허용된 목록에 있는 경우
-    if (process.env.NODE_ENV !== 'production' || !origin || allowedOrigins.includes(origin)) {
+    if (
+      process.env.NODE_ENV !== "production" ||
+      !origin ||
+      allowedOrigins.includes(origin)
+    ) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
   methods: ["GET", "POST"],
@@ -55,6 +60,14 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
+// helmet을 사용하여 보안 관련 HTTP 헤더를 설정합니다.
+// Content-Security-Policy와 Cross-Origin-Embedder-Policy는
+// 현재 앱과의 호환성을 위해 비활성화합니다.
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginEmbedderPolicy: false,
+}));
 
 const io = new Server(server, {
   cors: corsOptions,
