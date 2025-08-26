@@ -101,11 +101,6 @@ const MainApp = () => {
     // Load diagram from store
     useFlowStore.getState().loadDiagram();
 
-    // Inform chatService of the loaded history
-    if (chatLog && chatLog.length > 0) {
-      chatService.loadChatHistory(chatLog);
-    }
-
     const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
     if (!hasVisitedBefore) {
       setIsWelcomeModalVisible(true);
@@ -194,8 +189,6 @@ const MainApp = () => {
           if (data.completedQuests) {
             setCompletedQuests(data.completedQuests);
           }
-          localStorage.setItem("chatLog", JSON.stringify(data.chatHistory));
-          chatService.loadChatHistory(data.chatHistory);
         } else {
           alert("Invalid file format.");
         }

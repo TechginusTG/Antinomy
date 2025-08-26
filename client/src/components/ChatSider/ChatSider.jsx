@@ -95,8 +95,9 @@ const ChatSider = ({
       content: message,
       sender: "user",
     };
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
-    chatService.sendMessage(message);
+    const newChatLog = [...messages, userMessage];
+    setMessages(newChatLog);
+    chatService.sendMessage(message); // Send only the new message text
     setIsTyping(true);
     increaseExp(5);
   };

@@ -43,7 +43,7 @@ export function registerSocketHandlers(io) {
         sessions[socket.id] = [
           {
             role: "system",
-            content: `${systemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
+            content: `${systemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`, 
           },
         ];
       }
@@ -59,10 +59,10 @@ export function registerSocketHandlers(io) {
         const reply = res.choices[0].message.content;
         sessions[socket.id].push({ role: "assistant", content: reply });
         console.log(`GPT 응답 [${socket.id}]:`, reply);
-        socket.emit("chat message", reply);
+        socket.emit("chat message", { message: reply });
       } catch (err) {
         console.error("GPT 에러:", err);
-        socket.emit("chat message", "GPT 고장 💀");
+        socket.emit("chat message", { message: "GPT 고장 💀" });
       }
     });
 
@@ -76,7 +76,7 @@ export function registerSocketHandlers(io) {
       const newSession = [
         {
           role: "system",
-          content: `${systemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
+          content: `${systemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`, 
         },
       ];
 
@@ -97,7 +97,7 @@ export function registerSocketHandlers(io) {
       const newSession = [
         {
           role: "system",
-          content: `${systemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
+          content: `${systemPrompt}\n\nThis user has the same traits: ${specialString}. When you answer, you should be care these properties.`, 
         },
       ];
 
@@ -116,14 +116,14 @@ export function registerSocketHandlers(io) {
         const reply = res.choices[0].message.content;
         sessions[socket.id].push({ role: "assistant", content: reply });
         console.log(`GPT 응답 [${socket.id}]:`, reply);
-        socket.emit("chat message", reply);
+        socket.emit("chat message", { message: reply });
       } catch (err) {
         console.error("GPT 에러:", err);
-        socket.emit("chat message", "GPT 고장 💀");
+        socket.emit("chat message", { message: "GPT 고장 💀" });
       }
     });
 
-    socket.on("make diagram", async (payload) => {
+    socket.on("make diagram", async (payload, callback) => {
       console.log(`'make diagram' request from ${socket.id}`);
       const { chatLog, diagramState } = payload;
 
@@ -165,20 +165,20 @@ export function registerSocketHandlers(io) {
 
         try {
           const newDiagram = JSON.parse(reply);
-          socket.emit("diagram created", newDiagram);
+          if (callback) {
+            callback(newDiagram);
+          }
         } catch (parseError) {
           console.error("JSON parsing error:", parseError);
-          socket.emit(
-            "chat message",
-            "다이어그램 생성에 실패했어요. AI가 올바른 형식으로 응답하지 않았습니다."
-          );
+          if (callback) {
+            callback({ error: "JSON parsing error", details: parseError.message });
+          }
         }
       } catch (err) {
         console.error("GPT Diagram Error:", err);
-        socket.emit(
-          "chat message",
-          "다이어그램 생성 중 오류가 발생했습니다. 💀"
-        );
+        if (callback) {
+          callback({ error: "GPT Diagram Error", details: err.message });
+        }
       }
     });
 

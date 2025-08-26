@@ -393,20 +393,18 @@ const useFlowStore = create((set, get) => {
       const messageIndex = chatHistory.findIndex((msg) => msg.id === messageId);
 
       if (messageIndex > -1) {
+        // Update the content of the message being edited
         chatHistory[messageIndex].content = newText;
+        // Remove all messages after the edited one
         chatHistory.splice(messageIndex + 1);
 
-        // The component will update localStorage via its useEffect
+        // Update the UI with the truncated log
         setChatLog(chatHistory);
 
-        chatService.resubmit(chatHistory, (reply) => {
-          const newChatLog = [
-            ...chatHistory,
-            { id: Date.now(), sender: "ai", content: reply },
-          ];
-          // The component will update localStorage via its useEffect
-          setChatLog(newChatLog);
-        });
+        // Resubmit the truncated history to the server.
+        // The server will respond with a "chat message" event,
+        // which will be handled by the global listener in ChatSider.
+        chatService.resubmit(chatHistory);
       }
     }
   };
