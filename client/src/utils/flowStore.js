@@ -53,6 +53,7 @@ const useFlowStore = create((set, get) => {
       "aquamarine",
     ],
     chatWidth: parseInt(localStorage.getItem("chatWidth"), 10) || 30,
+    mode: localStorage.getItem("mode") || 'worry',
     isSettingsOpen: false,
     isQuestOpen: false,
     isConnected: false,
@@ -102,6 +103,10 @@ const useFlowStore = create((set, get) => {
     setIsSettingsOpen: (isOpen) => set({ isSettingsOpen: isOpen }),
     setIsQuestOpen: (isOpen) => set({ isQuestOpen: isOpen }),
     setEditingNodeId: (nodeId) => set({ editingNodeId: nodeId }),
+    setMode: (mode) => {
+      set({ mode });
+      localStorage.setItem('mode', mode);
+    },
 
     resetCustomThemeColors: () => {
       const defaultColors = [

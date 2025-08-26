@@ -19,6 +19,7 @@ const SettingsModal = () => {
     saveTheme,
     loadTheme,
   } = useFlowStore();
+  const { mode, setMode } = useFlowStore();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const fileInputRef = useRef(null);
 
@@ -188,6 +189,23 @@ const SettingsModal = () => {
               onChange={setChatWidth}
               style={{ width: 200 }}
             />
+            
+            {/* 모드 선택 버튼 */}
+            <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ marginRight: 8 }}>모드:</span>
+              <Button
+                type={mode === 'worry' ? 'primary' : 'default'}
+                onClick={() => setMode('worry')}
+              >
+                고민 모드
+              </Button>
+              <Button
+                type={mode === 'solution' ? 'primary' : 'default'}
+                onClick={() => setMode('solution')}
+              >
+                문제해결 모드
+              </Button>
+            </div>
           </div>
         )}
       </div>

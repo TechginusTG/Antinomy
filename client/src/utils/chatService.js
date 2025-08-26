@@ -38,9 +38,19 @@ class ChatService {
     });
   }
 
-  sendMessage(payload) {
+  sendMessage(payload, chatLog = []) { // Add chatLog parameter with default empty array
     if (this.socket) {
-      this.socket.emit("chat message", payload);
+      const currentMode = useFlowStore.getState().mode || 'worry';
+      let msgPayload;
+      if (typeof payload === 'string') {
+        msgPayload = { text: payload, mode: currentMode };
+      } else if (payload && typeof payload === 'object') {
+        msgPayload = { ...payload, mode: payload.mode || currentMode };
+      } else {
+        msgPayload = { text: String(payload), mode: currentMode };
+      }
+      // Emit both the message payload and the full chat log
+      this.socket.emit("chat message", { msgPayload, chatLog });
     }
   }
 

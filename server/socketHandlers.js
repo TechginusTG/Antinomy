@@ -35,34 +35,48 @@ export function registerSocketHandlers(io) {
     socket.on("chat message", async (msg) => {
       console.log(`메시지 수신 [${socket.id}]:`, msg);
 
+      // msg may be an object { text, mode }
+      const text = typeof msg === 'string' ? msg : msg.text || '';
+      const mode = (msg && msg.mode) || userSpecial[socket.id]?.mode || 'worry';
+
+      // Store chosen mode per socket for future reference (e.g., load history/resubmit)
+      if (!userSpecial[socket.id]) userSpecial[socket.id] = [];
+      userSpecial[socket.id].mode = mode;
+
+      // Select system prompt based on mode
+      const worryPrompt = `You are a compassionate listener and empathetic counselor. Prioritize active listening, validating feelings, and offering emotional support. Use gentle, encouraging language and reflective statements.
+Always respond in polite, formal Korean (존댓말).`;
+      const solutionPrompt = `You are an analytical problem-solving assistant. Focus on clarifying details, identifying root causes, and proposing practical, step-by-step solutions. Ask focused questions and provide actionable recommendations.
+Always respond in polite, formal Korean (존댓말).`;
+
+      const selectedSystemPrompt = mode === 'solution' ? solutionPrompt : worryPrompt;
+
       if (!sessions[socket.id]) {
         const special = userSpecial[socket.id] || [];
-        const specialString = Array.isArray(special)
-          ? special.join(", ")
-          : special.toString();
+        const specialString = Array.isArray(special) ? special.join(', ') : special.toString();
         sessions[socket.id] = [
           {
-            role: "system",
-            content: `${systemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`, 
+            role: 'system',
+            content: `${selectedSystemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
           },
         ];
       }
 
-      sessions[socket.id].push({ role: "user", content: msg });
+      sessions[socket.id].push({ role: 'user', content: text });
 
       try {
         const res = await openai.chat.completions.create({
-          model: "gpt-5",
+          model: 'gpt-5',
           messages: sessions[socket.id],
         });
 
         const reply = res.choices[0].message.content;
-        sessions[socket.id].push({ role: "assistant", content: reply });
+        sessions[socket.id].push({ role: 'assistant', content: reply });
         console.log(`GPT 응답 [${socket.id}]:`, reply);
-        socket.emit("chat message", { message: reply });
+        socket.emit('chat message', { message: reply });
       } catch (err) {
-        console.error("GPT 에러:", err);
-        socket.emit("chat message", { message: "GPT 고장 💀" });
+        console.error('GPT 에러:', err);
+        socket.emit('chat message', { message: 'GPT 고장 💀' });
       }
     });
 
@@ -73,10 +87,16 @@ export function registerSocketHandlers(io) {
         ? special.join(", ")
         : special.toString();
       
+      // Select system prompt based on stored mode (default worry)
+      const storedMode = userSpecial[socket.id]?.mode || 'worry';
+      const worryPrompt = `You are a compassionate listener and empathetic counselor. Prioritize active listening, validating feelings, and offering emotional support. Use gentle, encouraging language and reflective statements.\nAlways respond in polite, formal Korean (존댓말).`;
+      const solutionPrompt = `You are an analytical problem-solving assistant. Focus on clarifying details, identifying root causes, and proposing practical, step-by-step solutions. Ask focused questions and provide actionable recommendations.\nAlways respond in polite, formal Korean (존댓말).`;
+      const selectedSystemPrompt = storedMode === 'solution' ? solutionPrompt : worryPrompt;
+
       const newSession = [
         {
-          role: "system",
-          content: `${systemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`, 
+          role: 'system',
+          content: `${selectedSystemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`, 
         },
       ];
 
@@ -94,10 +114,16 @@ export function registerSocketHandlers(io) {
       const specialString = Array.isArray(special)
         ? special.join(", ")
         : special.toString();
+      // Use stored mode when resubmitting
+      const storedMode = userSpecial[socket.id]?.mode || 'worry';
+      const worryPrompt = `You are a compassionate listener and empathetic counselor. Prioritize active listening, validating feelings, and offering emotional support. Use gentle, encouraging language and reflective statements.\nAlways respond in polite, formal Korean (존댓말).`;
+      const solutionPrompt = `You are an analytical problem-solving assistant. Focus on clarifying details, identifying root causes, and proposing practical, step-by-step solutions. Ask focused questions and provide actionable recommendations.\nAlways respond in polite, formal Korean (존댓말).`;
+      const selectedSystemPrompt = storedMode === 'solution' ? solutionPrompt : worryPrompt;
+
       const newSession = [
         {
-          role: "system",
-          content: `${systemPrompt}\n\nThis user has the same traits: ${specialString}. When you answer, you should be care these properties.`, 
+          role: 'system',
+          content: `${selectedSystemPrompt}\n\nThis user has the same traits: ${specialString}. When you answer, you should be care these properties.`, 
         },
       ];
 
@@ -109,17 +135,17 @@ export function registerSocketHandlers(io) {
 
       try {
         const res = await openai.chat.completions.create({
-          model: "gpt-5",
+          model: 'gpt-5',
           messages: sessions[socket.id],
         });
 
         const reply = res.choices[0].message.content;
-        sessions[socket.id].push({ role: "assistant", content: reply });
+        sessions[socket.id].push({ role: 'assistant', content: reply });
         console.log(`GPT 응답 [${socket.id}]:`, reply);
-        socket.emit("chat message", { message: reply });
+        socket.emit('chat message', { message: reply });
       } catch (err) {
-        console.error("GPT 에러:", err);
-        socket.emit("chat message", { message: "GPT 고장 💀" });
+        console.error('GPT 에러:', err);
+        socket.emit('chat message', { message: 'GPT 고장 💀' });
       }
     });
 

@@ -97,7 +97,8 @@ const ChatSider = ({
     };
     const newChatLog = [...messages, userMessage];
     setMessages(newChatLog);
-    chatService.sendMessage(message); // Send only the new message text
+    // Pass the full chat log to chatService.sendMessage
+    chatService.sendMessage(message, newChatLog); 
     setIsTyping(true);
     increaseExp(5);
   };
