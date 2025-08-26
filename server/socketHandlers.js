@@ -32,7 +32,7 @@ export function registerSocketHandlers(io) {
   io.on("connection", (socket) => {
     console.log(`클라이언트 연결: ${socket.id}`);
 
-    socket.on("chat message", async ({ msgPayload, chatLog }) => {
+    socket.on("chat message", async ({ msgPayload = {}, chatLog }) => {
       console.log(`메시지 수신 [${socket.id}]:`, { msgPayload, chatLog });
 
       const text = msgPayload.text || '';
@@ -56,7 +56,7 @@ Always respond in polite, formal Korean (존댓말).`;
       const newSession = [
         {
           role: 'system',
-          content: `${selectedSystemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
+          content: `${selectedSystemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`, 
         },
       ];
 
