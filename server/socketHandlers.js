@@ -32,15 +32,14 @@ export function registerSocketHandlers(io) {
   io.on("connection", (socket) => {
     console.log(`클라이언트 연결: ${socket.id}`);
 
-    socket.on("chat message", async (msg) => {
-      console.log(`메시지 수신 [${socket.id}]:`, msg);
+    socket.on("chat message", async ({ msgPayload, chatLog }) => {
+      console.log(`메시지 수신 [${socket.id}]:`, { msgPayload, chatLog });
 
-      // msg may be an object { text, mode }
-      const text = typeof msg === 'string' ? msg : msg.text || '';
-      const mode = (msg && msg.mode) || userSpecial[socket.id]?.mode || 'worry';
+      const text = msgPayload.text || '';
+      const mode = msgPayload.mode || userSpecial[socket.id]?.mode || 'worry';
 
       // Store chosen mode per socket for future reference (e.g., load history/resubmit)
-      if (!userSpecial[socket.id]) userSpecial[socket.id] = [];
+      if (!userSpecial[socket.id]) userSpecial[socket.id] = {};
       userSpecial[socket.id].mode = mode;
 
       // Select system prompt based on mode
@@ -51,18 +50,23 @@ Always respond in polite, formal Korean (존댓말).`;
 
       const selectedSystemPrompt = mode === 'solution' ? solutionPrompt : worryPrompt;
 
-      if (!sessions[socket.id]) {
-        const special = userSpecial[socket.id] || [];
-        const specialString = Array.isArray(special) ? special.join(', ') : special.toString();
-        sessions[socket.id] = [
-          {
-            role: 'system',
-            content: `${selectedSystemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
-          },
-        ];
-      }
+      const special = userSpecial[socket.id].special || []; // Access .special property
+      const specialString = Array.isArray(special) ? special.join(', ') : special.toString();
 
-      sessions[socket.id].push({ role: 'user', content: text });
+      const newSession = [
+        {
+          role: 'system',
+          content: `${selectedSystemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
+        },
+      ];
+
+      chatLog.forEach((msg) => {
+        newSession.push({ role: msg.sender === 'user' ? 'user' : 'assistant', content: msg.content });
+      });
+
+      newSession.push({ role: 'user', content: text });
+
+      sessions[socket.id] = newSession;
 
       try {
         const res = await openai.chat.completions.create({
@@ -82,7 +86,7 @@ Always respond in polite, formal Korean (존댓말).`;
 
     socket.on("load chat history", (chatHistory) => {
       console.log(`'load chat history' request from ${socket.id}`);
-      const special = userSpecial[socket.id] || [];
+      const special = userSpecial[socket.id]?.special || [];
       const specialString = Array.isArray(special)
         ? special.join(", ")
         : special.toString();
@@ -110,7 +114,7 @@ Always respond in polite, formal Korean (존댓말).`;
 
     socket.on("resubmit chat", async (chatHistory) => {
       console.log(`'resubmit chat' request from ${socket.id}`);
-      const special = userSpecial[socket.id] || [];
+      const special = userSpecial[socket.id]?.special || [];
       const specialString = Array.isArray(special)
         ? special.join(", ")
         : special.toString();
