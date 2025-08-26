@@ -13,8 +13,7 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
-// Canonical host 리다이렉션 미들웨어 (마이그레이션을 위해 임시 비활성화)
-/*
+// Canonical host 리다이렉션 미들웨어
 app.use((req, res, next) => {
   const canonicalHost = 'syncro.tg-antinomy.kro.kr';
   // 'x-forwarded-host'는 프록시 환경을 위한 헤더입니다.
@@ -27,7 +26,6 @@ app.use((req, res, next) => {
     next();
   }
 });
-*/
 
 const server = http.createServer(app);
 
