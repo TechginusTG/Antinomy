@@ -16,6 +16,7 @@ import CustomNode from "../../components/CustomNode/CustomNode";
 import ContextMenu from "../../components/ContextMenu/ContextMenu";
 import DiagramMessage from "../../components/DiagramMessage/DiagramMessage";
 import chatService from "../../utils/chatService";
+import { loadChatLog } from "../../utils/chatStorage";
 
 import { getLayoutedElements } from "../../utils/prettyDia.js";
 import SettingsModal from "../../components/SettingsModal/SettingsModal";
@@ -88,17 +89,14 @@ const MainApp = () => {
   
 
   useEffect(() => {
-    const loadedData = loadFlow();
-    if (loadedData) {
-      setChatLog(loadedData.chatHistory);
-      chatService.loadChatHistory(loadedData.chatHistory);
-      if(loadedData.quests) {
-        setQuests(loadedData.quests);
-      }
-      if(loadedData.completedQuests) {
-        setCompletedQuests(loadedData.completedQuests);
-      }
-    }
+    // Load chat log from localStorage
+    const initialChatLog = loadChatLog();
+    setChatLog(initialChatLog);
+
+    // Initialize chatService with the loaded chat log
+    // chatService.connect will now handle loading its internal history
+    // and passing it to the onMessageCallback (which is setChatLog here)
+    chatService.connect(setChatLog); // Pass setChatLog as the onMessageCallback
 
     const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
     if (!hasVisitedBefore) {
@@ -171,8 +169,6 @@ const MainApp = () => {
           if (data.completedQuests) {
             setCompletedQuests(data.completedQuests);
           }
-          localStorage.setItem("chatLog", JSON.stringify(data.chatHistory));
-          chatService.loadChatHistory(data.chatHistory);
         } else {
           alert("Invalid file format.");
         }

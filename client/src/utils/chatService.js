@@ -1,5 +1,6 @@
 import { io } from "socket.io-client";
 import useFlowStore from "./flowStore";
+import { saveChatLog, loadChatLog, clearChatLog } from "./chatStorage";
 
 // 서버가 로컬에서 실행 중이라고 가정합니다. 포트가 다른 경우 이 URL을 수정하세요.
 // 예를 들어, Vite 개발 서버를 사용하는 경우 프록시 설정이 필요할 수 있습니다.
@@ -8,6 +9,11 @@ const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (isLocal ? "http://localho
 
 class ChatService {
   socket = null;
+  chatHistory = []; // Add chatHistory property
+
+  constructor() { // Add constructor to load initial chat history
+    this.chatHistory = loadChatLog();
+  }
 
   connect(onMessageCallback) {
     this.socket = io(SOCKET_URL, {
@@ -19,6 +25,10 @@ class ChatService {
     this.socket.on("connect", () => {
       console.log("서버에 연결되었습니다:", this.socket.id);
       setIsConnected(true);
+      // Pass initial chat history to the callback if needed by the component
+      if (onMessageCallback) {
+        onMessageCallback(this.chatHistory);
+      }
     });
 
     this.socket.on("disconnect", () => {
@@ -27,8 +37,11 @@ class ChatService {
     });
 
     this.socket.on("chat message", (msg) => {
+      // Append new message to chatHistory
+      this.chatHistory.push(msg);
+      saveChatLog(this.chatHistory); // Save updated chat history
       if (onMessageCallback) {
-        onMessageCallback(msg);
+        onMessageCallback(this.chatHistory); // Pass the entire updated history
       }
     });
 
@@ -44,10 +57,13 @@ class ChatService {
     }
   }
 
-  resubmit(chatHistory, onMessageCallback) {
+  resubmit(onMessageCallback) { // Removed chatHistory parameter as it's managed internally
     if (this.socket) {
-      this.socket.emit("resubmit chat", chatHistory);
+      this.socket.emit("resubmit chat", this.chatHistory); // Use internal chatHistory
       this.socket.once("chat message", (msg) => {
+        // This part is handled by the general "chat message" listener now
+        // The onMessageCallback here is for the *response* to resubmit, not the full history
+        // So, we should just pass the new message, and the main listener will update history
         if (onMessageCallback) {
           onMessageCallback(msg);
         }
@@ -55,7 +71,7 @@ class ChatService {
     }
   }
 
-  loadChatHistory(chatHistory) {
+  loadChatHistory(chatHistory) { // This function seems redundant now, but keeping for now
     if (this.socket) {
       this.socket.emit("load chat history", chatHistory);
     }
@@ -74,6 +90,8 @@ class ChatService {
 
   resetChat() {
     if (this.socket) {
+      this.chatHistory = []; // Clear internal chat history
+      clearChatLog(); // Clear localStorage
       this.socket.emit("reset chat");
     }
   }
@@ -83,7 +101,7 @@ class ChatService {
       this.socket.disconnect();
       this.socket = null;
     }
-  } 
+  }
 }
 
 const chatService = new ChatService();

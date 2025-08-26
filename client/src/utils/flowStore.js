@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import { addEdge, applyNodeChanges, applyEdgeChanges } from "reactflow";
-import pako from "pako";
+
 import chatService from "./chatService";
 import { getUnlockedThemes } from "./themeManager";
+import { saveChatLog } from "./chatStorage";
 
 const initialNodes = [
   {
@@ -142,7 +143,7 @@ const useFlowStore = create((set, get) => {
     },
 
     _updateHistory: (newState) => {
-      const { history, historyIndex, autoSaveToHash } = get();
+      const { history, historyIndex } = get();
       const newHistory = history.slice(0, historyIndex + 1);
       newHistory.push(newState);
       const stateToSet = {
@@ -151,36 +152,9 @@ const useFlowStore = create((set, get) => {
         historyIndex: newHistory.length - 1,
       };
       set(stateToSet);
-      autoSaveToHash();
     },
 
-    updateUrlHash: () => {
-      const { nodes, edges } = get();
-      const diagramData = { nodes, edges };
-
-      const chatLogString = localStorage.getItem("chatLog");
-      const chatHistory = chatLogString ? JSON.parse(chatLogString) : [];
-
-      const combinedData = {
-        diagramData,
-        chatHistory,
-      };
-
-      const jsonString = JSON.stringify(combinedData);
-      const compressed = pako.deflate(jsonString);
-      const base64 = btoa(String.fromCharCode.apply(null, compressed));
-      const safeEncodedData = base64
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_")
-        .replace(/=/g, "");
-      const hash = `#data=${safeEncodedData}`;
-      window.history.replaceState(null, null, hash);
-      localStorage.setItem("flow-hash", hash);
-    },
-
-    autoSaveToHash: () => {
-      get().updateUrlHash();
-    },
+    
 
     onNodesChange: (changes) => {
       const { nodes, edges, _updateHistory } = get();
@@ -256,7 +230,7 @@ const useFlowStore = create((set, get) => {
       if (historyIndex > 0) {
         const prevState = history[historyIndex - 1];
         set({ ...prevState, historyIndex: historyIndex - 1 });
-        get().autoSaveToHash();
+
       }
     },
 
@@ -265,7 +239,7 @@ const useFlowStore = create((set, get) => {
       if (historyIndex < history.length - 1) {
         const nextState = history[historyIndex + 1];
         set({ ...nextState, historyIndex: historyIndex + 1 });
-        get().autoSaveToHash();
+
       }
     },
 
@@ -354,59 +328,8 @@ const useFlowStore = create((set, get) => {
     },
 
     loadFlow: () => {
-      let hash = window.location.hash;
-      if (!hash.startsWith("#data=")) {
-        const storedHash = localStorage.getItem("flow-hash");
-        if (storedHash && storedHash.startsWith("#data=")) {
-          hash = storedHash;
-          window.history.replaceState(null, null, hash);
-        } else {
-          get().resetFlow();
-          return null;
-        }
-      }
-
-      try {
-        if (!hash.startsWith("#data=")) return null;
-
-        const safeEncodedData = hash.substring(6);
-
-        let base64 = safeEncodedData.replace(/-/g, "+").replace(/_/g, "/");
-        while (base64.length % 4) {
-          base64 += "=";
-        }
-
-        const decodedData = atob(base64);
-        const len = decodedData.length;
-        const compressed = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-            compressed[i] = decodedData.charCodeAt(i);
-        }
-        const jsonString = pako.inflate(compressed, { to: "string" });
-        const data = JSON.parse(jsonString);
-
-        if (data.diagramData && data.chatHistory) {
-          get().setFlow(data.diagramData);
-          localStorage.setItem("chatLog", JSON.stringify(data.chatHistory));
-          const returnData = { chatHistory: data.chatHistory };
-          if (data.quests) {
-            returnData.quests = data.quests;
-          }
-          if (data.completedQuests) {
-            returnData.completedQuests = data.completedQuests;
-          }
-          return returnData;
-        } else {
-          get().setFlow(data);
-          return null;
-        }
-      } catch (error) {
-        console.error("Failed to load from hash:", error);
-        window.location.hash = "";
-        localStorage.removeItem("flow-hash");
-        get().resetFlow();
-        return null;
-      }
+      get().resetFlow();
+      return null;
     },
 
     deleteMessage: (messageId, setChatLog) => {
@@ -416,9 +339,9 @@ const useFlowStore = create((set, get) => {
       
       if (messageIndex > -1) {
         chatHistory.splice(messageIndex);
-        localStorage.setItem("chatLog", JSON.stringify(chatHistory));
+        saveChatLog(chatHistory);
         setChatLog(chatHistory);
-        get().autoSaveToHash();
+
       }
     },
 
@@ -432,8 +355,8 @@ const useFlowStore = create((set, get) => {
         chatHistory.splice(messageIndex + 1);
 
         setChatLog(chatHistory);
-        localStorage.setItem("chatLog", JSON.stringify(chatHistory));
-        get().autoSaveToHash();
+        saveChatLog(chatHistory);
+
 
         chatService.resubmit(chatHistory, (reply) => {
           const newChatLog = [
@@ -441,8 +364,8 @@ const useFlowStore = create((set, get) => {
             { id: Date.now(), sender: "ai", content: reply },
           ];
           setChatLog(newChatLog);
-          localStorage.setItem("chatLog", JSON.stringify(newChatLog));
-          get().autoSaveToHash();
+          saveChatLog(newChatLog);
+
         });
       }
     }
