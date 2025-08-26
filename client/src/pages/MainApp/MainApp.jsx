@@ -16,7 +16,6 @@ import CustomNode from "../../components/CustomNode/CustomNode";
 import ContextMenu from "../../components/ContextMenu/ContextMenu";
 import DiagramMessage from "../../components/DiagramMessage/DiagramMessage";
 import chatService from "../../utils/chatService";
-import { loadChatLog } from "../../utils/chatStorage";
 
 import { getLayoutedElements } from "../../utils/prettyDia.js";
 import SettingsModal from "../../components/SettingsModal/SettingsModal";
@@ -40,7 +39,7 @@ const MainApp = () => {
     undo,
     redo,
     save,
-    loadFlow,
+    loadDiagram,
     setFlow,
     addNode,
     setIsSettingsOpen,
@@ -56,13 +55,20 @@ const MainApp = () => {
     getCustomColorVarName,
   } = useFlowStore();
   const reactFlowWrapper = useRef(null);
-  const [chatLog, setChatLog] = useState([]);
+  const [chatLog, setChatLog] = useState(() => {
+    const saved = localStorage.getItem("chatLog");
+    return saved ? JSON.parse(saved) : [];
+  });
   const fileInputRef = useRef(null);
+  const isInitialMount = useRef(true);
   const [contextMenu, setContextMenu] = useState(null);
   const [reactFlowInstance, setReactFlowInstance] = useState(null);
   const [diagramMessage, setDiagramMessage] = useState(null);
   const [isDiagramMaking, setIsDiagramMaking] = useState(false);
-  const [quests, setQuests] = useState([]);
+  const [quests, setQuests] = useState(() => {
+    const saved = localStorage.getItem("quests");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const [isSiderVisible, setIsSiderVisible] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
@@ -71,7 +77,10 @@ const MainApp = () => {
   const toggleSider = () => {
     setIsSiderVisible(!isSiderVisible);
   };
-  const [completedQuests, setCompletedQuests] = useState([]);
+  const [completedQuests, setCompletedQuests] = useState(() => {
+    const saved = localStorage.getItem("completedQuests");
+    return saved ? JSON.parse(saved) : [];
+  });
 
   const handleResetQuests = () => {
     setQuests([]);
@@ -89,14 +98,13 @@ const MainApp = () => {
   
 
   useEffect(() => {
-    // Load chat log from localStorage
-    const initialChatLog = loadChatLog();
-    setChatLog(initialChatLog);
+    // Load diagram from store
+    useFlowStore.getState().loadDiagram();
 
-    // Initialize chatService with the loaded chat log
-    // chatService.connect will now handle loading its internal history
-    // and passing it to the onMessageCallback (which is setChatLog here)
-    chatService.connect(setChatLog); // Pass setChatLog as the onMessageCallback
+    // Inform chatService of the loaded history
+    if (chatLog && chatLog.length > 0) {
+      chatService.loadChatHistory(chatLog);
+    }
 
     const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
     if (!hasVisitedBefore) {
@@ -104,6 +112,23 @@ const MainApp = () => {
       localStorage.setItem('hasVisitedBefore', 'true');
     }
   }, []);
+
+  useEffect(() => {
+    localStorage.setItem("quests", JSON.stringify(quests));
+  }, [quests]);
+
+  useEffect(() => {
+    localStorage.setItem("completedQuests", JSON.stringify(completedQuests));
+  }, [completedQuests]);
+
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+    } else {
+      // This will not run on the first render, but will run on all subsequent updates.
+      localStorage.setItem("chatLog", JSON.stringify(chatLog));
+    }
+  }, [chatLog]);
 
   useEffect(() => {
     document.body.setAttribute("data-theme", theme);
@@ -169,6 +194,8 @@ const MainApp = () => {
           if (data.completedQuests) {
             setCompletedQuests(data.completedQuests);
           }
+          localStorage.setItem("chatLog", JSON.stringify(data.chatHistory));
+          chatService.loadChatHistory(data.chatHistory);
         } else {
           alert("Invalid file format.");
         }

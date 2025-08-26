@@ -87,9 +87,7 @@ const ChatSider = ({
     }
   }, [messages]);
 
-  useEffect(() => {
-    localStorage.setItem("chatLog", JSON.stringify(messages));
-  }, [messages]);
+  
 
   const sendMessage = (message) => {
     const userMessage = {

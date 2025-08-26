@@ -1,9 +1,8 @@
 import { create } from "zustand";
 import { addEdge, applyNodeChanges, applyEdgeChanges } from "reactflow";
-
+import pako from "pako";
 import chatService from "./chatService";
 import { getUnlockedThemes } from "./themeManager";
-import { saveChatLog } from "./chatStorage";
 
 const initialNodes = [
   {
@@ -60,7 +59,7 @@ const useFlowStore = create((set, get) => {
     editingNodeId: null,
 
     currentExp: 0,
-    maxExp: 100, 
+    maxExp: 100,
     level: 1,
     unlockedThemes: getUnlockedThemes(1),
 
@@ -143,7 +142,7 @@ const useFlowStore = create((set, get) => {
     },
 
     _updateHistory: (newState) => {
-      const { history, historyIndex } = get();
+      const { history, historyIndex, autoSaveDiagram } = get();
       const newHistory = history.slice(0, historyIndex + 1);
       newHistory.push(newState);
       const stateToSet = {
@@ -152,9 +151,26 @@ const useFlowStore = create((set, get) => {
         historyIndex: newHistory.length - 1,
       };
       set(stateToSet);
+      autoSaveDiagram();
     },
 
-    
+    saveDiagramToLocalStorage: () => {
+      const { nodes, edges } = get();
+      const diagramData = { nodes, edges };
+
+      const jsonString = JSON.stringify(diagramData);
+      const compressed = pako.deflate(jsonString);
+      const base64 = btoa(String.fromCharCode.apply(null, compressed));
+      const safeEncodedData = base64
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=/g, "");
+      localStorage.setItem("diagram-data", safeEncodedData);
+    },
+
+    autoSaveDiagram: () => {
+      get().saveDiagramToLocalStorage();
+    },
 
     onNodesChange: (changes) => {
       const { nodes, edges, _updateHistory } = get();
@@ -230,7 +246,7 @@ const useFlowStore = create((set, get) => {
       if (historyIndex > 0) {
         const prevState = history[historyIndex - 1];
         set({ ...prevState, historyIndex: historyIndex - 1 });
-
+        get().autoSaveDiagram();
       }
     },
 
@@ -239,7 +255,7 @@ const useFlowStore = create((set, get) => {
       if (historyIndex < history.length - 1) {
         const nextState = history[historyIndex + 1];
         set({ ...nextState, historyIndex: historyIndex + 1 });
-
+        get().autoSaveDiagram();
       }
     },
 
@@ -327,21 +343,47 @@ const useFlowStore = create((set, get) => {
       }
     },
 
-    loadFlow: () => {
-      get().resetFlow();
-      return null;
+    loadDiagram: () => {
+      const safeEncodedData = localStorage.getItem("diagram-data");
+
+      if (!safeEncodedData) {
+        get().resetFlow();
+        return;
+      }
+
+      try {
+        let base64 = safeEncodedData.replace(/-/g, "+").replace(/_/g, "/");
+        while (base64.length % 4) {
+          base64 += "=";
+        }
+
+        const decodedData = atob(base64);
+        const len = decodedData.length;
+        const compressed = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+            compressed[i] = decodedData.charCodeAt(i);
+        }
+        const jsonString = pako.inflate(compressed, { to: "string" });
+        const data = JSON.parse(jsonString);
+
+        get().setFlow(data);
+
+      } catch (error) {
+        console.error("Failed to load from localStorage:", error);
+        localStorage.removeItem("diagram-data");
+        get().resetFlow();
+      }
     },
 
     deleteMessage: (messageId, setChatLog) => {
       const chatLogString = localStorage.getItem("chatLog");
       let chatHistory = chatLogString ? JSON.parse(chatLogString) : [];
       const messageIndex = chatHistory.findIndex((msg) => msg.id === messageId);
-      
+
       if (messageIndex > -1) {
         chatHistory.splice(messageIndex);
-        saveChatLog(chatHistory);
+        // The component will update localStorage via its useEffect
         setChatLog(chatHistory);
-
       }
     },
 
@@ -354,18 +396,16 @@ const useFlowStore = create((set, get) => {
         chatHistory[messageIndex].content = newText;
         chatHistory.splice(messageIndex + 1);
 
+        // The component will update localStorage via its useEffect
         setChatLog(chatHistory);
-        saveChatLog(chatHistory);
-
 
         chatService.resubmit(chatHistory, (reply) => {
           const newChatLog = [
             ...chatHistory,
             { id: Date.now(), sender: "ai", content: reply },
           ];
+          // The component will update localStorage via its useEffect
           setChatLog(newChatLog);
-          saveChatLog(newChatLog);
-
         });
       }
     }
