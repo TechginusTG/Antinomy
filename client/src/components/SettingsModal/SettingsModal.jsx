@@ -9,6 +9,8 @@ const SettingsModal = () => {
     setTheme,
     chatWidth,
     setChatWidth,
+    chatFontSize,
+    setChatFontSize,
     isSettingsOpen,
     setIsSettingsOpen,
     level,
@@ -189,10 +191,26 @@ const SettingsModal = () => {
               onChange={setChatWidth}
               style={{ width: 200 }}
             />
+            <p style={{ marginTop: 24 }}>
+              채팅 글자 크기: <b>{chatFontSize}px</b>
+            </p>
+            <Slider
+              min={10}
+              max={24}
+              value={chatFontSize}
+              onChange={setChatFontSize}
+              style={{ width: 200 }}
+            />
             
             {/* 모드 선택 버튼 */}
             <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
               <span style={{ marginRight: 8 }}>모드:</span>
+              <Button
+                type={mode === 'basic' ? 'primary' : 'default'}
+                onClick={() => setMode('basic')}
+              >
+                기본 모드
+              </Button>
               <Button
                 type={mode === 'worry' ? 'primary' : 'default'}
                 onClick={() => setMode('worry')}

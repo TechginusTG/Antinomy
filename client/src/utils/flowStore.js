@@ -53,7 +53,8 @@ const useFlowStore = create((set, get) => {
       "aquamarine",
     ],
     chatWidth: parseInt(localStorage.getItem("chatWidth"), 10) || 30,
-    mode: localStorage.getItem("mode") || 'worry',
+    chatFontSize: parseInt(localStorage.getItem("chatFontSize"), 10) || 14,
+    mode: localStorage.getItem("mode") || 'basic',
     isSettingsOpen: false,
     isQuestOpen: false,
     isConnected: false,
@@ -99,6 +100,10 @@ const useFlowStore = create((set, get) => {
     setChatWidth: (width) => {
       set({ chatWidth: width });
       localStorage.setItem("chatWidth", width);
+    },
+    setChatFontSize: (size) => {
+      set({ chatFontSize: size });
+      localStorage.setItem("chatFontSize", size);
     },
     setIsSettingsOpen: (isOpen) => set({ isSettingsOpen: isOpen }),
     setIsQuestOpen: (isOpen) => set({ isQuestOpen: isOpen }),

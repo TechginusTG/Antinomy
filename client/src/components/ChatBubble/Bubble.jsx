@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import styles from './Bubble.module.css';
+import useFlowStore from '../../utils/flowStore';
 
 const Bubble = ({
     id, 
@@ -11,12 +12,14 @@ const Bubble = ({
     onEdit,
 }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const chatFontSize = useFlowStore((state) => state.chatFontSize);
 
     return (
         <li
             className={`${className} ${isUser ? styles.userBubbleContainer : ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            style={{ fontSize: `${chatFontSize}px` }}
         >
             {children}
             {isUser && isHovered && (

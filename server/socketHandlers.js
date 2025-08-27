@@ -28,6 +28,19 @@ Conversation Rules:
 - Use line breaks, lists, bolding, and other formatting to improve readability and structure.
 - For example, use bullet points (-) for lists.`;
 
+// Define prompts in a single object for clarity and maintainability.
+const prompts = {
+  worry: `You are a compassionate listener and empathetic counselor. Prioritize active listening, validating feelings, and offering emotional support. Use gentle, encouraging language and reflective statements.
+Always respond in polite, formal Korean (존댓말).`,
+  solution: `You are an analytical problem-solving assistant. Focus on clarifying details, identifying root causes, and proposing practical, step-by-step solutions. Ask focused questions and provide actionable recommendations.
+Always respond in polite, formal Korean (존댓말).`,
+  basic: `You are an AI counselor that balances empathy with practical problem-solving.
+- **Empathetic Listening:** Start by acknowledging the user's feelings and validating their concerns with gentle, supportive language.
+- **Analytical Problem-Solving:** After showing empathy, transition to a problem-solving approach. Ask targeted questions to clarify the issue, identify root causes, and collaboratively develop actionable, step-by-step solutions.
+- **Tone:** Maintain a polite, formal, and encouraging tone throughout the conversation.
+Always respond in polite, formal Korean (존댓말).`
+};
+
 export function registerSocketHandlers(io) {
   io.on("connection", (socket) => {
     console.log(`클라이언트 연결: ${socket.id}`);
@@ -36,19 +49,14 @@ export function registerSocketHandlers(io) {
       console.log(`메시지 수신 [${socket.id}]:`, { msgPayload, chatLog });
 
       const text = msgPayload.text || '';
-      const mode = msgPayload.mode || userSpecial[socket.id]?.mode || 'worry';
+      const mode = msgPayload.mode || userSpecial[socket.id]?.mode || 'basic';
 
       // Store chosen mode per socket for future reference (e.g., load history/resubmit)
       if (!userSpecial[socket.id]) userSpecial[socket.id] = {};
       userSpecial[socket.id].mode = mode;
 
-      // Select system prompt based on mode
-      const worryPrompt = `You are a compassionate listener and empathetic counselor. Prioritize active listening, validating feelings, and offering emotional support. Use gentle, encouraging language and reflective statements.
-Always respond in polite, formal Korean (존댓말).`;
-      const solutionPrompt = `You are an analytical problem-solving assistant. Focus on clarifying details, identifying root causes, and proposing practical, step-by-step solutions. Ask focused questions and provide actionable recommendations.
-Always respond in polite, formal Korean (존댓말).`;
-
-      const selectedSystemPrompt = mode === 'solution' ? solutionPrompt : worryPrompt;
+      // Select system prompt based on mode, defaulting to basic
+      const selectedSystemPrompt = prompts[mode] || prompts.basic;
 
       const special = userSpecial[socket.id].special || []; // Access .special property
       const specialString = Array.isArray(special) ? special.join(', ') : special.toString();
@@ -56,7 +64,7 @@ Always respond in polite, formal Korean (존댓말).`;
       const newSession = [
         {
           role: 'system',
-          content: `${selectedSystemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`, 
+          content: `${selectedSystemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
         },
       ];
 
@@ -91,16 +99,14 @@ Always respond in polite, formal Korean (존댓말).`;
         ? special.join(", ")
         : special.toString();
       
-      // Select system prompt based on stored mode (default worry)
-      const storedMode = userSpecial[socket.id]?.mode || 'worry';
-      const worryPrompt = `You are a compassionate listener and empathetic counselor. Prioritize active listening, validating feelings, and offering emotional support. Use gentle, encouraging language and reflective statements.\nAlways respond in polite, formal Korean (존댓말).`;
-      const solutionPrompt = `You are an analytical problem-solving assistant. Focus on clarifying details, identifying root causes, and proposing practical, step-by-step solutions. Ask focused questions and provide actionable recommendations.\nAlways respond in polite, formal Korean (존댓말).`;
-      const selectedSystemPrompt = storedMode === 'solution' ? solutionPrompt : worryPrompt;
+      // Select system prompt based on stored mode, defaulting to basic
+      const storedMode = userSpecial[socket.id]?.mode || 'basic';
+      const selectedSystemPrompt = prompts[storedMode] || prompts.basic;
 
       const newSession = [
         {
           role: 'system',
-          content: `${selectedSystemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`, 
+          content: `${selectedSystemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
         },
       ];
 
@@ -118,16 +124,15 @@ Always respond in polite, formal Korean (존댓말).`;
       const specialString = Array.isArray(special)
         ? special.join(", ")
         : special.toString();
-      // Use stored mode when resubmitting
-      const storedMode = userSpecial[socket.id]?.mode || 'worry';
-      const worryPrompt = `You are a compassionate listener and empathetic counselor. Prioritize active listening, validating feelings, and offering emotional support. Use gentle, encouraging language and reflective statements.\nAlways respond in polite, formal Korean (존댓말).`;
-      const solutionPrompt = `You are an analytical problem-solving assistant. Focus on clarifying details, identifying root causes, and proposing practical, step-by-step solutions. Ask focused questions and provide actionable recommendations.\nAlways respond in polite, formal Korean (존댓말).`;
-      const selectedSystemPrompt = storedMode === 'solution' ? solutionPrompt : worryPrompt;
+      
+      // Use stored mode when resubmitting, defaulting to basic
+      const storedMode = userSpecial[socket.id]?.mode || 'basic';
+      const selectedSystemPrompt = prompts[storedMode] || prompts.basic;
 
       const newSession = [
         {
           role: 'system',
-          content: `${selectedSystemPrompt}\n\nThis user has the same traits: ${specialString}. When you answer, you should be care these properties.`, 
+          content: `${selectedSystemPrompt}\n\nThis user has the same traits: ${specialString}. When you answer, you should be care these properties.`,
         },
       ];
 
@@ -152,6 +157,7 @@ Always respond in polite, formal Korean (존댓말).`;
         socket.emit('chat message', { message: 'GPT 고장 💀' });
       }
     });
+
 
     socket.on("make diagram", async (payload, callback) => {
       console.log(`'make diagram' request from ${socket.id}`);
