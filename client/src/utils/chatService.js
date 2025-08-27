@@ -38,6 +38,18 @@ class ChatService {
     });
   }
 
+  onNewRecommendations(callback) {
+    if (this.socket) {
+      this.socket.on('new_recommendations', callback);
+    }
+  }
+
+  offNewRecommendations(callback) {
+    if (this.socket) {
+      this.socket.off('new_recommendations', callback);
+    }
+  }
+
   sendMessage(payload, chatLog = []) { // Add chatLog parameter with default empty array
     if (this.socket) {
       const currentMode = useFlowStore.getState().mode || 'worry';

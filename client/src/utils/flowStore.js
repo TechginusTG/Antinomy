@@ -59,6 +59,7 @@ const useFlowStore = create((set, get) => {
     isQuestOpen: false,
     isConnected: false,
     editingNodeId: null,
+    recommendations: [],
 
     currentExp: 0,
     maxExp: 100,
@@ -112,6 +113,13 @@ const useFlowStore = create((set, get) => {
       set({ mode });
       localStorage.setItem('mode', mode);
     },
+
+    addRecommendations: (newRecommendations) => 
+      set((state) => ({ 
+        recommendations: [...state.recommendations, ...newRecommendations] 
+      })),
+
+    clearRecommendations: () => set({ recommendations: [] }),
 
     resetCustomThemeColors: () => {
       const defaultColors = [

@@ -31,15 +31,37 @@ Conversation Rules:
 // Define prompts in a single object for clarity and maintainability.
 const prompts = {
   worry: `You are a compassionate listener and empathetic counselor. Prioritize active listening, validating feelings, and offering emotional support. Use gentle, encouraging language and reflective statements.
-Always respond in polite, formal Korean (존댓말).`,
+Always respond in polite, formal Korean (존댓말).
+- **Proactive Recommendations:** After several turns of conversation, when you have a good understanding of the user's interests or a topic seems to be concluding, you MUST format your response as a single minified JSON object. This JSON object should contain two keys: "chat_response" (your normal chat message as a string) and "recommendations" (an array of 2-3 new, related topics or questions you suggest for the user). Otherwise, respond with a normal string.`,
   solution: `You are an analytical problem-solving assistant. Focus on clarifying details, identifying root causes, and proposing practical, step-by-step solutions. Ask focused questions and provide actionable recommendations.
-Always respond in polite, formal Korean (존댓말).`,
+Always respond in polite, formal Korean (존댓말).
+- **Proactive Recommendations:** After several turns of conversation, when you have a good understanding of the user\'s interests or a topic seems to be concluding, you MUST format your response as a single minified JSON object. This JSON object should contain two keys: "chat_response" (your normal chat message as a string) and "recommendations" (an array of 2-3 new, related topics or questions you suggest for the user). Otherwise, respond with a normal string.`,
   basic: `You are an AI counselor that balances empathy with practical problem-solving.
 - **Empathetic Listening:** Start by acknowledging the user's feelings and validating their concerns with gentle, supportive language.
 - **Analytical Problem-Solving:** After showing empathy, transition to a problem-solving approach. Ask targeted questions to clarify the issue, identify root causes, and collaboratively develop actionable, step-by-step solutions.
 - **Tone:** Maintain a polite, formal, and encouraging tone throughout the conversation.
-Always respond in polite, formal Korean (존댓말).`
+Always respond in polite, formal Korean (존댓말).
+- **Proactive Recommendations:** After several turns of conversation, when you have a good understanding of the user's interests or a topic seems to be concluding, you MUST format your response as a single minified JSON object. This JSON object should contain two keys: "chat_response" (your normal chat message as a string) and "recommendations" (an array of 2-3 new, related topics or questions you suggest for the user). Otherwise, respond with a normal string.`
 };
+
+function handleOpenAIResponse(socket, reply) {
+  try {
+    const parsedReply = JSON.parse(reply);
+    if (parsedReply.chat_response && parsedReply.recommendations) {
+      const chatMessage = parsedReply.chat_response;
+      sessions[socket.id].push({ role: 'assistant', content: chatMessage });
+      socket.emit('chat message', { message: chatMessage });
+      socket.emit('new_recommendations', parsedReply.recommendations);
+      console.log(`GPT 응답 (추천 포함) [${socket.id}]:`, parsedReply);
+    } else {
+      throw new Error("Invalid JSON format for recommendations");
+    }
+  } catch (parseError) {
+    sessions[socket.id].push({ role: 'assistant', content: reply });
+    console.log(`GPT 응답 [${socket.id}]:`, reply);
+    socket.emit('chat message', { message: reply });
+  }
+}
 
 export function registerSocketHandlers(io) {
   io.on("connection", (socket) => {
@@ -76,16 +98,25 @@ export function registerSocketHandlers(io) {
 
       sessions[socket.id] = newSession;
 
+      // --- TEMPORARY TEST CODE START ---
+      const testPrompt = `
+        You are a helpful assistant. The user has sent the following message: "${text}".
+        Your task is to respond to the user's message and also provide a list of recommended next questions.
+        You MUST format your response as a single minified JSON object with two keys:
+        - "chat_response": A string containing your direct reply to the user's message.
+        - "recommendations": An array of 3 strings, where each string is a new, interesting question related to the user's message.
+      `;
+      const testSession = [{ role: 'user', content: testPrompt }];
+      // --- TEMPORARY TEST CODE END ---
+
       try {
         const res = await openai.chat.completions.create({
           model: 'gpt-5',
-          messages: sessions[socket.id],
+          messages: testSession, // Using testSession instead of sessions[socket.id]
         });
 
         const reply = res.choices[0].message.content;
-        sessions[socket.id].push({ role: 'assistant', content: reply });
-        console.log(`GPT 응답 [${socket.id}]:`, reply);
-        socket.emit('chat message', { message: reply });
+        handleOpenAIResponse(socket, reply);
       } catch (err) {
         console.error('GPT 에러:', err);
         socket.emit('chat message', { message: 'GPT 고장 💀' });
@@ -132,7 +163,7 @@ export function registerSocketHandlers(io) {
       const newSession = [
         {
           role: 'system',
-          content: `${selectedSystemPrompt}\n\nThis user has the same traits: ${specialString}. When you answer, you should be care these properties.`,
+          content: `${selectedSystemPrompt}\n\nThis user has the same traits: ${specialString}. When you answer, you should be care these properties.`, 
         },
       ];
 
@@ -149,9 +180,7 @@ export function registerSocketHandlers(io) {
         });
 
         const reply = res.choices[0].message.content;
-        sessions[socket.id].push({ role: 'assistant', content: reply });
-        console.log(`GPT 응답 [${socket.id}]:`, reply);
-        socket.emit('chat message', { message: reply });
+        handleOpenAIResponse(socket, reply);
       } catch (err) {
         console.error('GPT 에러:', err);
         socket.emit('chat message', { message: 'GPT 고장 💀' });
