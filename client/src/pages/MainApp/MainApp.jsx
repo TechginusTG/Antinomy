@@ -21,7 +21,7 @@ import { getLayoutedElements } from "../../utils/prettyDia.js";
 import SettingsModal from "../../components/SettingsModal/SettingsModal";
 import QuestModal from "../../components/QuestModal/QuestModal";
 import GuideModal from "../../components/GuideModal/GuideModal";
-import ToastNotification from "../../components/ToastNotification/ToastNotification";
+
 
 import "reactflow/dist/style.css";
 import styles from "./MainApp.module.css";
@@ -54,15 +54,13 @@ const MainApp = () => {
     theme,
     customThemeColors,
     getCustomColorVarName,
-    addRecommendations,
+    setRecommendations,
   } = useFlowStore();
   const reactFlowWrapper = useRef(null);
   const [chatLog, setChatLog] = useState(() => {
     const saved = localStorage.getItem("chatLog");
     return saved ? JSON.parse(saved) : [];
   });
-  const [toastMessage, setToastMessage] = useState("");
-  const [isToastVisible, setIsToastVisible] = useState(false);
   const fileInputRef = useRef(null);
   const isInitialMount = useRef(true);
   const [contextMenu, setContextMenu] = useState(null);
@@ -129,19 +127,7 @@ const MainApp = () => {
     }
   }, [chatLog]);
 
-  useEffect(() => {
-    const handleNewRecommendations = (recommendations) => {
-      addRecommendations(recommendations);
-      setToastMessage("새로운 추천 질문이 퀘스트 목록에 추가되었어요.");
-      setIsToastVisible(true);
-    };
-
-    chatService.onNewRecommendations(handleNewRecommendations);
-
-    return () => {
-      chatService.offNewRecommendations(handleNewRecommendations);
-    };
-  }, [addRecommendations]);
+  
 
   useEffect(() => {
     document.body.setAttribute("data-theme", theme);
@@ -440,11 +426,7 @@ const MainApp = () => {
           </Content>
         </Layout>
       </Layout>
-      <ToastNotification 
-        message={toastMessage} 
-        isVisible={isToastVisible} 
-        onHide={() => setIsToastVisible(false)} 
-      />
+      
       {contextMenu && (
         <ContextMenu
           {...contextMenu}

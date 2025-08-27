@@ -114,10 +114,10 @@ const useFlowStore = create((set, get) => {
       localStorage.setItem('mode', mode);
     },
 
-    addRecommendations: (newRecommendations) => 
-      set((state) => ({ 
-        recommendations: [...state.recommendations, ...newRecommendations] 
-      })),
+    setRecommendations: (newRecommendations) => 
+      set({ 
+        recommendations: newRecommendations 
+      }),
 
     clearRecommendations: () => set({ recommendations: [] }),
 

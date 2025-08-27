@@ -1,0 +1,39 @@
+.recommendationContainer {
+  background-color: var(--background-secondary);
+  border-top: 1px solid var(--border-color);
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.recommendationHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: var(--text-primary);
+}
+
+.recommendationList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recommendationList li {
+  margin-bottom: 5px;
+}
+
+.recommendationList li button {
+  width: 100%;
+  text-align: left;
+  white-space: normal;
+  height: auto;
+  padding: 5px 0;
+  color: var(--text-primary);
+}
+
+.recommendationList li button:hover {
+  text-decoration: underline;
+}

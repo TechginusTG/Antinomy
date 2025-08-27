@@ -101,10 +101,10 @@ export function registerSocketHandlers(io) {
       // --- TEMPORARY TEST CODE START ---
       const testPrompt = `
         You are a helpful assistant. The user has sent the following message: "${text}".
-        Your task is to respond to the user's message and also provide a list of recommended next questions.
+        Your task is to respond to the user's message and also provide a list of recommended next questions for the user to ask.
         You MUST format your response as a single minified JSON object with two keys:
         - "chat_response": A string containing your direct reply to the user's message.
-        - "recommendations": An array of 3 strings, where each string is a new, interesting question related to the user's message.
+        - "recommendations": An array of 3 strings, where each string is a new, interesting question that the user might want to ask next, based on the conversation so far. These should be questions that encourage further exploration from the user's perspective.
       `;
       const testSession = [{ role: 'user', content: testPrompt }];
       // --- TEMPORARY TEST CODE END ---

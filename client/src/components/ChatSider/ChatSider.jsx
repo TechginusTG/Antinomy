@@ -9,6 +9,7 @@ import styles from "./ChatSider.module.css";
 import chatService from "../../utils/chatService";
 import useFlowStore from "../../utils/flowStore";
 import ChatInput from "../ChatInput/ChatInput";
+import RecommendationList from "../RecommendationList/RecommendationList";
 
 const { Sider } = Layout;
 
@@ -25,7 +26,7 @@ const ChatSider = ({
   isSiderVisible,
 }) => {
   const [isTyping, setIsTyping] = useState(false);
-  const { resetFlow, increaseExp } = useFlowStore();
+  const { resetFlow, increaseExp, recommendations, clearRecommendations, setRecommendations } = useFlowStore();
   const chatLogRef = useRef(null);
 
   const [diagramResetModal, setDiagramResetModal] = useState({
@@ -80,6 +81,18 @@ const ChatSider = ({
       chatService.disconnect();
     };
   }, [setMessages]);
+
+  useEffect(() => {
+    const handleNewRecommendations = (newRecommendations) => {
+      setRecommendations(newRecommendations);
+    };
+
+    chatService.onNewRecommendations(handleNewRecommendations);
+
+    return () => {
+      chatService.offNewRecommendations(handleNewRecommendations);
+    };
+  }, [setRecommendations]);
 
   useEffect(() => {
     if (chatLogRef.current) {
@@ -254,6 +267,14 @@ const ChatSider = ({
           />
         )}
         <div className={styles["chat-footer"]}>
+          <RecommendationList 
+            recommendations={recommendations} 
+            onRecommendationClick={(rec) => {
+              sendMessage(rec);
+              clearRecommendations();
+            }}
+            onClearRecommendations={clearRecommendations}
+          />
           <ChatInput onSendMessage={sendMessage} />
         </div>
       </div>
