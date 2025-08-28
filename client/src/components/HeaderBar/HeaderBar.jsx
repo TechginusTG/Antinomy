@@ -38,9 +38,7 @@ const HeaderBar = ({ className, toggleSider }) => {
     <Layout.Header className={`${styles.header} ${className}`}>
       <div className={styles.leftSection}>
         <Button
-          className={`${styles.menuButton} ${
-            theme === "dark" ? styles.darkThemeMenuButton : ""
-          }`}
+          className={styles.menuButton}
           icon={<MenuOutlined />}
           onClick={toggleSider}
         />
@@ -48,22 +46,20 @@ const HeaderBar = ({ className, toggleSider }) => {
           src={logo}
           alt="Antinomy Logo"
           className={`${styles.logo} ${
-            theme === "dark" ? styles.darkThemeLogo : ""
+            theme === "dark" ? styles.darkTheme : ""
           }`}
         />
         <h2 className={styles.title}>ANTINOMY</h2>
         <ConnectionStatus />
       </div>
-      <div className={styles.rightSection}>
-        <Popover
-          content={teamInfoContent}
-          title="Team TechGinus"
-          trigger="click"
-          placement="bottomRight"
-        >
-          <p className={styles.teamInfo}>Made by TeamTechGinus</p>
-        </Popover>
-      </div>
+      <Popover
+        content={teamInfoContent}
+        title="Team TechGinus"
+        trigger="click"
+        placement="bottomRight"
+      >
+        <p className={styles.teamInfo}>Made by TeamTechGinus</p>
+      </Popover>
     </Layout.Header>
   );
 };

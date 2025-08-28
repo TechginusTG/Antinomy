@@ -1,110 +1,101 @@
 html,
 body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-}
-
-.header {
-    padding: 0 1.5rem;
-    border-bottom: 0.125rem solid var(--border-color);
-    display: flex;
-    align-items: center;
+  margin: 0;
+  padding: 0;
+  height: 100%;
 }
 
 .header-title {
-    margin: 0;
-    color: var(--header-title-color);
+  margin: 0;
+  color: var(--header-title-color);
 }
 
 /* ===== MainApp Component Styles ===== */
 .main-layout {
-    height: 100dvh;
-    overflow: hidden;
-    position: relative;
+  height: 100dvh;
+  overflow: hidden;
+  position: relative;
 }
 
 .content-layout {
-    /* Smooth transition for when the sider collapses/expands */
-    transition: margin-left 0.2s ease-in-out;
+  /* Smooth transition for when the sider collapses/expands */
+  transition: margin-left 0.2s ease-in-out;
 }
 
 .main-content {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    position: relative;
-    overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+  overflow-y: auto;
 }
 
 .react-flow-wrapper {
-    flex-grow: 1;
-    height: 100%;
+  flex-grow: 1;
+  height: 100%;
 }
 
 .tail-buttons {
-    display: flex;
-    justify-content: flex-end;
-    padding: 0.5rem 1rem; /* 8px 16px */
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem 1rem; /* 8px 16px */
 }
 
 .chat-sider {
-    box-shadow: 0.125rem 0 0.5rem rgba(0, 0, 0, 0.15);
-    z-index: 1000; /* Ensure it is above other content */
+  box-shadow: 0.125rem 0 0.5rem rgba(0, 0, 0, 0.15);
+  z-index: 1000; /* Ensure it is above other content */
 }
 /* Ant Design Overrides */
 .ant-layout,
 .ant-layout-content {
-    margin: 0 !important;
-    padding: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 .tail-buttons :global(.ant-btn) {
-    position: absolute;
-    bottom: 5rem;
-    height: 2.5rem;
-    padding: 0.25rem 1.25rem;
-    font-size: 1rem;
-    z-index: 10;
+  position: absolute;
+  bottom: 5rem;
+  height: 2.5rem;
+  padding: 0.25rem 1.25rem;
+  font-size: 1rem;
+  z-index: 10;
 }
 
 .action-buttons {
-    position: absolute;
-    top: 0.625rem;
-    right: 0.9375rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    z-index: 10;
+  position: absolute;
+  top: 0.625rem;
+  right: 0.9375rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  z-index: 10;
 }
 
 .action-buttons :global(.ant-btn) {
-    width: 3.125rem;
-    height: 3.125rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.75rem;
+  width: 3.125rem;
+  height: 3.125rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
 }
 
 /* ===== theme apply ===== */
 .header,
 .ant-layout-header {
-    background: var(--background-header);
+  background: var(--background-header);
 }
 
 .main-content,
 .tail-buttons,
 .ant-layout,
 .ant-layout-content {
-    background: var(--background-primary);
+  background: var(--background-primary);
 }
 
 .react-flow-wrapper {
-    background: var(--background-flow-wrapper);
+  background: var(--background-flow-wrapper);
 }
-
-
 
 @media (max-width: 768px) {
   .chat-sider {
