@@ -18,7 +18,7 @@ const ChatInput = ({ onSendMessage }) => {
   };
 
   return (
-    <React.Fragment>
+    <div style={{ display: 'flex', gap: 8, alignItems: 'flex-end', width: '100%' }}>
       <Input.TextArea
         autoSize={{ minRows: 1, maxRows: 5 }}
         placeholder="Type a message..."
@@ -30,14 +30,19 @@ const ChatInput = ({ onSendMessage }) => {
             handleSendMessage();
           }
         }}
-        style={{ flexGrow: 1 }}
+        style={{ flexGrow: 1, resize: 'none' }}
       />
       <Button
-        icon={<SendOutlined />}
+        icon={<SendOutlined style={{ color: '#1e90ff', fontSize: 16 }} />}
         type="primary"
         onClick={handleSendMessage}
+        style={{ height: 40, flexShrink: 0, 
+          backgroundColor: '#ffffff',
+          borderColor: '#d9d9d9',
+          boxShadow: 'none',
+        }}
       />
-    </React.Fragment>
+    </div>
   );
 };
 
