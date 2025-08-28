@@ -2,6 +2,7 @@ import openai from "./openaiClient.js";
 import { systemPrompt } from "./prompt/systemPrompt.js";
 import { recommendPrompt } from "./prompt/recommendPrompt.js";
 import { modes as prompts } from "./prompt/modes.js";
+import { diagramPrompt } from "./prompt/diagramPrompt.js";
 
 const sessions = {};
 const userSpecial = {};
@@ -119,36 +120,14 @@ export function registerSocketHandlers(io) {
       console.log(`'make diagram' request from ${socket.id}`);
       const { chatLog, diagramState } = payload;
 
-      const diagramPrompt = `
-        Based on the following conversation and the current diagram state, generate an updated diagram.
-        The diagram should represent the key topics and their relationships from the conversation.
-        Conversation History:
-        ${JSON.stringify(chatLog, null, 2)}
-
-        Current Diagram State:
-        Nodes: ${JSON.stringify(
-          diagramState.nodes.map((n) => n.data.label),
-          null,
-          2
-        )}
-
-        Your task is to output a new diagram structure in a single, minified JSON object format. Do not calculate node positions.
-
-        **Output Format:**
-        - The JSON object must have three keys: "nodes", "edges", and "quests".
-        - "nodes" should be an array of objects, each with "id", "type" (use 'custom'), and "data" ({ "label": "..." }). Do NOT include a "position" key.
-        - "edges" should be an array of objects, each with "id", "source" (source node id), and "target" (target node id).
-        - **Challenge Generation:** Based on the conversation, create 2-3 simple, concise challenges for the user in the '-하기' style (e.g., "문제 원인 분석하기"). These should be returned in the "quests" key as an array of strings.
-        
-        Make sure all IDs are unique strings.
-        Do not include any explanations, comments, or any text outside of the single JSON object.
-        Example response: {"nodes":[{"id":"1","type":"custom","data":{"label":"Main Idea"}}],"edges":[],"quests":["Challenge 1", "Challenge 2"]}
-        `;
+      const finalDiagramPrompt = diagramPrompt
+        .replace('__CHAT_LOG__', JSON.stringify(chatLog, null, 2))
+        .replace('__NODES__', JSON.stringify(diagramState.nodes.map((n) => n.data.label), null, 2));
 
       try {
         const res = await openai.chat.completions.create({
           model: "gpt-5",
-          messages: [{ role: "user", content: diagramPrompt }],
+          messages: [{ role: "user", content: finalDiagramPrompt }],
           response_format: { type: "json_object" },
         });
 
