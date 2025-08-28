@@ -22,7 +22,6 @@ import SettingsModal from "../../components/SettingsModal/SettingsModal";
 import QuestModal from "../../components/QuestModal/QuestModal";
 import GuideModal from "../../components/GuideModal/GuideModal";
 
-
 import "reactflow/dist/style.css";
 import styles from "./MainApp.module.css";
 
@@ -97,16 +96,14 @@ const MainApp = () => {
     }
   };
 
-  
-
   useEffect(() => {
     // Load diagram from store
     useFlowStore.getState().loadDiagram();
 
-    const hasVisitedBefore = localStorage.getItem('hasVisitedBefore');
+    const hasVisitedBefore = localStorage.getItem("hasVisited");
     if (!hasVisitedBefore) {
       setIsWelcomeModalVisible(true);
-      localStorage.setItem('hasVisitedBefore', 'true');
+      localStorage.setItem("hasVisited", "true");
     }
   }, []);
 
@@ -127,17 +124,20 @@ const MainApp = () => {
     }
   }, [chatLog]);
 
-  
-
   useEffect(() => {
     document.body.setAttribute("data-theme", theme);
-    if (theme === 'custom') {
+    if (theme === "custom") {
       customThemeColors.forEach((color, index) => {
-        document.documentElement.style.setProperty(getCustomColorVarName(index), color);
+        document.documentElement.style.setProperty(
+          getCustomColorVarName(index),
+          color
+        );
       });
     } else {
       customThemeColors.forEach((_, index) => {
-        document.documentElement.style.removeProperty(getCustomColorVarName(index));
+        document.documentElement.style.removeProperty(
+          getCustomColorVarName(index)
+        );
       });
     }
   }, [theme, customThemeColors, getCustomColorVarName]);
@@ -176,7 +176,11 @@ const MainApp = () => {
         let data = JSON.parse(content);
 
         // Check for old format and migrate
-        if (data.chatHistory && data.chatHistory.length > 0 && data.chatHistory[0].text !== undefined) {
+        if (
+          data.chatHistory &&
+          data.chatHistory.length > 0 &&
+          data.chatHistory[0].text !== undefined
+        ) {
           data.chatHistory = data.chatHistory.map((msg, index) => ({
             id: msg.id || Date.now() + index, // Use existing id or create new one
             content: msg.text,
@@ -217,7 +221,7 @@ const MainApp = () => {
   const handleContextMenu = (event) => {
     event.preventDefault();
     setContextMenu({
-      type: 'pane',
+      type: "pane",
       x: event.clientX,
       y: event.clientY,
     });
@@ -228,7 +232,7 @@ const MainApp = () => {
       event.preventDefault();
       event.stopPropagation(); // Stop event from bubbling up to the pane
       setContextMenu({
-        type: 'node',
+        type: "node",
         nodeId: node.id,
         x: event.clientX,
         y: event.clientY,
@@ -239,7 +243,7 @@ const MainApp = () => {
 
   const onEdgeDoubleClick = useCallback(
     (event, edge) => {
-      const newLabel = prompt('Enter new label for edge', edge.label);
+      const newLabel = prompt("Enter new label for edge", edge.label);
       if (newLabel !== null) {
         updateEdgeLabel(edge.id, newLabel);
       }
@@ -287,11 +291,9 @@ const MainApp = () => {
       diagramState: { nodes, edges },
     };
     chatService.makeDiagram(payload, (diagram) => {
-      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
-        diagram.nodes,
-        diagram.edges
-      );
-      
+      const { nodes: layoutedNodes, edges: layoutedEdges } =
+        getLayoutedElements(diagram.nodes, diagram.edges);
+
       setFlow({ nodes: layoutedNodes, edges: layoutedEdges });
 
       if (diagram.quests) {
@@ -319,7 +321,9 @@ const MainApp = () => {
       <Header className={styles["header"]} toggleSider={toggleSider} />
       <Layout>
         <ChatSider
-          className={`${styles["chat-sider"]} ${isSiderVisible ? styles.visible : ""}`}
+          className={`${styles["chat-sider"]} ${
+            isSiderVisible ? styles.visible : ""
+          }`}
           isSiderVisible={isSiderVisible}
           chatWidth={chatWidth}
           messages={chatLog}
@@ -328,7 +332,9 @@ const MainApp = () => {
           isDiagramMaking={isDiagramMaking}
           onResetQuests={handleResetQuests}
           onDelete={(messageId) => deleteMessage(messageId, setChatLog)}
-          onEdit={(messageId, newText) => editMessage(messageId, newText, setChatLog)}
+          onEdit={(messageId, newText) =>
+            editMessage(messageId, newText, setChatLog)
+          }
         />
         <Layout className={styles["content-layout"]}>
           <Content className={styles["main-content"]}>
@@ -426,7 +432,7 @@ const MainApp = () => {
           </Content>
         </Layout>
       </Layout>
-      
+
       {contextMenu && (
         <ContextMenu
           {...contextMenu}
@@ -452,7 +458,10 @@ const MainApp = () => {
         okText="가이드 보기"
         cancelText="닫기"
       >
-        <p>Antinomy는 문제 해결을 위한 아이디어를 시각적으로 정리하고 발전시키는 데 도움을 주는 AI입니다.</p>
+        <p>
+          Antinomy는 문제 해결을 위한 아이디어를 시각적으로 정리하고 발전시키는
+          데 도움을 주는 AI입니다.
+        </p>
         <p>사용법이 궁금하신가요? 가이드를 확인해 보세요.</p>
       </Modal>
     </Layout>
