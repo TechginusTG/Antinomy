@@ -88,8 +88,8 @@ export function registerSocketHandlers(io) {
     socket.on("chat message", async ({ msgPayload = {}, chatLog }) => {
       console.log(`메시지 수신 [${socket.id}]:`, { msgPayload, chatLog });
 
-      const text = msgPayload.text || "";
-      const mode = msgPayload.mode || "basic";
+      const text = msgPayload.text ?? "";
+      const mode = msgPayload.mode ?? "basic";
 
       // Store or update user's mode and initialize if not present
       if (!userSpecial[socket.id]) userSpecial[socket.id] = {};
@@ -121,8 +121,15 @@ export function registerSocketHandlers(io) {
       const { chatLog, diagramState } = payload;
 
       const finalDiagramPrompt = diagramPrompt
-        .replace('__CHAT_LOG__', JSON.stringify(chatLog, null, 2))
-        .replace('__NODES__', JSON.stringify(diagramState.nodes.map((n) => n.data.label), null, 2));
+        .replace("__CHAT_LOG__", JSON.stringify(chatLog, null, 2))
+        .replace(
+          "__NODES__",
+          JSON.stringify(
+            diagramState.nodes.map((n) => n.data.label),
+            null,
+            2
+          )
+        );
 
       try {
         const res = await openai.chat.completions.create({
