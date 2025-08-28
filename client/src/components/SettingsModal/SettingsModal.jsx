@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Modal, Slider, ColorPicker, Button } from "antd";
+import { Modal, Slider, ColorPicker, Button, InputNumber } from "antd";
 import useFlowStore from "../../utils/flowStore";
 import { themes } from "../../utils/themeManager";
 
@@ -226,16 +226,19 @@ const SettingsModal = () => {
               />
             </>
           )}
-          <p style={{ marginTop: 24 }}>
-            채팅 글자 크기: <b>{chatFontSize}px</b>
-          </p>
-          <Slider
-            min={10}
-            max={24}
-            value={chatFontSize}
-            onChange={setChatFontSize}
-            style={{ width: 200 }}
-          />
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <p>
+              채팅 글자 크기: 
+            </p>
+            <InputNumber
+              min={10}
+              max={24}
+              value={chatFontSize}
+              onChange={(value) => setChatFontSize(value || 10)}
+            />
+            <p>px</p>
+          </div>
 
           {/* 모드 선택 버튼 */}
           <div
