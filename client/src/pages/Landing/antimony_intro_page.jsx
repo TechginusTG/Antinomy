@@ -79,17 +79,20 @@ export default function LandingPage() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 1, duration: 1 }}
         style={{
-          marginTop: "0.5rem",
-          fontSize: "1.15rem",
-          color: "#4b5563",
-          maxWidth: "420px",
-          textAlign: "center",
-          marginBottom: "1.5rem",
+       marginTop: "0.5rem",
+       fontSize: "1rem",
+       color: "#4b5563",
+       maxWidth: "760px",
+       textAlign: "center",
+       marginBottom: "1.5rem",
+       whiteSpace: 'nowrap',
+       overflow: 'hidden',
+       textOverflow: 'ellipsis',
         }}
       >
-        서로 다른 아이디어와 논리가 충돌하고 교차하는 공간.
-        <br />
-        다이어그램을 통해 복잡한 사고를 시각화하세요.
+     마음의 안식, 삶의 설계 ANTINOMY
+       <br />
+     ANTINOMY는 상담·문제해결·기획까지 함께하는 AI입니다.
       </motion.p>
 
       {/* 시작 버튼 */}
