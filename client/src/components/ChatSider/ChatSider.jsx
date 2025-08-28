@@ -15,7 +15,6 @@ const { Sider } = Layout;
 
 const ChatSider = ({
   className,
-  chatWidth,
   messages,
   setMessages,
   onGenerateDiagram,
@@ -26,7 +25,15 @@ const ChatSider = ({
   isSiderVisible,
 }) => {
   const [isTyping, setIsTyping] = useState(false);
-  const { resetFlow, increaseExp, recommendations, clearRecommendations, setRecommendations } = useFlowStore();
+  const {
+    chatWidth,
+    setChatWidth,
+    resetFlow,
+    increaseExp,
+    recommendations,
+    clearRecommendations,
+    setRecommendations,
+  } = useFlowStore();
   const chatLogRef = useRef(null);
 
   const [diagramResetModal, setDiagramResetModal] = useState({
@@ -42,6 +49,38 @@ const ChatSider = ({
   const [editingText, setEditingText] = useState("");
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
+
+  const [isResizing, setIsResizing] = useState(false);
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    setIsResizing(true);
+  };
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      const newWidth = (e.clientX / window.innerWidth) * 100;
+      const minWidth = 20;
+      const maxWidth = 50;
+      const clampedWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
+      setChatWidth(Math.round(clampedWidth));
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    if (isResizing) {
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
+    }
+
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+  }, [isResizing, setChatWidth]);
+
 
   const handleScroll = () => {
     if (chatLogRef.current) {
@@ -351,6 +390,7 @@ const ChatSider = ({
           다시 표시하지 않음
         </Checkbox>
       </Modal>
+      <div className={styles.resizeHandle} onMouseDown={handleMouseDown} />
     </Sider>
   );
 };
