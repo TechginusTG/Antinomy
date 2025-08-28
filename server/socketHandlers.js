@@ -2,46 +2,46 @@ import openai from "./openaiClient.js";
 
 const sessions = {};
 const userSpecial = {};
-const systemPrompt = `Your name is "Antinomy".
-You are a problem-solving guide AI.
+const systemPrompt = `Name: Antinomy
+Role: Problem-Solving Guide AI
 
 Conversation Rules:
-1. The user's first message is the main problem they want to solve.
-2. Each problem-solving cycle has 3 phases:
-   a. Problem Exploration Phase
-      - Ask 1 focused question at a time to clarify the problem.
-      - Ask 3 questions sequentially, waiting for user answer after each.
-      - After the 3rd question, summarize insights before moving to solution phase.
-   b. Solution Generation Phase
-      - Ask 1 question at a time to explore possible solutions.
-      - Ask 3 questions sequentially, waiting for user answer after each.
-      - After the 3rd question, summarize proposed solutions.
-   c. Conclusion Phase
-      - Help the user summarize the discussion into 3 key points.
-      - Ask if there is another problem. If yes, start a new cycle.
-3. Always proceed step by step, never skip questions.
-4. Each answer from the AI should include **only one question or prompt** until the user responds.
-5. Always respond in polite, formal Korean (존댓말).
 
-**Formatting Rule:**
-- Please format your responses using Markdown.
-- Use line breaks, lists, bolding, and other formatting to improve readability and structure.
-- For example, use bullet points (-) for lists.`;
+1. Treat the user’s first message as the main problem.
+
+
+2. Follow a 3-phase problem-solving process:
+
+Problem Exploration: Ask only one question at a time, wait for an answer, repeat 3 times, then summarize.
+
+Solution Generation: Ask only one question at a time, wait for an answer, repeat 3 times, then summarize.
+
+Conclusion: Summarize in key points.
+
+
+3. Ask only one question at a time; never skip steps.
+
+
+4. Keep answers concise, including only necessary information.
+
+5. Use Markdown, emphasis, lists, etc. only as needed, not excessively.
+
+
+6. Always respond in the user’s language.`;
+
+const recommendPrompt = `-**Proactive Recommendations:** After several turns of conversation, when you have a good understanding of the user's interests or a topic seems to be concluding, you MUST format your response as a single minified JSON object. This JSON object should contain two keys: "chat_response" (your normal chat message as a string) and "recommendations" (an array of 2-3 new, related topics or questions you suggest for the user). Otherwise, respond with a normal string.`;
 
 // Define prompts in a single object for clarity and maintainability.
 const prompts = {
   worry: `You are a compassionate listener and empathetic counselor. Prioritize active listening, validating feelings, and offering emotional support. Use gentle, encouraging language and reflective statements.
-Always respond in polite, formal Korean (존댓말).
-- **Proactive Recommendations:** After several turns of conversation, when you have a good understanding of the user's interests or a topic seems to be concluding, you MUST format your response as a single minified JSON object. This JSON object should contain two keys: "chat_response" (your normal chat message as a string) and "recommendations" (an array of 2-3 new, related topics or questions you suggest for the user). Otherwise, respond with a normal string.`,
+Always respond in polite, formal Korean (존댓말).`,
   solution: `You are an analytical problem-solving assistant. Focus on clarifying details, identifying root causes, and proposing practical, step-by-step solutions. Ask focused questions and provide actionable recommendations.
-Always respond in polite, formal Korean (존댓말).
-- **Proactive Recommendations:** After several turns of conversation, when you have a good understanding of the user\'s interests or a topic seems to be concluding, you MUST format your response as a single minified JSON object. This JSON object should contain two keys: "chat_response" (your normal chat message as a string) and "recommendations" (an array of 2-3 new, related topics or questions you suggest for the user). Otherwise, respond with a normal string.`,
+Always respond in polite, formal Korean (존댓말).`,
   basic: `You are an AI counselor that balances empathy with practical problem-solving.
 - **Empathetic Listening:** Start by acknowledging the user's feelings and validating their concerns with gentle, supportive language.
 - **Analytical Problem-Solving:** After showing empathy, transition to a problem-solving approach. Ask targeted questions to clarify the issue, identify root causes, and collaboratively develop actionable, step-by-step solutions.
 - **Tone:** Maintain a polite, formal, and encouraging tone throughout the conversation.
-Always respond in polite, formal Korean (존댓말).
-- **Proactive Recommendations:** After several turns of conversation, when you have a good understanding of the user's interests or a topic seems to be concluding, you MUST format your response as a single minified JSON object. This JSON object should contain two keys: "chat_response" (your normal chat message as a string) and "recommendations" (an array of 2-3 new, related topics or questions you suggest for the user). Otherwise, respond with a normal string.`
+Always respond in polite, formal Korean (존댓말).`,
 };
 
 function handleOpenAIResponse(socket, reply) {
@@ -49,17 +49,62 @@ function handleOpenAIResponse(socket, reply) {
     const parsedReply = JSON.parse(reply);
     if (parsedReply.chat_response && parsedReply.recommendations) {
       const chatMessage = parsedReply.chat_response;
-      sessions[socket.id].push({ role: 'assistant', content: chatMessage });
-      socket.emit('chat message', { message: chatMessage });
-      socket.emit('new_recommendations', parsedReply.recommendations);
+      sessions[socket.id].push({ role: "assistant", content: chatMessage });
+      socket.emit("chat message", { message: chatMessage });
+      socket.emit("new_recommendations", parsedReply.recommendations);
       console.log(`GPT 응답 (추천 포함) [${socket.id}]:`, parsedReply);
     } else {
       throw new Error("Invalid JSON format for recommendations");
     }
   } catch (parseError) {
-    sessions[socket.id].push({ role: 'assistant', content: reply });
+    sessions[socket.id].push({ role: "assistant", content: reply });
     console.log(`GPT 응답 [${socket.id}]:`, reply);
-    socket.emit('chat message', { message: reply });
+    socket.emit("chat message", { message: reply });
+  }
+}
+
+// Helper to build the session object based on user data and chat history
+function buildSession(socketId, chatHistory, newText = null) {
+  const { mode = "basic", special = [] } = userSpecial[socketId] || {};
+  const specialString = Array.isArray(special)
+    ? special.join(", ")
+    : special.toString();
+  const selectedSystemPrompt = prompts[mode] || prompts.basic;
+
+  const session = [
+    {
+      role: "system",
+      content: `${systemPrompt} 
+ MODE=${mode}:${selectedSystemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
+    },
+  ];
+
+  chatHistory.forEach((msg) => {
+    session.push({
+      role: msg.sender === "user" ? "user" : "assistant",
+      content: msg.content,
+    });
+  });
+
+  if (newText) {
+    session.push({ role: "user", content: newText });
+  }
+
+  return session;
+}
+
+// Helper to call OpenAI and handle the response
+async function callOpenAI(socket, session) {
+  try {
+    const res = await openai.chat.completions.create({
+      model: "gpt-5",
+      messages: session,
+    });
+    const reply = res.choices[0].message.content;
+    handleOpenAIResponse(socket, reply);
+  } catch (err) {
+    console.error("GPT 에러:", err);
+    socket.emit("chat message", { message: "GPT 고장 💀" });
   }
 }
 
@@ -70,33 +115,14 @@ export function registerSocketHandlers(io) {
     socket.on("chat message", async ({ msgPayload = {}, chatLog }) => {
       console.log(`메시지 수신 [${socket.id}]:`, { msgPayload, chatLog });
 
-      const text = msgPayload.text || '';
-      const mode = msgPayload.mode || userSpecial[socket.id]?.mode || 'basic';
+      const text = msgPayload.text || "";
+      const mode = msgPayload.mode || "basic";
 
-      // Store chosen mode per socket for future reference (e.g., load history/resubmit)
+      // Store or update user's mode and initialize if not present
       if (!userSpecial[socket.id]) userSpecial[socket.id] = {};
       userSpecial[socket.id].mode = mode;
 
-      // Select system prompt based on mode, defaulting to basic
-      const selectedSystemPrompt = prompts[mode] || prompts.basic;
-
-      const special = userSpecial[socket.id].special || []; // Access .special property
-      const specialString = Array.isArray(special) ? special.join(', ') : special.toString();
-
-      const newSession = [
-        {
-          role: 'system',
-          content: `${selectedSystemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
-        },
-      ];
-
-      chatLog.forEach((msg) => {
-        newSession.push({ role: msg.sender === 'user' ? 'user' : 'assistant', content: msg.content });
-      });
-
-      newSession.push({ role: 'user', content: text });
-
-      sessions[socket.id] = newSession;
+      sessions[socket.id] = buildSession(socket.id, chatLog, text);
 
       // --- TEMPORARY TEST CODE START ---
       const testPrompt = `
@@ -106,87 +132,40 @@ export function registerSocketHandlers(io) {
         - "chat_response": A string containing your direct reply to the user's message.
         - "recommendations": An array of 3 strings, where each string is a new, interesting question that the user might want to ask next, based on the conversation so far. These should be questions that encourage further exploration from the user's perspective.
       `;
-      const testSession = [{ role: 'user', content: testPrompt }];
+      const testSession = [{ role: "user", content: testPrompt }];
       // --- TEMPORARY TEST CODE END ---
 
+      // The temporary test code uses a different session, so we call the API directly here.
+      // If the temporary code is removed, this can be replaced with:
+      // await callOpenAI(socket, sessions[socket.id]);
       try {
         const res = await openai.chat.completions.create({
-          model: 'gpt-5',
+          model: "gpt-5",
           messages: testSession, // Using testSession instead of sessions[socket.id]
         });
 
         const reply = res.choices[0].message.content;
         handleOpenAIResponse(socket, reply);
       } catch (err) {
-        console.error('GPT 에러:', err);
-        socket.emit('chat message', { message: 'GPT 고장 💀' });
+        console.error("GPT 에러:", err);
+        socket.emit("chat message", { message: "GPT 고장 💀" });
       }
     });
 
     socket.on("load chat history", (chatHistory) => {
       console.log(`'load chat history' request from ${socket.id}`);
-      const special = userSpecial[socket.id]?.special || [];
-      const specialString = Array.isArray(special)
-        ? special.join(", ")
-        : special.toString();
-      
-      // Select system prompt based on stored mode, defaulting to basic
-      const storedMode = userSpecial[socket.id]?.mode || 'basic';
-      const selectedSystemPrompt = prompts[storedMode] || prompts.basic;
-
-      const newSession = [
-        {
-          role: 'system',
-          content: `${selectedSystemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
-        },
-      ];
-
-      chatHistory.forEach((msg) => {
-        newSession.push({ role: msg.sender === 'user' ? 'user' : 'assistant', content: msg.content });
-      });
-
-      sessions[socket.id] = newSession;
-      console.log(`Session for ${socket.id} has been replaced with loaded history.`);
+      sessions[socket.id] = buildSession(socket.id, chatHistory);
+      console.log(
+        `Session for ${socket.id} has been replaced with loaded history.`
+      );
     });
 
     socket.on("resubmit chat", async (chatHistory) => {
       console.log(`'resubmit chat' request from ${socket.id}`);
-      const special = userSpecial[socket.id]?.special || [];
-      const specialString = Array.isArray(special)
-        ? special.join(", ")
-        : special.toString();
-      
-      // Use stored mode when resubmitting, defaulting to basic
-      const storedMode = userSpecial[socket.id]?.mode || 'basic';
-      const selectedSystemPrompt = prompts[storedMode] || prompts.basic;
-
-      const newSession = [
-        {
-          role: 'system',
-          content: `${selectedSystemPrompt}\n\nThis user has the same traits: ${specialString}. When you answer, you should be care these properties.`, 
-        },
-      ];
-
-      chatHistory.forEach((msg) => {
-        newSession.push({ role: msg.sender === 'user' ? 'user' : 'assistant', content: msg.content });
-      });
-
-      sessions[socket.id] = newSession;
-
-      try {
-        const res = await openai.chat.completions.create({
-          model: 'gpt-5',
-          messages: sessions[socket.id],
-        });
-
-        const reply = res.choices[0].message.content;
-        handleOpenAIResponse(socket, reply);
-      } catch (err) {
-        console.error('GPT 에러:', err);
-        socket.emit('chat message', { message: 'GPT 고장 💀' });
-      }
+      const session = buildSession(socket.id, chatHistory);
+      sessions[socket.id] = session;
+      await callOpenAI(socket, session);
     });
-
 
     socket.on("make diagram", async (payload, callback) => {
       console.log(`'make diagram' request from ${socket.id}`);
@@ -236,7 +215,10 @@ export function registerSocketHandlers(io) {
         } catch (parseError) {
           console.error("JSON parsing error:", parseError);
           if (callback) {
-            callback({ error: "JSON parsing error", details: parseError.message });
+            callback({
+              error: "JSON parsing error",
+              details: parseError.message,
+            });
           }
         }
       } catch (err) {
