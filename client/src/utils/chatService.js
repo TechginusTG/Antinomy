@@ -1,5 +1,6 @@
 import { io } from "socket.io-client";
 import useFlowStore from "./flowStore";
+import useUserStore from "./userStore"; // 1. userStore იმპორტი
 
 const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || (isLocal ? "http://localhost:3000" : window.location.origin);
@@ -53,13 +54,14 @@ class ChatService {
   sendMessage(payload, chatLog = []) { // Add chatLog parameter with default empty array
     if (this.socket) {
       const currentMode = useFlowStore.getState().mode || 'worry';
+      const userNote = useUserStore.getState().userNote; // 2. userNote 가져오기
       let msgPayload;
       if (typeof payload === 'string') {
-        msgPayload = { text: payload, mode: currentMode };
+        msgPayload = { text: payload, mode: currentMode, userNote }; // 3. userNote 페이로드에 추가
       } else if (payload && typeof payload === 'object') {
-        msgPayload = { ...payload, mode: payload.mode || currentMode };
+        msgPayload = { ...payload, mode: payload.mode || currentMode, userNote }; // 3. userNote 페이로드에 추가
       } else {
-        msgPayload = { text: String(payload), mode: currentMode };
+        msgPayload = { text: String(payload), mode: currentMode, userNote }; // 3. userNote 페이로드에 추가
       }
       // Emit both the message payload and the full chat log
       this.socket.emit("chat message", { msgPayload, chatLog });

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Modal, Slider, ColorPicker, Button, InputNumber } from "antd";
 import useFlowStore from "../../utils/flowStore";
+import useUserStore from "../../utils/userStore";
 import { themes } from "../../utils/themeManager";
 
 const SettingsModal = () => {
@@ -22,6 +23,7 @@ const SettingsModal = () => {
     loadTheme,
   } = useFlowStore();
   const { mode, setMode } = useFlowStore();
+  const { userNote, setUserNote } = useUserStore();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const fileInputRef = useRef(null);
 
@@ -273,6 +275,8 @@ const SettingsModal = () => {
         <div style={{ marginTop: 24 }}>
           <p style={{ marginBottom: 8 }}>유저노트</p>
           <textarea
+            value={userNote}
+            onChange={(e) => setUserNote(e.target.value)}
             style={{
               width: "100%",
               minHeight: "80px",

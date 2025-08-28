@@ -28,7 +28,7 @@ function handleOpenAIResponse(socket, reply) {
 
 // Helper to build the session object based on user data and chat history
 function buildSession(socketId, chatHistory, newText = null) {
-  const { mode = "basic", special = [] } = userSpecial[socketId] || {};
+  const { mode = "basic", special = [], userNote = "" } = userSpecial[socketId] || {};
   const specialString = Array.isArray(special)
     ? special.join(", ")
     : special.toString();
@@ -43,6 +43,8 @@ function buildSession(socketId, chatHistory, newText = null) {
     MODE=${mode}:${selectedModePrompt}
 
     This user has the following traits: ${specialString}. When you answer, you should be care these properties.
+
+    ${userNote ? `This is a note from the user about themselves: "${userNote}"` : ""}
   `;
 
   const session = [
@@ -90,10 +92,12 @@ export function registerSocketHandlers(io) {
 
       const text = msgPayload.text ?? "";
       const mode = msgPayload.mode ?? "basic";
+      const userNote = msgPayload.userNote ?? "";
 
       // Store or update user's mode and initialize if not present
       if (!userSpecial[socket.id]) userSpecial[socket.id] = {};
       userSpecial[socket.id].mode = mode;
+      userSpecial[socket.id].userNote = userNote;
 
       sessions[socket.id] = buildSession(socket.id, chatLog, text);
 
