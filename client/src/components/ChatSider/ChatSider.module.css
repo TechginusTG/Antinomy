@@ -1,146 +1,146 @@
 /* ===== ChatSider Component Styles ===== */
 
 .chat {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .chat-header {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0.75rem 0.25rem; /* 12px 16px */
-    border-bottom: 0.125rem solid var(--border-color);
-    flex-shrink: 0; /* Prevent header from shrinking */
-    background: var(--background-primary);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0.75rem 0.25rem; /* 12px 16px */
+  border-bottom: 0.125rem solid var(--border-color);
+  flex-shrink: 0; /* Prevent header from shrinking */
+  background: var(--background-primary);
 }
 
 .chat-header :global(.ant-btn) {
-    background: var(--background-tertiary);
-    color: var(--text-primary);
-    border: 0.125rem solid var(--border-color);
+  background: var(--background-tertiary);
+  color: var(--text-primary);
+  border: 0.125rem solid var(--border-color);
 }
 
 .chat-log {
-    flex-grow: 1; /* Grow to fill available space */
-    overflow-y: auto; /* Enable vertical scroll on overflow */
-    padding: 1rem; /* 16px */
-    background: var(--background-primary);
-    position: relative;
+  flex-grow: 1; /* Grow to fill available space */
+  overflow-y: auto; /* Enable vertical scroll on overflow */
+  padding: 1rem; /* 16px */
+  background: var(--background-primary);
+  position: relative;
 }
 
 .chat-log ul {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    padding: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 0;
 }
 
 .chat-footer {
-    display: flex;
-    flex-direction: column; 
-    align-items: stretch; 
-    padding: 0.75rem 1rem; /* 12px 16px */
-    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0));
-    border-top: 0.125rem solid var(--border-color);
-    flex-shrink: 0; /* Prevent footer from shrinking */
-    gap: 0.5rem; /* Use gap for spacing between children */
-    background: var(--background-secondary);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0.75rem 1rem; /* 12px 16px */
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0));
+  border-top: 0.125rem solid var(--border-color);
+  flex-shrink: 0; /* Prevent footer from shrinking */
+  gap: 0.5rem; /* Use gap for spacing between children */
+  background: var(--background-secondary);
 }
 
 /* Bubble Component Styles */
 .bubble {
-    list-style: none;
-    padding: 1rem;
-    margin-top: 0.5rem;
-    margin-bottom: 0.5rem;
-    border-radius: 3.125rem;
-    width: auto;
-    max-width: 70%;
-    box-shadow: 0.125rem 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
-    color: var(--text-primary);
+  list-style: none;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 3.125rem;
+  width: auto;
+  max-width: 70%;
+  box-shadow: 0.125rem 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+  color: var(--text-primary);
 }
 
 .user {
-    align-self: flex-end;
-    background-color: var(--bubble-user-bg);
-    border-bottom-right-radius: 0;
-    text-align: end;
+  align-self: flex-end;
+  background-color: var(--bubble-user-bg);
+  border-bottom-right-radius: 0;
+  text-align: end;
 }
 
 .ai {
-    background-color: var(--bubble-ai-bg);
-    font-style: italic;
-    border-bottom-left-radius: 0;
+  background-color: var(--bubble-ai-bg);
+  font-style: italic;
+  border-bottom-left-radius: 0;
 }
 
 .markdownContent li {
-    margin-left: 1.5rem;
+  margin-left: 1.5rem;
 }
 
 .resetContainer {
-    position: relative;
-    width: 10rem; /* Adjusted to accommodate both buttons */
-    height: 2rem; /* Assuming the button height is around 32px */
-    overflow: hidden; /* Hide anything that overflows */
+  position: relative;
+  width: 10rem; /* Adjusted to accommodate both buttons */
+  height: 2rem; /* Assuming the button height is around 32px */
+  overflow: hidden; /* Hide anything that overflows */
 }
 
 .resetText {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    background: var(--background-tertiary);
-    color: var(--text-primary);
-    border: 0.125rem solid var(--border-color);
-    border-radius: 0.375rem; /* To match Ant Design button's default border-radius */
-    cursor: default; /* Indicate it's not a clickable button */
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 1;
-    visibility: visible;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background: var(--background-tertiary);
+  color: var(--text-primary);
+  border: 0.125rem solid var(--border-color);
+  border-radius: 0.375rem; /* To match Ant Design button's default border-radius */
+  cursor: default; /* Indicate it's not a clickable button */
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 1;
+  visibility: visible;
 }
 
 .resetContainer:hover .resetText {
-    opacity: 0;
-    visibility: hidden;
+  opacity: 0;
+  visibility: hidden;
 }
 
 /* Style for the hidden buttons container */
 .hiddenButtons {
-    position: absolute; /* Position it within the container */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: space-evenly; /* Distribute space between buttons */
-    align-items: center;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
-    opacity: 0; /* Initially hidden */
-    visibility: hidden; /* Initially hidden */
-    pointer-events: none; /* Do not capture mouse events when hidden */
-    background: var(--background-primary); /* Add background to cover the span */
-    border-radius: 0.375rem; /* Match the resetText border-radius */
+  position: absolute; /* Position it within the container */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-evenly; /* Distribute space between buttons */
+  align-items: center;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  opacity: 0; /* Initially hidden */
+  visibility: hidden; /* Initially hidden */
+  pointer-events: none; /* Do not capture mouse events when hidden */
+  background: var(--background-primary); /* Add background to cover the span */
+  border-radius: 0.375rem; /* Match the resetText border-radius */
 }
 
 /* When hovering over the container, show the hidden buttons */
 .resetContainer:hover .hiddenButtons {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto; /* Enable mouse events when visible */
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto; /* Enable mouse events when visible */
 }
 
 .mobileSider {
   position: absolute !important;
   top: 4rem !important;
   height: calc(100dvh - 4rem) !important;
-  z-index: 100;
+  z-index: var(--z-mobile-sider, 101);
   transition: transform 0.3s ease-in-out;
 }
 
@@ -156,20 +156,25 @@
   position: absolute;
   bottom: 80px;
   right: 20px;
-  z-index: 10;
+  z-index: var(--z-scroll-btn, 10);
 }
 
 .resizeHandle {
   position: absolute;
   top: 0;
-  right: -3px; 
+  right: -3px;
   bottom: 0;
-  width: 6px; 
-  background-color: transparent; 
-  cursor: col-resize; 
-  z-index: 40; 
+  width: 6px;
+  background-color: transparent;
+  cursor: col-resize;
+  z-index: var(--z-resize, 40);
 }
 
 .resizeHandle:hover {
   background-color: rgba(0, 123, 255, 0.5);
+}
+
+/* Modal override to centrally control z-index for Antd Modals used in ChatSider */
+.modalOverride {
+  z-index: var(--z-modal, 1002) !important;
 }

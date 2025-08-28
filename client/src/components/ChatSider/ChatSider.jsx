@@ -1,5 +1,9 @@
 import { Layout, Button, Input, Modal, Checkbox } from "antd";
-import { SendOutlined, ExclamationCircleFilled, DownOutlined } from "@ant-design/icons";
+import {
+  SendOutlined,
+  ExclamationCircleFilled,
+  DownOutlined,
+} from "@ant-design/icons";
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
 
@@ -81,7 +85,6 @@ const ChatSider = ({
     };
   }, [isResizing, setChatWidth]);
 
-
   const handleScroll = () => {
     if (chatLogRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = chatLogRef.current;
@@ -92,9 +95,9 @@ const ChatSider = ({
   useEffect(() => {
     const chatLogElement = chatLogRef.current;
     if (chatLogElement) {
-      chatLogElement.addEventListener('scroll', handleScroll);
+      chatLogElement.addEventListener("scroll", handleScroll);
       return () => {
-        chatLogElement.removeEventListener('scroll', handleScroll);
+        chatLogElement.removeEventListener("scroll", handleScroll);
       };
     }
   }, []);
@@ -139,8 +142,6 @@ const ChatSider = ({
     }
   }, [messages]);
 
-  
-
   const sendMessage = (message) => {
     const userMessage = {
       id: Date.now(),
@@ -150,7 +151,7 @@ const ChatSider = ({
     const newChatLog = [...messages, userMessage];
     setMessages(newChatLog);
     // Pass the full chat log to chatService.sendMessage
-    chatService.sendMessage(message, newChatLog); 
+    chatService.sendMessage(message, newChatLog);
     setIsTyping(true);
     increaseExp(5);
   };
@@ -262,9 +263,7 @@ const ChatSider = ({
         <div className={styles["chat-log"]} ref={chatLogRef}>
           <ul>
             <li style={{ listStyle: "none", textAlign: "center" }}>
-              <i>
-                해결하고픈 문제나, 고민, 하고싶은 일을 적어보세요
-              </i>
+              <i>해결하고픈 문제나, 고민, 하고싶은 일을 적어보세요</i>
             </li>
             {messages.map((msg) => (
               <Bubble
@@ -288,7 +287,11 @@ const ChatSider = ({
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 1, repeat: Infinity, repeatType: "reverse" }}
+                transition={{
+                  duration: 1,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                }}
               >
                 <Bubble className={`${styles.bubble} ${styles.ai}`}>
                   AI가 생각중이에요...
@@ -309,8 +312,8 @@ const ChatSider = ({
           />
         )}
         <div className={styles["chat-footer"]}>
-          <RecommendationList 
-            recommendations={recommendations} 
+          <RecommendationList
+            recommendations={recommendations}
             onRecommendationClick={(rec) => {
               sendMessage(rec);
               clearRecommendations();
@@ -328,6 +331,7 @@ const ChatSider = ({
         onCancel={handleModalCancel}
         okText="수정"
         cancelText="취소"
+        wrapClassName={styles.modalOverride}
       >
         <Input.TextArea
           value={editingText}
@@ -350,6 +354,7 @@ const ChatSider = ({
         okText="리셋"
         cancelText="취소"
         okType="danger"
+        wrapClassName={styles.modalOverride}
       >
         <p>
           현재 다이어그램의 모든 노드와 연결이 삭제됩니다. 이 작업은 되돌릴 수
@@ -376,6 +381,7 @@ const ChatSider = ({
         okText="모두 리셋"
         cancelText="취소"
         okType="danger"
+        wrapClassName={styles.modalOverride}
       >
         <p>
           채팅 기록, 다이어그램, 퀘스트 등 모든 데이터가 삭제됩니다. 이 작업은
