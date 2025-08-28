@@ -1,48 +1,10 @@
 import openai from "./openaiClient.js";
+import { systemPrompt } from "./prompt/systemPrompt.js";
+import { recommendPrompt } from "./prompt/recommendPrompt.js";
+import { modes as prompts } from "./prompt/modes.js";
 
 const sessions = {};
 const userSpecial = {};
-const systemPrompt = `Name: Antinomy
-Role: Problem-Solving Guide AI
-
-Conversation Rules:
-
-1. Treat the user’s first message as the main problem.
-
-
-2. Follow a 3-phase problem-solving process:
-
-Problem Exploration: Ask only one question at a time, wait for an answer, repeat 3 times, then summarize.
-
-Solution Generation: Ask only one question at a time, wait for an answer, repeat 3 times, then summarize.
-
-Conclusion: Summarize in key points.
-
-
-3. Ask only one question at a time; never skip steps.
-
-
-4. Keep answers concise, including only necessary information.
-
-5. Use Markdown, emphasis, lists, etc. only as needed, not excessively.
-
-
-6. Always respond in the user’s language.`;
-
-const recommendPrompt = `-**Proactive Recommendations:** After several turns of conversation, when you have a good understanding of the user's interests or a topic seems to be concluding, you MUST format your response as a single minified JSON object. This JSON object should contain two keys: "chat_response" (your normal chat message as a string) and "recommendations" (an array of 2-3 new, related topics or questions you suggest for the user). Otherwise, respond with a normal string.`;
-
-// Define prompts in a single object for clarity and maintainability.
-const prompts = {
-  worry: `You are a compassionate listener and empathetic counselor. Prioritize active listening, validating feelings, and offering emotional support. Use gentle, encouraging language and reflective statements.
-Always respond in polite, formal Korean (존댓말).`,
-  solution: `You are an analytical problem-solving assistant. Focus on clarifying details, identifying root causes, and proposing practical, step-by-step solutions. Ask focused questions and provide actionable recommendations.
-Always respond in polite, formal Korean (존댓말).`,
-  basic: `You are an AI counselor that balances empathy with practical problem-solving.
-- **Empathetic Listening:** Start by acknowledging the user's feelings and validating their concerns with gentle, supportive language.
-- **Analytical Problem-Solving:** After showing empathy, transition to a problem-solving approach. Ask targeted questions to clarify the issue, identify root causes, and collaboratively develop actionable, step-by-step solutions.
-- **Tone:** Maintain a polite, formal, and encouraging tone throughout the conversation.
-Always respond in polite, formal Korean (존댓말).`,
-};
 
 function handleOpenAIResponse(socket, reply) {
   try {
@@ -69,13 +31,23 @@ function buildSession(socketId, chatHistory, newText = null) {
   const specialString = Array.isArray(special)
     ? special.join(", ")
     : special.toString();
-  const selectedSystemPrompt = prompts[mode] || prompts.basic;
+  const selectedModePrompt = prompts[mode] || prompts.basic;
+
+  // Combine all parts of the system prompt
+  const finalSystemPrompt = `
+    ${systemPrompt}
+
+    ${recommendPrompt}
+
+    MODE=${mode}:${selectedModePrompt}
+
+    This user has the following traits: ${specialString}. When you answer, you should be care these properties.
+  `;
 
   const session = [
     {
       role: "system",
-      content: `${systemPrompt} 
- MODE=${mode}:${selectedSystemPrompt}\n\nThis user has the following traits: ${specialString}. When you answer, you should be care these properties.`,
+      content: finalSystemPrompt.trim(),
     },
   ];
 
@@ -124,32 +96,8 @@ export function registerSocketHandlers(io) {
 
       sessions[socket.id] = buildSession(socket.id, chatLog, text);
 
-      // --- TEMPORARY TEST CODE START ---
-      const testPrompt = `
-        You are a helpful assistant. The user has sent the following message: "${text}".
-        Your task is to respond to the user's message and also provide a list of recommended next questions for the user to ask.
-        You MUST format your response as a single minified JSON object with two keys:
-        - "chat_response": A string containing your direct reply to the user's message.
-        - "recommendations": An array of 3 strings, where each string is a new, interesting question that the user might want to ask next, based on the conversation so far. These should be questions that encourage further exploration from the user's perspective.
-      `;
-      const testSession = [{ role: "user", content: testPrompt }];
-      // --- TEMPORARY TEST CODE END ---
-
-      // The temporary test code uses a different session, so we call the API directly here.
-      // If the temporary code is removed, this can be replaced with:
-      // await callOpenAI(socket, sessions[socket.id]);
-      try {
-        const res = await openai.chat.completions.create({
-          model: "gpt-5",
-          messages: testSession, // Using testSession instead of sessions[socket.id]
-        });
-
-        const reply = res.choices[0].message.content;
-        handleOpenAIResponse(socket, reply);
-      } catch (err) {
-        console.error("GPT 에러:", err);
-        socket.emit("chat message", { message: "GPT 고장 💀" });
-      }
+      // Call the OpenAI API with the constructed session
+      await callOpenAI(socket, sessions[socket.id]);
     });
 
     socket.on("load chat history", (chatHistory) => {
