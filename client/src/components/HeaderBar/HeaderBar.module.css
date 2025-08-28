@@ -32,6 +32,7 @@
 }
 
 .logo {
+  margin-left: 1.5rem;
   width: 1.5rem;
   height: 1.5rem;
 }
@@ -49,6 +50,9 @@
 }
 
 @media (max-width: 768px) {
+  .logo {
+    margin-left: auto;
+  }
   .menuButton {
     display: block;
   }

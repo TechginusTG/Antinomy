@@ -232,15 +232,18 @@ const ChatSider = ({
     </div>
   );
 
-  const mobileClassName =
-    isMobile && isSiderVisible ? styles.mobileVisible : "";
+  const mobileClassName = isMobile
+    ? `${styles.mobileSider} ${
+        isSiderVisible ? styles.mobileSiderVisible : styles.mobileSiderHidden
+      }`
+    : "";
 
   return (
     <Sider
       width={isMobile ? "100%" : `${chatWidth}%`}
       theme="light"
       className={`${className} ${mobileClassName}`}
-      collapsed={isMobile ? !isSiderVisible : false}
+      collapsed={false}
       collapsedWidth={0}
     >
       <div className={styles.chat}>

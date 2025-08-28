@@ -136,17 +136,20 @@
     pointer-events: auto; /* Enable mouse events when visible */
 }
 
-.mobileVisible {
-    position: absolute !important;
-    /* Assumes header height is 4rem (64px). Adjust if necessary. */
-    top: 4rem !important;
-    left: 0;
-    /* Use 100vw to ensure it covers the full width */
-    width: 100vw !important; 
-    height: calc(100dvh - 4rem) !important;
-    z-index: 100;
-    background: var(--background-primary);
-    transition: none !important; /* Disable transition to avoid conflict with parent component's logic */
+.mobileSider {
+  position: absolute !important;
+  top: 4rem !important;
+  height: calc(100dvh - 4rem) !important;
+  z-index: 100;
+  transition: transform 0.3s ease-in-out;
+}
+
+.mobileSiderHidden {
+  transform: translateX(-100%);
+}
+
+.mobileSiderVisible {
+  transform: translateX(0);
 }
 
 .scroll-to-bottom-button {
