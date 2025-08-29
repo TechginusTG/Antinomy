@@ -22,6 +22,7 @@ import SettingsModal from "../../components/SettingsModal/SettingsModal";
 import QuestModal from "../../components/QuestModal/QuestModal";
 import GuideModal from "../../components/GuideModal/GuideModal";
 import Login from "../Login/Login";
+import Register from "../Register/Register";
 
 import "reactflow/dist/style.css";
 import styles from "./MainApp.module.css";
@@ -32,6 +33,7 @@ const nodeTypes = { custom: CustomNode };
 
 const MainApp = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authView, setAuthView] = useState('login'); // 'login' or 'register'
   const {
     nodes,
     edges,
@@ -324,7 +326,11 @@ const MainApp = () => {
   };
 
   if (!isLoggedIn) {
-    return <Login onLoginSuccess={() => setIsLoggedIn(true)} />;
+    if (authView === 'login') {
+      return <Login onLoginSuccess={() => setIsLoggedIn(true)} switchToRegister={() => setAuthView('register')} />;
+    } else {
+      return <Register switchToLogin={() => setAuthView('login')} />;
+    }
   }
 
   return (

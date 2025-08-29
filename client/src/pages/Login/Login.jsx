@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from './Login.module.css';
 
-const Login = ({ onLoginSuccess }) => {
+const Login = ({ onLoginSuccess, switchToRegister }) => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -60,6 +60,9 @@ const Login = ({ onLoginSuccess }) => {
         </div>
         {error && <p className={styles.errorMessage}>{error}</p>}
         <button type="submit" className={styles.loginButton}>로그인</button>
+        <p className={styles.switchText}>
+          계정이 없으신가요? <span onClick={switchToRegister} className={styles.switchLink}>회원가입</span>
+        </p>
       </form>
     </div>
   );
