@@ -6,12 +6,17 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { registerSocketHandlers } from "./socketHandlers.js";
 import helmet from "helmet";
+import jwt from "jsonwebtoken";
+import knex from 'knex';
+import knexConfig from '../knexfile.cjs';
+import bcrypt from 'bcrypt';
 
 // ESM에서 __dirname을 사용하기 위한 설정
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const db = knex(knexConfig.development);
 
 // Canonical host 리다이렉션 미들웨어
 app.use((req, res, next) => {
@@ -72,6 +77,35 @@ const io = new Server(server, {
 });
 
 app.use(express.json());
+
+app.post("/api/login", async (req, res) => {
+  const { id, password } = req.body;
+
+  try {
+    // 1. 데이터베이스에서 사용자 찾기
+    const user = await db('users').where({ id: id }).first();
+
+    if (user) {
+      // 2. 사용자가 있으면, 입력된 비밀번호와 DB의 암호화된 비밀번호 비교
+      const isValid = await bcrypt.compare(password, user.password);
+
+      if (isValid) {
+        // 3. 비밀번호가 맞으면, 토큰 생성하여 전송
+        const token = jwt.sign({ userId: user.id, name: user.name }, process.env.JWT_SECRET || 'your_default_secret', { expiresIn: '1h' });
+        res.json({ success: true, token });
+      } else {
+        // 비밀번호가 틀리면 에러 전송
+        res.status(401).json({ success: false, message: "아이디 또는 비밀번호가 잘못되었습니다." });
+      }
+    } else {
+      // 사용자가 없으면 에러 전송
+      res.status(401).json({ success: false, message: "아이디 또는 비밀번호가 잘못되었습니다." });
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ success: false, message: '서버 에러가 발생했습니다.' });
+  }
+});
 
 // 프로덕션 환경에서 React 앱 서빙
 if (process.env.NODE_ENV === "production") {
