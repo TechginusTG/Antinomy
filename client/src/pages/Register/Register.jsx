@@ -39,22 +39,22 @@ const Register = ({ onRegistrationSuccess, switchToLogin }) => {
       <form onSubmit={handleSubmit} className={styles.registerForm}>
         <h2>Antinomy 계정 생성</h2>
         <div className={styles.inputGroup}>
-          <label htmlFor="id">Id</label>
-          <input
-            type="text"
-            id="id"
-            value={id}
-            onChange={(e) => setId(e.target.value)}
-            required
-          />
-        </div>
-        <div className={styles.inputGroup}>
           <label htmlFor="name">User Name</label>
           <input
             type="text"
             id="name"
             value={name}
             onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
+        <div className={styles.inputGroup}>
+          <label htmlFor="id">Id</label>
+          <input
+            type="text"
+            id="id"
+            value={id}
+            onChange={(e) => setId(e.target.value)}
             required
           />
         </div>
