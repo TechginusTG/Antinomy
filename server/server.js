@@ -4,6 +4,7 @@ import { Server } from "socket.io";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
+import { execSync } from "child_process";
 import { registerSocketHandlers } from "./socketHandlers.js";
 import helmet from "helmet";
 import jwt from "jsonwebtoken";
@@ -147,6 +148,13 @@ if (process.env.NODE_ENV === "production") {
 
 // Socket.IO 이벤트 처리
 registerSocketHandlers(io);
+
+try {
+  execSync('npx knex migrate:latest --knexfile knexfile.cjs', { stdio: 'inherit' });
+} catch (error) {
+  console.error('migration failed', error);
+  process.exit(1); 
+}
 
 server.listen(PORT, () => {
   console.log(`✨ API Server is running on http://localhost:${PORT}`);
