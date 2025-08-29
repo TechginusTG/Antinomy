@@ -82,27 +82,54 @@ app.post("/api/login", async (req, res) => {
   const { id, password } = req.body;
 
   try {
-    // 1. 데이터베이스에서 사용자 찾기
     const user = await db('users').where({ id: id }).first();
 
     if (user) {
-      // 2. 사용자가 있으면, 입력된 비밀번호와 DB의 암호화된 비밀번호 비교
       const isValid = await bcrypt.compare(password, user.password);
 
       if (isValid) {
-        // 3. 비밀번호가 맞으면, 토큰 생성하여 전송
         const token = jwt.sign({ userId: user.id, name: user.name }, process.env.JWT_SECRET || 'your_default_secret', { expiresIn: '1h' });
         res.json({ success: true, token });
       } else {
-        // 비밀번호가 틀리면 에러 전송
         res.status(401).json({ success: false, message: "아이디 또는 비밀번호가 잘못되었습니다." });
       }
     } else {
-      // 사용자가 없으면 에러 전송
       res.status(401).json({ success: false, message: "아이디 또는 비밀번호가 잘못되었습니다." });
     }
   } catch (error) {
     console.error('Login error:', error);
+    res.status(500).json({ success: false, message: '서버 에러가 발생했습니다.' });
+  }
+});
+
+app.post("/api/register", async (req, res) => {
+  const { id, name, password } = req.body;
+
+  if (!id || !name || !password) {
+    return res.status(400).json({success: false, message: "아이디, 사용자 이름, 비밀번호 모두를 입력해 주세요."});
+  }
+
+  try{
+    const existingUser = await db('users').where({ id: id }).first();
+
+    if (existingUser) {
+      return res.status(409).json({ success: false, message: "이미 존재하는 아이디입니다." });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const [newUser] = await db('users').insert({
+      id: id,
+      name: name,
+      password: hashedPassword
+    }).returning(['user_id', 'id', 'name']);
+
+    const token = jwt.sign({ userId: newUser.id, name: newUser.name }, process.env.JWT_SECRET || 'your_default_secret', { expiresIn: '1h' });
+
+    res.status(201).json({ success: true, message: "회원가입이 완료되었습니다.", token: token });
+
+  } catch (error) {
+    console.error('Registration error:', error);
     res.status(500).json({ success: false, message: '서버 에러가 발생했습니다.' });
   }
 });
