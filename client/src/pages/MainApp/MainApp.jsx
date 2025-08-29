@@ -21,6 +21,7 @@ import { getLayoutedElements } from "../../utils/prettyDia.js";
 import SettingsModal from "../../components/SettingsModal/SettingsModal";
 import QuestModal from "../../components/QuestModal/QuestModal";
 import GuideModal from "../../components/GuideModal/GuideModal";
+import Login from "../Login/Login";
 
 import "reactflow/dist/style.css";
 import styles from "./MainApp.module.css";
@@ -30,6 +31,7 @@ const { Content } = Layout;
 const nodeTypes = { custom: CustomNode };
 
 const MainApp = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const {
     nodes,
     edges,
@@ -104,6 +106,11 @@ const MainApp = () => {
     if (!hasVisitedBefore) {
       setIsWelcomeModalVisible(true);
       localStorage.setItem("hasVisited", "true");
+    }
+
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      setIsLoggedIn(true);
     }
   }, []);
 
@@ -316,13 +323,17 @@ const MainApp = () => {
     setIsWelcomeModalVisible(false);
   };
 
+  if (!isLoggedIn) {
+    return <Login onLoginSuccess={() => setIsLoggedIn(true)} />;
+  }
+
   return (
     <Layout style={{ height: "100dvh" }}>
       <Header className={styles["header"]} toggleSider={toggleSider} />
       <Layout>
         <ChatSider
-          className={`${styles["chat-sider"]} ${
-            isSiderVisible ? styles.visible : ""
+          className={`${styles["chat-sider"]} ${ 
+            isSiderVisible ? styles.visible : "" 
           }`}
           isSiderVisible={isSiderVisible}
           chatWidth={chatWidth}
@@ -387,7 +398,7 @@ const MainApp = () => {
                     return;
                   }
 
-                  const filenameBase =
+                  const filenameBase = 
                     userInput.trim() === "" ? defaultName : userInput.trim();
 
                   const sanitizedFilenameBase = filenameBase
