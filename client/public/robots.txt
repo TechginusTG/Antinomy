@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://syncro.tg-antinomy.kro.kr/sitemap.xml
