@@ -1,4 +1,5 @@
 import React, { useCallback, useState, useEffect, useRef } from "react";
+import { Helmet } from "react-helmet-async";
 import { Layout, Button, Modal } from "antd";
 import {
   SaveOutlined,
@@ -335,12 +336,18 @@ const MainApp = () => {
 
   return (
     <Layout style={{ height: "100dvh" }}>
+      <Helmet>
+        <title>Antinomy | AI 채팅 및 다이어그램</title>
+        <meta name="description" content="AI와 대화하며 생각을 정리하고, 실시간으로 다이어그램을 생성하여 아이디어를 시각화하세요. Antinomy는 당신의 복잡한 문제 해결과 기획을 돕는 파트너입니다." />
+        <meta property="og:title" content="Antinomy | AI 채팅 및 다이어그램" />
+        <meta property="og:description" content="AI와 대화하며 생각을 정리하고, 실시간으로 다이어그램을 생성하여 아이디어를 시각화하세요." />
+        <meta property="og:url" content="https://syncro.tg-antinomy.kro.kr/app" />
+        <meta property="og:type" content="website" />
+      </Helmet>
       <Header className={styles["header"]} toggleSider={toggleSider} />
       <Layout>
         <ChatSider
-          className={`${styles["chat-sider"]} ${ 
-            isSiderVisible ? styles.visible : "" 
-          }`}
+          className={`${styles["chat-sider"]} ${isSiderVisible ? styles.visible : ""}`}
           isSiderVisible={isSiderVisible}
           chatWidth={chatWidth}
           messages={chatLog}
