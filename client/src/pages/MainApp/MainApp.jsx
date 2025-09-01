@@ -22,6 +22,8 @@ import { getLayoutedElements } from "../../utils/prettyDia.js";
 import SettingsModal from "../../components/SettingsModal/SettingsModal";
 import QuestModal from "../../components/QuestModal/QuestModal";
 import GuideModal from "../../components/GuideModal/GuideModal";
+import Login from "../Login/Login";
+import Register from "../Register/Register";
 
 import "reactflow/dist/style.css";
 import styles from "./MainApp.module.css";
@@ -31,6 +33,8 @@ const { Content } = Layout;
 const nodeTypes = { custom: CustomNode };
 
 const MainApp = () => {
+  const [authStatus, setAuthStatus] = useState('loggedOut'); 
+  const [authView, setAuthView] = useState('login'); // 'login' or 'register'
   const {
     nodes,
     edges,
@@ -105,6 +109,11 @@ const MainApp = () => {
     if (!hasVisitedBefore) {
       setIsWelcomeModalVisible(true);
       localStorage.setItem("hasVisited", "true");
+    }
+
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      setAuthStatus('loggedIn');
     }
   }, []);
 
@@ -317,6 +326,19 @@ const MainApp = () => {
     setIsWelcomeModalVisible(false);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    setAuthStatus('loggedOut');
+  };
+
+  if (authStatus === 'loggedOut') {
+    if (authView === 'login') {
+      return <Login onLoginSuccess={() => setAuthStatus('loggedIn')} onGuestLogin={() => setAuthStatus('guest')} switchToRegister={() => setAuthView('register')} />;
+    } else {
+      return <Register switchToLogin={() => setAuthView('login')} />;
+    }
+  }
+
   return (
     <Layout style={{ height: "100dvh" }}>
       <Helmet>
@@ -327,10 +349,12 @@ const MainApp = () => {
         <meta property="og:url" content="https://syncro.tg-antinomy.kro.kr/app" />
         <meta property="og:type" content="website" />
       </Helmet>
-      <Header className={styles["header"]} toggleSider={toggleSider} />
+      <Header className={styles["header"]} toggleSider={toggleSider} authStatus={authStatus} onLogout={handleLogout} />
       <Layout>
         <ChatSider
-          className={`${styles["chat-sider"]} ${isSiderVisible ? styles.visible : ""}`}
+          className={`${styles["chat-sider"]} ${ 
+            isSiderVisible ? styles.visible : "" 
+          }`}
           isSiderVisible={isSiderVisible}
           chatWidth={chatWidth}
           messages={chatLog}
