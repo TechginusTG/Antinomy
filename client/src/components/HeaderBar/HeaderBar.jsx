@@ -7,15 +7,15 @@ import styles from "./HeaderBar.module.css";
 import logo from "../../assets/img/logo.png"; // Adjust the path as necessary
 import useFlowStore from "../../utils/flowStore";
 
-const HeaderBar = ({ className, toggleSider, isLoggedIn, onLogout }) => {
+const HeaderBar = ({ className, toggleSider, authStatus, onLogout }) => {
   const theme = useFlowStore((state) => state.theme);
   const navigate = useNavigate();
 
-  const handleLogoutClick = () => {
+  const handleAuthActionClick = () => {
     if (onLogout) {
-      onLogout();
+      onLogout(); 
     }
-    navigate('/');
+    navigate('/'); 
   };
 
   const teamInfoContent = (
@@ -60,9 +60,14 @@ const HeaderBar = ({ className, toggleSider, isLoggedIn, onLogout }) => {
         />
         <h2 className={styles.title}>ANTINOMY</h2>
         <ConnectionStatus />
-        {isLoggedIn && (
-          <Button onClick={handleLogoutClick} className={styles.logoutButton}>
+        {authStatus === 'loggedIn' && (
+          <Button onClick={handleAuthActionClick} className={styles.authButton}>
             Log Out
+          </Button>
+        )}
+        {authStatus === 'guest' && (
+          <Button onClick={handleAuthActionClick} className={styles.authButton}>
+            Log In
           </Button>
         )}
       </div>

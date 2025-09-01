@@ -340,7 +340,7 @@ const MainApp = () => {
 
   return (
     <Layout style={{ height: "100dvh" }}>
-      <Header className={styles["header"]} toggleSider={toggleSider} isLoggedIn={authStatus === 'loggedIn'} onLogout={handleLogout} />
+      <Header className={styles["header"]} toggleSider={toggleSider} authStatus={authStatus} onLogout={handleLogout} />
       <Layout>
         <ChatSider
           className={`${styles["chat-sider"]} ${ 
