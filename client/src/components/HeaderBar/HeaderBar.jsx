@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from 'react-router-dom';
 import { Layout, Button, Popover } from "antd";
 import { MenuOutlined } from "@ant-design/icons";
 import ConnectionStatus from "../ConnectionStatus/ConnectionStatus";
@@ -6,8 +7,16 @@ import styles from "./HeaderBar.module.css";
 import logo from "../../assets/img/logo.png"; // Adjust the path as necessary
 import useFlowStore from "../../utils/flowStore";
 
-const HeaderBar = ({ className, toggleSider }) => {
+const HeaderBar = ({ className, toggleSider, isLoggedIn, onLogout }) => {
   const theme = useFlowStore((state) => state.theme);
+  const navigate = useNavigate();
+
+  const handleLogoutClick = () => {
+    if (onLogout) {
+      onLogout();
+    }
+    navigate('/');
+  };
 
   const teamInfoContent = (
     <div>
@@ -51,15 +60,22 @@ const HeaderBar = ({ className, toggleSider }) => {
         />
         <h2 className={styles.title}>ANTINOMY</h2>
         <ConnectionStatus />
+        {isLoggedIn && (
+          <Button onClick={handleLogoutClick} className={styles.logoutButton}>
+            Log Out
+          </Button>
+        )}
       </div>
-      <Popover
-        content={teamInfoContent}
-        title="Team TechGinus"
-        trigger="click"
-        placement="bottomRight"
-      >
-        <p className={styles.teamInfo}>Made by TeamTechGinus</p>
-      </Popover>
+      <div className={styles.rightSection}>
+        <Popover
+          content={teamInfoContent}
+          title="Team TechGinus"
+          trigger="click"
+          placement="bottomRight"
+        >
+          <p className={styles.teamInfo}>Made by TeamTechGinus</p>
+        </Popover>
+      </div>
     </Layout.Header>
   );
 };

@@ -325,6 +325,11 @@ const MainApp = () => {
     setIsWelcomeModalVisible(false);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    setIsLoggedIn(false);
+  };
+
   if (!isLoggedIn) {
     if (authView === 'login') {
       return <Login onLoginSuccess={() => setIsLoggedIn(true)} switchToRegister={() => setAuthView('register')} />;
@@ -335,7 +340,7 @@ const MainApp = () => {
 
   return (
     <Layout style={{ height: "100dvh" }}>
-      <Header className={styles["header"]} toggleSider={toggleSider} />
+      <Header className={styles["header"]} toggleSider={toggleSider} isLoggedIn={isLoggedIn} onLogout={handleLogout} />
       <Layout>
         <ChatSider
           className={`${styles["chat-sider"]} ${ 
