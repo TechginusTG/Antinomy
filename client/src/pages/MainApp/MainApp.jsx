@@ -33,7 +33,7 @@ const { Content } = Layout;
 const nodeTypes = { custom: CustomNode };
 
 const MainApp = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authStatus, setAuthStatus] = useState('loggedOut'); 
   const [authView, setAuthView] = useState('login'); // 'login' or 'register'
   const {
     nodes,
@@ -113,7 +113,7 @@ const MainApp = () => {
 
     const token = localStorage.getItem('authToken');
     if (token) {
-      setIsLoggedIn(true);
+      setAuthStatus('loggedIn');
     }
   }, []);
 
@@ -326,9 +326,14 @@ const MainApp = () => {
     setIsWelcomeModalVisible(false);
   };
 
-  if (!isLoggedIn) {
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    setAuthStatus('loggedOut');
+  };
+
+  if (authStatus === 'loggedOut') {
     if (authView === 'login') {
-      return <Login onLoginSuccess={() => setIsLoggedIn(true)} switchToRegister={() => setAuthView('register')} />;
+      return <Login onLoginSuccess={() => setAuthStatus('loggedIn')} onGuestLogin={() => setAuthStatus('guest')} switchToRegister={() => setAuthView('register')} />;
     } else {
       return <Register switchToLogin={() => setAuthView('login')} />;
     }
