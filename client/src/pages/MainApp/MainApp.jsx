@@ -349,10 +349,12 @@ const MainApp = () => {
         <meta property="og:url" content="https://syncro.tg-antinomy.kro.kr/app" />
         <meta property="og:type" content="website" />
       </Helmet>
-      <Header className={styles["header"]} toggleSider={toggleSider} />
+      <Header className={styles["header"]} toggleSider={toggleSider} authStatus={authStatus} onLogout={handleLogout} />
       <Layout>
         <ChatSider
-          className={`${styles["chat-sider"]} ${isSiderVisible ? styles.visible : ""}`}
+          className={`${styles["chat-sider"]} ${ 
+            isSiderVisible ? styles.visible : "" 
+          }`}
           isSiderVisible={isSiderVisible}
           chatWidth={chatWidth}
           messages={chatLog}
