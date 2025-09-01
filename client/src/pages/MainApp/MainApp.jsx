@@ -32,7 +32,7 @@ const { Content } = Layout;
 const nodeTypes = { custom: CustomNode };
 
 const MainApp = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authStatus, setAuthStatus] = useState('loggedOut'); 
   const [authView, setAuthView] = useState('login'); // 'login' or 'register'
   const {
     nodes,
@@ -112,7 +112,7 @@ const MainApp = () => {
 
     const token = localStorage.getItem('authToken');
     if (token) {
-      setIsLoggedIn(true);
+      setAuthStatus('loggedIn');
     }
   }, []);
 
@@ -327,12 +327,12 @@ const MainApp = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
-    setIsLoggedIn(false);
+    setAuthStatus('loggedOut');
   };
 
-  if (!isLoggedIn) {
+  if (authStatus === 'loggedOut') {
     if (authView === 'login') {
-      return <Login onLoginSuccess={() => setIsLoggedIn(true)} switchToRegister={() => setAuthView('register')} />;
+      return <Login onLoginSuccess={() => setAuthStatus('loggedIn')} onGuestLogin={() => setAuthStatus('guest')} switchToRegister={() => setAuthView('register')} />;
     } else {
       return <Register switchToLogin={() => setAuthView('login')} />;
     }
@@ -340,7 +340,7 @@ const MainApp = () => {
 
   return (
     <Layout style={{ height: "100dvh" }}>
-      <Header className={styles["header"]} toggleSider={toggleSider} isLoggedIn={isLoggedIn} onLogout={handleLogout} />
+      <Header className={styles["header"]} toggleSider={toggleSider} isLoggedIn={authStatus === 'loggedIn'} onLogout={handleLogout} />
       <Layout>
         <ChatSider
           className={`${styles["chat-sider"]} ${ 

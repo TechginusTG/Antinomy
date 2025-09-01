@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from './Login.module.css';
 
-const Login = ({ onLoginSuccess, switchToRegister }) => {
+const Login = ({ onLoginSuccess, onGuestLogin, switchToRegister }) => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -62,6 +62,9 @@ const Login = ({ onLoginSuccess, switchToRegister }) => {
         <button type="submit" className={styles.loginButton}>로그인</button>
         <p className={styles.switchText}>
           계정이 없으신가요? <span onClick={switchToRegister} className={styles.switchLink}>회원가입</span>
+        </p>
+        <p className={styles.switchText}>
+          <span onClick={onGuestLogin} className={styles.switchLink}>로그인 없이 이용하기</span>
         </p>
       </form>
     </div>
