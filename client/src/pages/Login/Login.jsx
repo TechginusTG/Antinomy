@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import styles from './Login.module.css';
+import useUserStore from '../../utils/userStore';
 
 const Login = ({ onLoginSuccess, onGuestLogin, switchToRegister }) => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { login } = useUserStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,6 +26,7 @@ const Login = ({ onLoginSuccess, onGuestLogin, switchToRegister }) => {
       if (response.ok && data.success) {
         console.log('Login successful', data);
         localStorage.setItem('authToken', data.token);
+        login(id);
         onLoginSuccess(); 
       } else {
         setError(data.message || '로그인에 실패했습니다.');

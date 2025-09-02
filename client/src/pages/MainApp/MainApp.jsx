@@ -22,6 +22,7 @@ import { getLayoutedElements } from "../../utils/prettyDia.js";
 import SettingsModal from "../../components/SettingsModal/SettingsModal";
 import QuestModal from "../../components/QuestModal/QuestModal";
 import GuideModal from "../../components/GuideModal/GuideModal";
+import ProfileModal from "../../components/ProfileModal/ProfileModal";
 import Login from "../Login/Login";
 import Register from "../Register/Register";
 
@@ -460,6 +461,7 @@ const MainApp = () => {
               handleQuestChange={handleQuestChange}
               onRecommendationClick={onRecommendationClick}
             />
+            <ProfileModal />
           </Content>
         </Layout>
       </Layout>

@@ -56,6 +56,7 @@ const useFlowStore = create((set, get) => {
     chatFontSize: parseInt(localStorage.getItem("chatFontSize"), 10) || 14,
     mode: localStorage.getItem("mode") || 'basic',
     isSettingsOpen: false,
+    isProfileModalOpen: false,
     isQuestOpen: false,
     isConnected: false,
     editingNodeId: null,
@@ -107,6 +108,7 @@ const useFlowStore = create((set, get) => {
       localStorage.setItem("chatFontSize", size);
     },
     setIsSettingsOpen: (isOpen) => set({ isSettingsOpen: isOpen }),
+    setIsProfileModalOpen: (isOpen) => set({ isProfileModalOpen: isOpen }),
     setIsQuestOpen: (isOpen) => set({ isQuestOpen: isOpen }),
     setEditingNodeId: (nodeId) => set({ editingNodeId: nodeId }),
     setMode: (mode) => {
