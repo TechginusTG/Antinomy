@@ -264,14 +264,14 @@ const MainApp = () => {
 
   const onPaneClick = useCallback(() => setContextMenu(null), []);
 
-  const onAddNode = useCallback(() => {
+  const onAddNode = useCallback((shape) => {
     if (contextMenu && reactFlowInstance && reactFlowWrapper.current) {
       const bounds = reactFlowWrapper.current.getBoundingClientRect();
       const position = reactFlowInstance.project({
         x: contextMenu.x - bounds.left,
         y: contextMenu.y - bounds.top,
       });
-      addNode(position);
+      addNode(position, shape);
       setContextMenu(null);
     }
   }, [reactFlowInstance, contextMenu, addNode]);

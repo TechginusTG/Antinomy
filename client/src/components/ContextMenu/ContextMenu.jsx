@@ -11,8 +11,8 @@ const ContextMenu = ({
   onEditNode,
   onClose,
 }) => {
-  const handleAddNodeClick = () => {
-    onAddNode();
+  const handleAddNodeClick = (shape) => {
+    onAddNode(shape);
     onClose();
   };
 
@@ -66,8 +66,13 @@ const ContextMenu = ({
         </>
       )}
       {type === "pane" && (
-        <div className={styles.menuItem} onClick={handleAddNodeClick}>
+        <div className={styles.menuItem}>
           노드 추가... (A)
+          <div className={styles.submenu}>
+            <div className={styles.menuItem} onClick={() => handleAddNodeClick('rectangle')}>사각형</div>
+            <div className={styles.menuItem} onClick={() => handleAddNodeClick('ellipse')}>타원</div>
+            <div className={styles.menuItem} onClick={() => handleAddNodeClick('diamond')}>다이아몬드</div>
+          </div>
         </div>
       )}
     </div>

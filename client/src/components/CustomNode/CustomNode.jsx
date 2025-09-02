@@ -36,8 +36,20 @@ const CustomNode = ({ id, data, selected }) => {
   };
 
   return (
-    <div className={`${styles.customNode} ${selected ? styles.selected : ''}`} onDoubleClick={handleDoubleClick}>
-      <Handle type="target" position={Position.Top} />
+    <div className={`${styles.customNode} ${styles[data.shape]} ${selected ? styles.selected : ''}`} onDoubleClick={handleDoubleClick}>
+      {data.shape === 'diamond' ? (
+        <>
+          <Handle type="target" position={Position.Top} id="top" className={styles.diamondHandle} />
+          <Handle type="source" position={Position.Right} id="right" className={styles.diamondHandle} />
+          <Handle type="source" position={Position.Bottom} id="bottom" className={styles.diamondHandle} />
+          <Handle type="source" position={Position.Left} id="left" className={styles.diamondHandle} />
+        </>
+      ) : (
+        <>
+          <Handle type="target" position={Position.Top} />
+          <Handle type="source" position={Position.Bottom} />
+        </>
+      )}
       <div>
         {isEditing ? (
           <input
@@ -52,7 +64,6 @@ const CustomNode = ({ id, data, selected }) => {
           <div className={styles.label}>{label}</div>
         )}
       </div>
-      <Handle type="source" position={Position.Bottom} />
     </div>
   );
 };

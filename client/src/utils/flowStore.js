@@ -9,19 +9,19 @@ const initialNodes = [
     id: "1",
     type: "custom",
     position: { x: 100, y: 150 },
-    data: { label: "문제" },
+    data: { label: "문제", shape: "rectangle" },
   },
   {
     id: "2",
     type: "custom",
     position: { x: 200, y: 250 },
-    data: { label: "과정" },
+    data: { label: "과정", shape: "rectangle" },
   },
   {
     id: "3",
     type: "custom",
     position: { x: 300, y: 350 },
-    data: { label: "해결" },
+    data: { label: "해결", shape: "rectangle" },
   },
 ];
 const initialEdges = [
@@ -217,7 +217,7 @@ const useFlowStore = create((set, get) => {
       _updateHistory({ nodes, edges: nextEdges });
     },
 
-    addNode: (position) => {
+    addNode: (position, shape = 'rectangle') => {
       const { nodes, edges, _updateHistory } = get();
       const newNodeId =
         (nodes.length > 0 ? Math.max(...nodes.map((n) => parseInt(n.id))) : 0) +
@@ -226,7 +226,7 @@ const useFlowStore = create((set, get) => {
         id: newNodeId.toString(),
         type: "custom",
         position,
-        data: { label: "New Node" },
+        data: { label: "New Node", shape },
       };
       const nextNodes = [...nodes, newNode];
       _updateHistory({ nodes: nextNodes, edges });

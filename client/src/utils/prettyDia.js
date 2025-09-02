@@ -8,10 +8,32 @@ const nodeWidth = 172;
 const nodeHeight = 36;
 
 export const getLayoutedElements = (nodes, edges, direction = 'TB') => {
-  dagreGraph.setGraph({ rankdir: direction });
+  const avgWidth = nodes.reduce((acc, node) => {
+    let width = nodeWidth;
+    if (node.data.shape === 'ellipse' || node.data.shape === 'diamond') {
+      width = 100;
+    }
+    return acc + width;
+  }, 0) / nodes.length;
+
+  const avgHeight = nodes.reduce((acc, node) => {
+    let height = nodeHeight;
+    if (node.data.shape === 'ellipse' || node.data.shape === 'diamond') {
+      height = 100;
+    }
+    return acc + height;
+  }, 0) / nodes.length;
+
+  dagreGraph.setGraph({ rankdir: direction, nodesep: avgWidth * 1.5, ranksep: avgHeight * 1.5 });
 
   nodes.forEach((node) => {
-    dagreGraph.setNode(node.id, { width: nodeWidth, height: nodeHeight });
+    let width = nodeWidth;
+    let height = nodeHeight;
+    if (node.data.shape === 'ellipse' || node.data.shape === 'diamond') {
+      width = 100;
+      height = 100;
+    }
+    dagreGraph.setNode(node.id, { width, height });
   });
 
   edges.forEach((edge) => {
@@ -22,14 +44,24 @@ export const getLayoutedElements = (nodes, edges, direction = 'TB') => {
 
   nodes.forEach((node) => {
     const nodeWithPosition = dagreGraph.node(node.id);
-    node.targetPosition = 'top';
-    node.sourcePosition = 'bottom';
+
+    if (node.data.shape !== 'diamond') {
+      node.targetPosition = 'top';
+      node.sourcePosition = 'bottom';
+    }
+
+    let width = nodeWidth;
+    let height = nodeHeight;
+    if (node.data.shape === 'ellipse' || node.data.shape === 'diamond') {
+      width = 100;
+      height = 100;
+    }
 
     // We are shifting the dagre node position (anchor=center) to the top left
     // so it matches the React Flow node anchor point (top left).
     node.position = {
-      x: nodeWithPosition.x - nodeWidth / 2,
-      y: nodeWithPosition.y - nodeHeight / 2,
+      x: nodeWithPosition.x - width / 2,
+      y: nodeWithPosition.y - height / 2,
     };
   });
 

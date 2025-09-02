@@ -5,11 +5,46 @@
   padding: 0.625rem;
   font-size: 0.75rem;
   text-align: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.customNode.selected {
-  border: 0.0625rem solid #007bff; 
-  box-shadow: 0 0 0 0.0625rem #007bff; 
+.rectangle {
+  min-width: 50px;
+  min-height: 50px;
+}
+
+.ellipse {
+  border-radius: 50%;
+  min-width: 50px;
+  min-height: 50px;
+}
+
+.diamond {
+  width: 100px;
+  height: 100px;
+  background: transparent;
+  border: none;
+}
+
+.diamond::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100px;
+  height: 100px;
+  background: #fff;
+  border: 0.0625rem solid #1a192b;
+  transform: rotate(45deg);
+  z-index: -1;
+}
+
+.customNode.selected.diamond::before {
+  border: 0.0625rem solid #007bff;
+  box-shadow: 0 0 0 0.0625rem #007bff;
 }
 
 .input {
@@ -21,4 +56,30 @@
 
 .label {
   padding: 0.25rem 0.5rem;
+  word-wrap: break-word;
+  white-space: normal;
+}
+
+.diamondHandle.react-flow__handle {
+    width: 5px;
+    height: 5px;
+    border-radius: 0;
+    transform: none;
+    border: 1px solid #555;
+}
+
+.diamondHandle.react-flow__handle-top {
+    top: -2px;
+}
+
+.diamondHandle.react-flow__handle-right {
+    right: -2px;
+}
+
+.diamondHandle.react-flow__handle-bottom {
+    bottom: -2px;
+}
+
+.diamondHandle.react-flow__handle-left {
+    left: -2px;
 }
