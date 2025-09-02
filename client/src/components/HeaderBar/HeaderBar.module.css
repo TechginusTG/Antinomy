@@ -60,3 +60,15 @@
     font-size: smaller;
   }
 }
+
+.authButton {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  margin-left: 1rem;
+}
+
+.authButton.authButtonDarkTheme {
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
