@@ -26,31 +26,35 @@ function handleOpenAIResponse(socket, reply) {
   }
 }
 
-// Helper to build the session object based on user data and chat history
-function buildSession(socketId, chatHistory, newText = null) {
-  const { mode = "basic", special = [], userNote = "" } = userSpecial[socketId] || {};
-  const specialString = Array.isArray(special)
-    ? special.join(", ")
-    : special.toString();
+// Helper to build the system prompt
+function buildSystemPrompt(socketId) {
+  const { 
+    mode = "basic", 
+    userNote = "", 
+  } = userSpecial[socketId] || {};
   const selectedModePrompt = prompts[mode] || prompts.basic;
 
-  // Combine all parts of the system prompt
-  const finalSystemPrompt = `
-    ${systemPrompt}
+  const promptParts = [
+    systemPrompt,
+    recommendPrompt,
+    `MODE=${mode}:${selectedModePrompt}`,
+  ];
 
-    ${recommendPrompt}
+  if (userNote) {
+    promptParts.push(
+      `This user has the following traits: ${userNote}. When you answer, you should be care these properties.`
+    );
+  }
 
-    MODE=${mode}:${selectedModePrompt}
+  return promptParts.join("\n\n");
+}
 
-    This user has the following traits: ${specialString}. When you answer, you should be care these properties.
-
-    ${userNote ? `This is a note from the user about themselves: "${userNote}"` : ""}
-  `;
-
+// Helper to build the session object based on user data and chat history
+function buildSession(socketId, chatHistory, newText = null) {
   const session = [
     {
       role: "system",
-      content: finalSystemPrompt.trim(),
+      content: buildSystemPrompt(socketId),
     },
   ];
 
