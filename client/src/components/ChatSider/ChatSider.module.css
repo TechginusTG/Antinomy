@@ -62,10 +62,12 @@
   box-shadow: 0.125rem 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
   color: var(--text-primary);
 
-  /* Preserve user line breaks and improve long-word wrapping */
-  white-space: pre-wrap;      /* preserve newlines and wrap */
-  overflow-wrap: anywhere;    /* allow breaking long words */
-  word-break: break-word;     /* fallback for very long tokens */
+  /* Preserve explicit newlines, avoid breaking CJK characters; allow breaking only for very long tokens */
+  white-space: pre-line;      /* preserve user newlines but wrap at word boundaries */
+  overflow-wrap: anywhere;    /* allow breaking extremely long tokens (URLs) when necessary */
+  word-break: keep-all;       /* prevent arbitrary breaks inside CJK text (avoid single-char wraps) */
+  hyphens: none;
+  text-align: left;
 }
 
 .user {
@@ -73,6 +75,7 @@
   background-color: var(--bubble-user-bg);
   border-bottom-right-radius: 0;
   text-align: end;
+  text-align: left;
 }
 
 .ai {
