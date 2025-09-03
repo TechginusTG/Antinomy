@@ -284,6 +284,7 @@ const ChatSider = ({
                   isUser={msg.sender === "user"}
                   onDelete={onDelete}
                   onEdit={() => handleOpenEditModal(msg)}
+                  chatWidth={chatWidth}
                 >
                   {msg.sender === "ai" ? (
                     <div className={styles.markdownContent}>
