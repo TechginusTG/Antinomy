@@ -61,6 +61,11 @@
   max-width: 70%;
   box-shadow: 0.125rem 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
   color: var(--text-primary);
+
+  /* Preserve user line breaks and improve long-word wrapping */
+  white-space: pre-wrap;      /* preserve newlines and wrap */
+  overflow-wrap: anywhere;    /* allow breaking long words */
+  word-break: break-word;     /* fallback for very long tokens */
 }
 
 .user {
@@ -78,6 +83,26 @@
 
 .markdownContent li {
   margin-left: 1.5rem;
+}
+
+/* Short messages: center and slightly larger for visual balance */
+.bubbleShort {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 1.05rem;
+  padding: 0.6rem 1rem;
+  max-width: 55%;
+}
+
+/* Long messages: left aligned, increased line-height for readability */
+.bubbleLong {
+  font-size: 0.95rem;
+  line-height: 1.55;
+  text-align: left;
+  max-width: 80%;
+  padding: 0.9rem 1rem;
 }
 
 .resetContainer {

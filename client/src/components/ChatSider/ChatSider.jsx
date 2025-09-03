@@ -265,24 +265,36 @@ const ChatSider = ({
             <li style={{ listStyle: "none", textAlign: "center" }}>
               <i>해결하고픈 문제나, 고민, 하고싶은 일을 적어보세요</i>
             </li>
-            {messages.map((msg) => (
-              <Bubble
-                key={msg.id}
-                id={msg.id}
-                className={`${styles.bubble} ${styles[msg.sender]}`}
-                isUser={msg.sender === "user"}
-                onDelete={onDelete}
-                onEdit={() => handleOpenEditModal(msg)}
-              >
-                {msg.sender === "ai" ? (
-                  <div className={styles.markdownContent}>
-                    <ReactMarkdown>{msg.content}</ReactMarkdown>
-                  </div>
-                ) : (
-                  msg.content
-                )}
-              </Bubble>
-            ))}
+            {messages.map((msg) => {
+              const getBubbleClass = (m) => {
+                const text = m?.content || "";
+                const length = text.length;
+                // Prefer short center-styled bubbles for very short texts,
+                // long bubbles for long texts. Thresholds adjustable.
+                if (length <= 40) return `${styles.bubble} ${styles[m.sender]} ${styles.bubbleShort}`;
+                if (length >= 200) return `${styles.bubble} ${styles[m.sender]} ${styles.bubbleLong}`;
+                return `${styles.bubble} ${styles[m.sender]}`;
+              };
+
+              return (
+                <Bubble
+                  key={msg.id}
+                  id={msg.id}
+                  className={getBubbleClass(msg)}
+                  isUser={msg.sender === "user"}
+                  onDelete={onDelete}
+                  onEdit={() => handleOpenEditModal(msg)}
+                >
+                  {msg.sender === "ai" ? (
+                    <div className={styles.markdownContent}>
+                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    msg.content
+                  )}
+                </Bubble>
+              );
+            })}
             {isTyping && (
               <motion.div
                 initial={{ opacity: 0 }}
