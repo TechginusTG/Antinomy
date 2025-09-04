@@ -8,8 +8,6 @@ exports.up = function (knex) {
     table.string("id", 255).notNullable().unique();
     table.string("password", 255).notNullable();
     table.string("name", 255).notNullable();
-    table.smallint("lvl").unsigned().defaultTo(1);
-    table.integer("exp").defaultTo(0);
 
     table.timestamps(true, true);
   });

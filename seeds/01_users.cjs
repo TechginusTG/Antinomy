@@ -16,7 +16,9 @@ exports.seed = async function(knex) {
     {
       id: 'test',
       password: hashedPassword, // Store the hashed password
-      name: '테스트 사용자'
+      name: '테스트 사용자',
+      lvl: 1,
+      exp: 0
     }
   ]);
 };
