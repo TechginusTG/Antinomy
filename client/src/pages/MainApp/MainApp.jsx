@@ -128,6 +128,11 @@ const MainApp = () => {
     };
 
     chatService.onChatHistoryLoaded(handleChatHistoryLoaded);
+
+    chatService.connect((message) => {
+      setChatLog((prevChatLog) => [...prevChatLog, { id: Date.now(), content: message, sender: 'ai' }]);
+    });
+
     chatService.loadChatHistory(convId);
 
     return () => {

@@ -13,7 +13,6 @@ class ChatService {
     const token = localStorage.getItem('authToken');
 
     this.socket = io(SOCKET_URL, {
-      transports: ["websocket"],
       auth: {
         token,
       },
@@ -97,7 +96,7 @@ class ChatService {
 
   loadChatHistory(conversationId) {
     if (this.socket) {
-      this.socket.emit("load latest chat", { conversationId });
+    this.socket.emit("load latest chat", { conversationId });
     }
   }
 
