@@ -10,7 +10,7 @@ const useUserStore = create(
       lvl: 1,
       setUserNote: (note) => set({ userNote: note }),
       setUsername: (name) => set({ username: name }),
-      login: (name) => set({ username: name }),
+      login: (user) => set({ username: user.name, exp: user.exp, lvl: user.lvl }),
       logout: () => {
         set({ username: null, userNote: "", exp: 0, lvl: 1 });
         localStorage.removeItem('authToken');

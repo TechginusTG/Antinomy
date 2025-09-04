@@ -26,7 +26,7 @@ const Login = ({ onLoginSuccess, onGuestLogin, switchToRegister }) => {
       if (response.ok && data.success) {
         console.log('Login successful', data);
         localStorage.setItem('authToken', data.token);
-        login(id);
+        login(data.user);
         onLoginSuccess(); 
       } else {
         setError(data.message || '로그인에 실패했습니다.');

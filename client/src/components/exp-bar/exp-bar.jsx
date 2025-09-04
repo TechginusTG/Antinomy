@@ -1,15 +1,16 @@
 import React from "react";
 import styles from "./exp-bar.module.css";
-import useFlowStore from "../../utils/flowStore"; 
+import useUserStore from "../../utils/userStore";
 
 function round(value, decimals) {
     return Number(Math.round(value + "e" + decimals) + "e-" + decimals);
 }
 
 const ExpBar = () => {
-    const { currentExp, maxExp, level } = useFlowStore(); 
+    const { exp: currentExp, lvl: level } = useUserStore();
+    const maxExp = level * 100;
 
-    const expPercentage = (currentExp / maxExp) * 100;
+    const expPercentage = maxExp > 0 ? (currentExp / maxExp) * 100 : 0;
 
     return (
         <div className={styles["exp-bar"]}>
@@ -17,7 +18,9 @@ const ExpBar = () => {
                 className={styles["exp-bar-fill"]}
                 style={{ width: `${expPercentage}%` }}
             />
-            <span className={styles["exp-bar-label"]}>Lv {level} / Exp {round((currentExp)/(maxExp) * 100, 1)}%</span>
+            <span className={styles["exp-bar-label"]}>
+                Lv {level} / Exp {round(expPercentage, 1)}%
+            </span>
         </div>
     );
 };
