@@ -62,10 +62,7 @@ const MainApp = () => {
     setRecommendations,
   } = useFlowStore();
   const reactFlowWrapper = useRef(null);
-  const [chatLog, setChatLog] = useState(() => {
-    const saved = localStorage.getItem("chatLog");
-    return saved ? JSON.parse(saved) : [];
-  });
+  const [chatLog, setChatLog] = useState([]);
   const fileInputRef = useRef(null);
   const isInitialMount = useRef(true);
   const [contextMenu, setContextMenu] = useState(null);
@@ -80,6 +77,7 @@ const MainApp = () => {
   const [isSiderVisible, setIsSiderVisible] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [isWelcomeModalVisible, setIsWelcomeModalVisible] = useState(false);
+  const [conversationId, setConversationId] = useState(null);
 
   const toggleSider = () => {
     setIsSiderVisible(!isSiderVisible);
@@ -116,6 +114,25 @@ const MainApp = () => {
     if (token) {
       setAuthStatus('loggedIn');
     }
+
+    let convId = localStorage.getItem('conversationId');
+    if (!convId) {
+      convId = crypto.randomUUID();
+      localStorage.setItem('conversationId', convId);
+    }
+    setConversationId(convId);
+
+    const handleChatHistoryLoaded = (history) => {
+      setChatLog(history);
+      console.log('Chat history loaded from DB:', history);
+    };
+
+    chatService.onChatHistoryLoaded(handleChatHistoryLoaded);
+    chatService.loadChatHistory(convId);
+
+    return () => {
+      chatService.offChatHistoryLoaded(handleChatHistoryLoaded);
+    };
   }, []);
 
   useEffect(() => {
@@ -126,14 +143,7 @@ const MainApp = () => {
     localStorage.setItem("completedQuests", JSON.stringify(completedQuests));
   }, [completedQuests]);
 
-  useEffect(() => {
-    if (isInitialMount.current) {
-      isInitialMount.current = false;
-    } else {
-      // This will not run on the first render, but will run on all subsequent updates.
-      localStorage.setItem("chatLog", JSON.stringify(chatLog));
-    }
-  }, [chatLog]);
+  
 
   useEffect(() => {
     document.body.setAttribute("data-theme", theme);
@@ -367,6 +377,7 @@ const MainApp = () => {
           onEdit={(messageId, newText) =>
             editMessage(messageId, newText, setChatLog)
           }
+          conversationId={conversationId}
         />
         <Layout className={styles["content-layout"]}>
           <Content className={styles["main-content"]}>

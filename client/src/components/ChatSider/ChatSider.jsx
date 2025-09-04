@@ -27,6 +27,7 @@ const ChatSider = ({
   onDelete,
   onEdit,
   isSiderVisible,
+  conversationId,
 }) => {
   const [isTyping, setIsTyping] = useState(false);
   const {
@@ -150,8 +151,8 @@ const ChatSider = ({
     };
     const newChatLog = [...messages, userMessage];
     setMessages(newChatLog);
-    // Pass the full chat log to chatService.sendMessage
-    chatService.sendMessage(message, newChatLog);
+    // Pass the full chat log and conversationId to chatService.sendMessage
+    chatService.sendMessage(message, newChatLog, conversationId);
     setIsTyping(true);
     increaseExp(5);
   };

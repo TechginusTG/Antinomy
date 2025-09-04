@@ -10,8 +10,13 @@ class ChatService {
   messageListener = null;
 
   connect(onMessageCallback) {
+    const token = localStorage.getItem('authToken');
+
     this.socket = io(SOCKET_URL, {
       transports: ["websocket"],
+      auth: {
+        token,
+      },
     });
     this.messageListener = onMessageCallback;
 
@@ -51,17 +56,17 @@ class ChatService {
     }
   }
 
-  sendMessage(payload, chatLog = []) { // Add chatLog parameter with default empty array
+  sendMessage(payload, chatLog = [], conversationId) {
     if (this.socket) {
       const currentMode = useFlowStore.getState().mode || 'worry';
       const userNote = useUserStore.getState().userNote; // 2. userNote 가져오기
       let msgPayload;
       if (typeof payload === 'string') {
-        msgPayload = { text: payload, mode: currentMode, userNote }; // 3. userNote 페이로드에 추가
+        msgPayload = { text: payload, mode: currentMode, userNote, conversationId };
       } else if (payload && typeof payload === 'object') {
-        msgPayload = { ...payload, mode: payload.mode || currentMode, userNote }; // 3. userNote 페이로드에 추가
+        msgPayload = { ...payload, mode: payload.mode || currentMode, userNote, conversationId };
       } else {
-        msgPayload = { text: String(payload), mode: currentMode, userNote }; // 3. userNote 페이로드에 추가
+        msgPayload = { text: String(payload), mode: currentMode, userNote, conversationId };
       }
       // Emit both the message payload and the full chat log
       this.socket.emit("chat message", { msgPayload, chatLog });
@@ -87,6 +92,24 @@ class ChatService {
   resetChat() {
     if (this.socket) {
       this.socket.emit("reset chat");
+    }
+  }
+
+  loadChatHistory(conversationId) {
+    if (this.socket) {
+      this.socket.emit("load latest chat", { conversationId });
+    }
+  }
+
+  onChatHistoryLoaded(callback) {
+    if (this.socket) {
+      this.socket.on('chat history loaded', callback);
+    }
+  }
+
+  offChatHistoryLoaded(callback) {
+    if (this.socket) {
+      this.socket.off('chat history loaded', callback);
     }
   }
 
