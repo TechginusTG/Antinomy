@@ -3,28 +3,37 @@ import { FiEdit, FiTrash2 } from 'react-icons/fi';
 import styles from './Bubble.module.css';
 
 const Bubble = ({
-    id, 
-    className, 
+    id,
+    className,
     children,
     isUser,
     onDelete,
     onEdit,
     chatWidth,
+    isMobile,
+    chatFontSize,
 }) => {
     const [isHovered, setIsHovered] = useState(false);
 
-    // Font size in rem
-    const baseFontSize = 0.625; // 10px
-    const maxFontSize = 1; // 16px
-    const minChatWidth = 20; // min chat width in %
-    const maxChatWidth = 50; // max chat width in %
+    let finalFontSize;
 
-    let fontSize = baseFontSize;
-    if (chatWidth) {
-        const widthRange = maxChatWidth - minChatWidth;
-        const fontRange = maxFontSize - baseFontSize;
-        fontSize = baseFontSize + ((chatWidth - minChatWidth) / widthRange) * fontRange;
-        fontSize = Math.max(baseFontSize, Math.min(fontSize, maxFontSize));
+    if (isMobile) {
+        finalFontSize = `${chatFontSize}px`;
+    } else {
+        // Font size in rem
+        const baseFontSize = 0.625; // 10px
+        const maxFontSize = 1; // 16px
+        const minChatWidth = 20; // min chat width in %
+        const maxChatWidth = 50; // max chat width in %
+
+        let dynamicFontSize = baseFontSize;
+        if (chatWidth) {
+            const widthRange = maxChatWidth - minChatWidth;
+            const fontRange = maxFontSize - baseFontSize;
+            dynamicFontSize = baseFontSize + ((chatWidth - minChatWidth) / widthRange) * fontRange;
+            dynamicFontSize = Math.max(baseFontSize, Math.min(dynamicFontSize, maxFontSize));
+        }
+        finalFontSize = `${dynamicFontSize}rem`;
     }
 
     return (
@@ -32,13 +41,13 @@ const Bubble = ({
             className={`${className} ${isUser ? styles.userBubbleContainer : ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            style={{ fontSize: `${fontSize}rem` }}
+            style={{ fontSize: finalFontSize }}
         >
             {children}
             {isUser && isHovered && (
                 <div className={styles.bubbleActions}>
-                    <button 
-                        onClick={() => onEdit(id)} 
+                    <button
+                        onClick={() => onEdit(id)}
                         className={styles.bubbleActionBtn}
                     >
                         <FiEdit />

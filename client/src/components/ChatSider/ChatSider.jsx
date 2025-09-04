@@ -38,6 +38,7 @@ const ChatSider = ({
     recommendations,
     clearRecommendations,
     setRecommendations,
+    chatFontSize,
   } = useFlowStore();
   const chatLogRef = useRef(null);
 
@@ -286,6 +287,8 @@ const ChatSider = ({
                   onDelete={onDelete}
                   onEdit={() => handleOpenEditModal(msg)}
                   chatWidth={chatWidth}
+                  isMobile={isMobile}
+                  chatFontSize={chatFontSize}
                 >
                   {msg.sender === "ai" ? (
                     <div className={styles.markdownContent}>

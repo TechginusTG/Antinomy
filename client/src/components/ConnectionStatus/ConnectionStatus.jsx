@@ -36,7 +36,10 @@ const ConnectionStatus = () => {
       } catch (error) {
         console.error("Failed to fetch status:", error);
         setServerState({ isConnected: false, message: "Server Disconnected" });
-        const dbErrorState = { isConnected: false, message: "DB status unknown" };
+        const dbErrorState = {
+          isConnected: false,
+          message: "DB status unknown",
+        };
         setDbState(dbErrorState);
         console.error(dbErrorState.message);
       }
@@ -53,9 +56,7 @@ const ConnectionStatus = () => {
 
   const tooltipContent = (
     <div>
-      <div>
-        채팅 서버에 {serverState.isConnected ? "연결됨" : "연결되지 않음"}
-      </div>
+      <div>서버에 {serverState.isConnected ? "연결됨" : "연결되지 않음"}</div>
       <div>
         데이터베이스에 {dbState.isConnected ? "연결됨" : "연결되지 않음"}
       </div>
