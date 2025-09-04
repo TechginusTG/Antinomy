@@ -6,16 +6,41 @@ const useUserStore = create(
     (set) => ({
       userNote: "",
       username: null,
+      exp: 0,
+      lvl: 1,
       setUserNote: (note) => set({ userNote: note }),
       setUsername: (name) => set({ username: name }),
       login: (name) => set({ username: name }),
       logout: () => {
-        set({ username: null, userNote: "" });
+        set({ username: null, userNote: "", exp: 0, lvl: 1 });
         localStorage.removeItem('authToken');
+      },
+      updateStats: async (stats) => {
+        set(stats);
+        const token = localStorage.getItem('authToken');
+        if (token) {
+          try {
+            const response = await fetch('/api/user/stats', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify(stats)
+            });
+            const data = await response.json();
+            if (!data.success) {
+              console.error('Failed to save stats to server:', data.message);
+              // Optionally revert state here
+            }
+          } catch (error) {
+            console.error('Error saving stats to server:', error);
+          }
+        }
       },
     }),
     {
-      name: "user-note-storage", // 로컬 스토리지에 저장될 때 사용될 키
+      name: "user-note-storage",
     }
   )
 );

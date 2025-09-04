@@ -136,6 +136,36 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (token == null) return res.sendStatus(401);
+
+  jwt.verify(token, process.env.JWT_SECRET || 'your_default_secret', (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+};
+
+app.post("/api/user/stats", authenticateToken, async (req, res) => {
+  const { exp, lvl } = req.body;
+  const userId = req.user.userId;
+
+  if (typeof exp === 'undefined' || typeof lvl === 'undefined') {
+    return res.status(400).json({ success: false, message: "exp and lvl are required." });
+  }
+
+  try {
+    await db('users').where({ id: userId }).update({ exp, lvl });
+    res.json({ success: true, message: "Stats updated successfully." });
+  } catch (error) {
+    console.error('Stats update error:', error);
+    res.status(500).json({ success: false, message: 'Server error while updating stats.' });
+  }
+});
+
 // 프로덕션 환경에서 React 앱 서빙
 if (process.env.NODE_ENV === "production") {
   // 클라이언트 빌드 디렉토리 경로를 수정해야 할 수 있습니다.
