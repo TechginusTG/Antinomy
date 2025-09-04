@@ -9,9 +9,6 @@ module.exports = {
     },
     seeds: {
       directory: './seeds'
-    },
-    ssl: {
-      rejectUnauthorized: false
     }
   },
   production: {
@@ -22,9 +19,6 @@ module.exports = {
     },
     seeds: {
       directory: './seeds'
-    },
-    ssl: {
-      rejectUnauthorized: false
     }
   }
 };
