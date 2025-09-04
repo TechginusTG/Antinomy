@@ -150,13 +150,35 @@ if (process.env.NODE_ENV === "production") {
 // Socket.IO 이벤트 처리
 registerSocketHandlers(io);
 
-try {
-  execSync('npx knex migrate:latest --knexfile knexfile.cjs', { stdio: 'inherit' });
-} catch (error) {
-  console.error('migration failed', error);
-  process.exit(1); 
-}
+let dbStatus = {
+  isConnected: false,
+  message: 'Initializing...'
+};
 
-server.listen(PORT, () => {
-  console.log(`✨ API Server is running on http://localhost:${PORT}`);
+// 서버 및 DB 상태를 반환하는 엔드포인트
+app.get("/api/status", (req, res) => {
+  res.json({
+    server: { isConnected: true },
+    database: dbStatus
+  });
 });
+
+const startServerAndCheckDb = () => {
+  server.listen(PORT, () => {
+    console.log(`✨ API Server is running on http://localhost:${PORT}`);
+    
+    // 서버 시작 후 비동기적으로 DB 마이그레이션 시도
+    db.migrate.latest()
+      .then(() => {
+        console.log('Database migration successful.');
+        dbStatus = { isConnected: true, message: 'Connected' };
+      })
+      .catch((error) => {
+        console.error('Database migration failed:', error);
+        dbStatus = { isConnected: false, message: 'Database connection failed' };
+        console.warn('⚠️ Server started, but database connection failed.');
+      });
+  });
+};
+
+startServerAndCheckDb();
