@@ -61,7 +61,9 @@ const useFlowStore = create((set, get) => {
     isConnected: false,
     editingNodeId: null,
     recommendations: [],
+    isTyping: false,
 
+    setIsTyping: (isTyping) => set({ isTyping }),
     setIsConnected: (isConnected) => set({ isConnected }),
     setTheme: (theme) => {
       set({ theme });

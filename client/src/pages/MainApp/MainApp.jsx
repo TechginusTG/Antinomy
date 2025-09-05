@@ -60,6 +60,7 @@ const MainApp = () => {
     customThemeColors,
     getCustomColorVarName,
     setRecommendations,
+    setIsTyping,
   } = useFlowStore();
   const reactFlowWrapper = useRef(null);
   const [chatLog, setChatLog] = useState([]);
@@ -130,6 +131,7 @@ const MainApp = () => {
     chatService.onChatHistoryLoaded(handleChatHistoryLoaded);
 
     chatService.connect((message) => {
+      useFlowStore.getState().setIsTyping(false);
       setChatLog((prevChatLog) => [...prevChatLog, { id: Date.now(), content: message, sender: 'ai' }]);
     });
 
