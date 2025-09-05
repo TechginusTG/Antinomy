@@ -156,8 +156,8 @@ export function registerSocketHandlers(io) {
           token,
           process.env.JWT_SECRET || "your_default_secret"
         );
-        // The token payload has the string id, we need the integer user_id for our foreign key
-        const user = await db("users").where({ id: decoded.userId }).first();
+        // The token payload has the integer user_id, so we query by that.
+        const user = await db("users").where({ user_id: decoded.userId }).first();
 
         if (user) {
           socket.userId = user.user_id; // Attach the integer PK to the socket
