@@ -227,10 +227,20 @@ export function registerSocketHandlers(io) {
       }
     });
 
-    socket.on("reset chat", () => {
+    socket.on("reset chat", async () => {
       console.log(`'reset chat' request from ${socket.id}`);
       delete sessions[socket.id];
       console.log(`Session for ${socket.id} has been reset.`);
+
+      if (socket.userId) {
+        try {
+          await db('chats').where({ user_id: socket.userId }).del();
+          console.log(`[DB] Reset data for user: ${socket.userId}`);
+          
+        } catch (error) {
+          console.error(`[DB] Error resetting data for user: ${socket.userId}`, error);
+        }
+      }
     });
 
     socket.on("load latest chat", async ({ conversationId }) => {
