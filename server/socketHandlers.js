@@ -6,6 +6,10 @@ import { diagramPrompt } from "./prompt/diagramPrompt.js";
 import db from "./db.js";
 import jwt from "jsonwebtoken";
 
+const EXP_REWARDS = {
+  CHAT: 10,
+};
+
 const sessions = {};
 const userSpecial = {};
 
@@ -208,7 +212,7 @@ export function registerSocketHandlers(io) {
       );
 
       if (success) {
-        await grantExp(socket, socket.userId, 10);
+        await grantExp(socket, socket.userId, EXP_REWARDS.CHAT);
       }
     });
 
