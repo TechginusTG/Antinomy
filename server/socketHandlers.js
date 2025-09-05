@@ -171,6 +171,7 @@ export function registerSocketHandlers(io) {
   });
 
   io.on("connection", (socket) => {
+    socket.emit('ready'); 
     console.log(`클라이언트 연결: ${socket.id}`);
 
     socket.on("chat message", async ({ msgPayload = {}, chatLog }) => {

@@ -9,7 +9,7 @@ class ChatService {
   socket = null;
   messageListener = null;
 
-  connect(onMessageCallback) {
+  connect(onMessageCallback, onConnectCallback) {
     const token = localStorage.getItem('authToken');
 
     this.socket = io(SOCKET_URL, {
@@ -24,6 +24,13 @@ class ChatService {
     this.socket.on("connect", () => {
       console.log("서버에 연결되었습니다:", this.socket.id);
       setIsConnected(true);
+    });
+
+    this.socket.on("ready", () => {
+      console.log("Socket is ready.");
+      if (onConnectCallback) {
+        onConnectCallback();
+      }
     });
 
     this.socket.on("disconnect", () => {

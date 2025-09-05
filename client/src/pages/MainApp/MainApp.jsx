@@ -102,7 +102,6 @@ const MainApp = () => {
   };
 
   useEffect(() => {
-    // Load diagram from store
     useFlowStore.getState().loadDiagram();
 
     const hasVisitedBefore = localStorage.getItem("hasVisited");
@@ -114,6 +113,8 @@ const MainApp = () => {
     const token = localStorage.getItem('authToken');
     if (token) {
       setAuthStatus('loggedIn');
+    } else {
+      setAuthStatus('loggedOut');
     }
 
     let convId = localStorage.getItem('conversationId');
@@ -122,25 +123,42 @@ const MainApp = () => {
       localStorage.setItem('conversationId', convId);
     }
     setConversationId(convId);
+  }, []); 
+
+  useEffect(() => {
+    console.log("Auth status is:", authStatus, "Setting up connection...");
+
+    if (authStatus === null) return;
+
+    chatService.disconnect(); 
 
     const handleChatHistoryLoaded = (history) => {
-      setChatLog(history);
       console.log('Chat history loaded from DB:', history);
+      setChatLog([...history]);
     };
+
+    const onConnect = () => {
+      const convId = localStorage.getItem('conversationId');
+      if (convId) {
+        chatService.loadChatHistory(convId);
+      }
+    };
+
+    chatService.connect(
+      (message) => {
+        useFlowStore.getState().setIsTyping(false);
+        setChatLog((prevChatLog) => [...prevChatLog, { id: Date.now(), content: message, sender: 'ai' }]);
+      },
+      onConnect
+    );
 
     chatService.onChatHistoryLoaded(handleChatHistoryLoaded);
 
-    chatService.connect((message) => {
-      useFlowStore.getState().setIsTyping(false);
-      setChatLog((prevChatLog) => [...prevChatLog, { id: Date.now(), content: message, sender: 'ai' }]);
-    });
-
-    chatService.loadChatHistory(convId);
-
     return () => {
       chatService.offChatHistoryLoaded(handleChatHistoryLoaded);
+      chatService.disconnect();
     };
-  }, []);
+  }, [authStatus]); 
 
   useEffect(() => {
     localStorage.setItem("quests", JSON.stringify(quests));
@@ -149,6 +167,8 @@ const MainApp = () => {
   useEffect(() => {
     localStorage.setItem("completedQuests", JSON.stringify(completedQuests));
   }, [completedQuests]);
+
+  
 
   
 
