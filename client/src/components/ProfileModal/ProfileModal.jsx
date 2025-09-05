@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Modal, Button } from "antd";
+import { Modal, Button, message } from "antd";
 import useFlowStore from "../../utils/flowStore";
 import useUserStore from "../../utils/userStore";
 import { useNavigate } from 'react-router-dom';
@@ -18,8 +18,37 @@ const ProfileModal = () => {
     navigate('/');
   };
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
+    try {
+      const values = await passwordChangeForm.validateFields();
+      const { currentPassword, newPassword } = values;
+      
+      const response = await fetch('/api/user/change-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify({ currentPassword, newPassword })
+      });
 
+      const data = await response.json();
+
+      if (response.ok) {
+        message.success(data.message || '비밀번호 변경에 성공했습니다.');
+        setShowChangePasswordForm(false);
+        passwordChangeForm.resetFields();
+      } else {
+        message.error(data.message || '비밀번호 변경에 실패했습니다.');
+      }
+    } catch (errorInfo) {
+      message.error('비밀번호 변경 중 오류가 발생했습니다.');
+      if (errorInfo.errorFields) {
+        message.error('입력값을 확인해주세요.');
+      } else {
+        message.error('비밀번호 변경 중 알 수 없는 오류가 발생했습니다.');
+      }
+    }
   };
 
   const handleDeleteAccount = () => {
@@ -73,7 +102,7 @@ const ProfileModal = () => {
           >
             <Input.Password />
           </Form.Item>
-          <Button type="primary">비밀번호 변경하기</Button>
+          <Button type="primary" onClick={handleChangePassword}>비밀번호 변경하기</Button>
           <Button style={{ marginLeft: '8px' }} onClick={() => setShowChangePasswordForm(false)}>취소</Button>
         </Form>
       )}

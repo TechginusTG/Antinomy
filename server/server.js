@@ -21,6 +21,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const db = knex(knexConfig.development);
 
+app.use(express.json());
+
+app.use('/api/user', userRoutes);
 // Canonical host 리다이렉션 미들웨어
 app.use((req, res, next) => {
   const canonicalHost = 'syncro.tg-antinomy.kro.kr';
@@ -35,7 +38,6 @@ app.use((req, res, next) => {
   }
 });
 
-app.use('/api/user', userRoutes);
 
 const server = http.createServer(app);
 
@@ -80,8 +82,6 @@ app.use(helmet({
 const io = new Server(server, {
   cors: corsOptions,
 });
-
-app.use(express.json());
 
 app.post("/api/login", async (req, res) => {
   const { id, password } = req.body;
