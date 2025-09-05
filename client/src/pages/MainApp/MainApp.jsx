@@ -13,6 +13,7 @@ import Header from "../../components/HeaderBar/HeaderBar";
 import ExpBar from "../../components/exp-bar/exp-bar";
 import ReactFlow from "reactflow";
 import useFlowStore from "../../utils/flowStore";
+import useUserStore from "../../utils/userStore";
 import CustomNode from "../../components/CustomNode/CustomNode";
 import ContextMenu from "../../components/ContextMenu/ContextMenu";
 import DiagramMessage from "../../components/DiagramMessage/DiagramMessage";
@@ -129,6 +130,11 @@ const MainApp = () => {
     console.log("Auth status is:", authStatus, "Setting up connection...");
 
     if (authStatus === null) return;
+
+    if (authStatus === 'loggedIn') {
+      const { exp, lvl } = useUserStore.getState();
+      useUserStore.getState().updateStats({ exp, lvl });
+    }
 
     chatService.disconnect(); 
 
