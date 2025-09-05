@@ -14,7 +14,6 @@ const SettingsModal = () => {
     setChatFontSize,
     isSettingsOpen,
     setIsSettingsOpen,
-    level,
     customThemeColors,
     setCustomThemeColors,
     getCustomColorVarName,
@@ -23,7 +22,7 @@ const SettingsModal = () => {
     loadTheme,
   } = useFlowStore();
   const { mode, setMode } = useFlowStore();
-  const { userNote, setUserNote } = useUserStore();
+  const { userNote, setUserNote, lvl } = useUserStore();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const fileInputRef = useRef(null);
 
@@ -127,11 +126,11 @@ const SettingsModal = () => {
                 value={t.name}
                 checked={theme === t.name}
                 onChange={handleThemeChange}
-                disabled={level < t.level}
+                disabled={lvl < t.level}
               />
               <span style={{ whiteSpace: "nowrap" }}>
                 {t.label}
-                {level < t.level && ` (Lv.${t.level}↑)`}
+                {lvl < t.level && ` (Lv.${t.level}↑)`}
               </span>
             </label>
           ))}
