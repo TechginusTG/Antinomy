@@ -12,6 +12,7 @@ import jwt from "jsonwebtoken";
 import knex from 'knex';
 import knexConfig from '../knexfile.cjs';
 import bcrypt from 'bcrypt';
+import userRoutes from './routes/userRoutes.js';
 
 // ESM에서 __dirname을 사용하기 위한 설정
 const __filename = fileURLToPath(import.meta.url);
@@ -33,6 +34,8 @@ app.use((req, res, next) => {
     next();
   }
 });
+
+app.use('/api/user', userRoutes);
 
 const server = http.createServer(app);
 
