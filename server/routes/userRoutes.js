@@ -2,6 +2,7 @@ import express from 'express';
 import db from '../db.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { ConsoleSqlOutlined } from '@ant-design/icons';
 
 const router = express.Router();
 
@@ -45,6 +46,37 @@ router.post('/change-password', authenticateToken, async (req, res) => {
     } catch (error) {
         console.error(error);
         return res.status(500).json({ success: false, message: "서버 오류가 발생했습니다." });
+    }
+});
+
+router.delete('/delete-account', authenticateToken, async (req, res) => {
+    const userId = req.user.userId;
+    const { passwordConfirm } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({ success: false, message: "사용자 ID가 필요합니다." });
+    }
+
+    try {
+        const user = await db('users').where({ id: userId }).first();
+        if (!user) {
+            return res.status(404).json({ success: false, message: "사용자를 찾을 수 없습니다." });
+        }
+        const isMatch = await bcrypt.compare(passwordConfirm, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ success: false, message: "비밀번호가 일치하지 않습니다." });
+        }
+
+        await db('chats').where({ user_id: userId }).del();
+        console.log(`[DB] User ${userId} chat messages deleted`);
+
+        await db('users').where({ id: userId }).del();
+        console.log(`[DB] User ${userId} account deleted`);
+
+        res.json({ success: true, message: "회원 탈퇴에 성공했습니다." });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "탈퇴 중 오류가 발생했습니다." });
     }
 });
 
