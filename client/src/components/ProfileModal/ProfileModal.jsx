@@ -15,6 +15,14 @@ const ProfileModal = () => {
     navigate('/');
   };
 
+  const handleChangePassword = () => {
+
+  };
+
+  const handleDeleteAccount = () => {
+
+  };
+
   return (
     <Modal
       title="Profile"
@@ -22,10 +30,16 @@ const ProfileModal = () => {
       onCancel={() => setIsProfileModalOpen(false)}
       footer={null} 
     >
-      <p>Username: <b>{username}</b></p>
-      <Button type="primary" danger onClick={handleLogout}>
-        Logout
-      </Button>
+      <div>
+        <p>Username: <b>{username}</b></p>
+        <Button type="primary" danger onClick={handleLogout}>
+          Logout
+        </Button>
+        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
+          <Button>비밀번호 변경</Button>
+          <Button type="danger">회원 탈퇴</Button>
+        </div>
+      </div>
     </Modal>
   );
 };
