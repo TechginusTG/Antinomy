@@ -29,7 +29,6 @@ const ChatSider = ({
   isSiderVisible,
   conversationId,
 }) => {
-  const [isTyping, setIsTyping] = useState(false);
   const {
     chatWidth,
     setChatWidth,
@@ -39,6 +38,8 @@ const ChatSider = ({
     clearRecommendations,
     setRecommendations,
     chatFontSize,
+    isTyping,
+    setIsTyping,
   } = useFlowStore();
   const chatLogRef = useRef(null);
 
@@ -110,21 +111,7 @@ const ChatSider = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    const handleNewMessage = (message) => {
-      setIsTyping(false);
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { id: Date.now(), content: message, sender: "ai" },
-      ]);
-    };
-
-    chatService.connect(handleNewMessage);
-
-    return () => {
-      chatService.disconnect();
-    };
-  }, [setMessages]);
+  
 
   useEffect(() => {
     const handleNewRecommendations = (newRecommendations) => {
@@ -337,7 +324,7 @@ const ChatSider = ({
             }}
             onClearRecommendations={clearRecommendations}
           />
-          <ChatInput onSendMessage={sendMessage} />
+          <ChatInput onSendMessage={sendMessage} key={messages.length} />
         </div>
       </div>
 
