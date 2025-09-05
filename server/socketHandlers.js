@@ -13,15 +13,17 @@ function handleOpenAIResponse(socket, reply, conversationId) {
   const saveAiMessage = async (message) => {
     if (socket.userId && conversationId && message) {
       try {
-        await db('chats').insert({
+        await db("chats").insert({
           user_id: socket.userId,
           conversation_id: conversationId,
-          sender: 'ai',
+          sender: "ai",
           message: message,
         });
-        console.log(`[DB] AI message saved for user: ${socket.userId}, conversation: ${conversationId}`);
+        console.log(
+          `[DB] AI message saved for user: ${socket.userId}, conversation: ${conversationId}`
+        );
       } catch (error) {
-        console.error('[DB] Error saving AI message:', error);
+        console.error("[DB] Error saving AI message:", error);
       }
     }
   };
@@ -48,10 +50,7 @@ function handleOpenAIResponse(socket, reply, conversationId) {
 
 // Helper to build the system prompt
 function buildSystemPrompt(socketId) {
-  const { 
-    mode = "basic", 
-    userNote = "", 
-  } = userSpecial[socketId] || {};
+  const { mode = "basic", userNote = "" } = userSpecial[socketId] || {};
   const selectedModePrompt = prompts[mode] || prompts.basic;
 
   const promptParts = [
@@ -96,7 +95,7 @@ function buildSession(socketId, chatHistory, newText = null) {
 async function callOpenAI(socket, session, conversationId) {
   try {
     const res = await openai.chat.completions.create({
-      model: "gpt-4-turbo",
+      model: "gpt-5",
       messages: session,
     });
     const reply = res.choices[0].message.content;
@@ -114,9 +113,12 @@ export function registerSocketHandlers(io) {
 
     if (token) {
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_default_secret');
+        const decoded = jwt.verify(
+          token,
+          process.env.JWT_SECRET || "your_default_secret"
+        );
         // The token payload has the string id, we need the integer user_id for our foreign key
-        const user = await db('users').where({ id: decoded.userId }).first();
+        const user = await db("users").where({ id: decoded.userId }).first();
 
         if (user) {
           socket.userId = user.user_id; // Attach the integer PK to the socket
@@ -142,15 +144,17 @@ export function registerSocketHandlers(io) {
 
       if (socket.userId && conversationId && text) {
         try {
-          await db('chats').insert({
+          await db("chats").insert({
             user_id: socket.userId,
             conversation_id: conversationId,
-            sender: 'user',
+            sender: "user",
             message: text,
           });
-          console.log(`[DB] User message saved for user: ${socket.userId}, conversation: ${conversationId}`);
+          console.log(
+            `[DB] User message saved for user: ${socket.userId}, conversation: ${conversationId}`
+          );
         } catch (error) {
-          console.error('[DB] Error saving user message:', error);
+          console.error("[DB] Error saving user message:", error);
         }
       }
 
@@ -234,33 +238,39 @@ export function registerSocketHandlers(io) {
 
       if (socket.userId) {
         try {
-          await db('chats').where({ user_id: socket.userId }).del();
+          await db("chats").where({ user_id: socket.userId }).del();
           console.log(`[DB] Reset data for user: ${socket.userId}`);
-          
         } catch (error) {
-          console.error(`[DB] Error resetting data for user: ${socket.userId}`, error);
+          console.error(
+            `[DB] Error resetting data for user: ${socket.userId}`,
+            error
+          );
         }
       }
     });
 
     socket.on("load latest chat", async ({ conversationId }) => {
-      console.log(`'load latest chat' request from ${socket.id} for conversation: ${conversationId}`);
+      console.log(
+        `'load latest chat' request from ${socket.id} for conversation: ${conversationId}`
+      );
       if (socket.userId && conversationId) {
         try {
-          const chatHistory = await db('chats')
+          const chatHistory = await db("chats")
             .where({ conversation_id: conversationId, user_id: socket.userId })
-            .orderBy('created_at', 'asc');
+            .orderBy("created_at", "asc");
 
-          const formattedHistory = chatHistory.map(msg => ({
+          const formattedHistory = chatHistory.map((msg) => ({
             id: msg.id,
             content: msg.message,
             sender: msg.sender,
           }));
 
           socket.emit("chat history loaded", formattedHistory);
-          console.log(`[DB] Sent ${formattedHistory.length} messages for user: ${socket.userId}, conversation: ${conversationId}`);
+          console.log(
+            `[DB] Sent ${formattedHistory.length} messages for user: ${socket.userId}, conversation: ${conversationId}`
+          );
         } catch (error) {
-          console.error('[DB] Error loading chat history:', error);
+          console.error("[DB] Error loading chat history:", error);
           socket.emit("chat history error", "Failed to load chat history.");
         }
       } else {
