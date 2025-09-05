@@ -93,7 +93,7 @@ app.post("/api/login", async (req, res) => {
       const isValid = await bcrypt.compare(password, user.password);
 
       if (isValid) {
-        const token = jwt.sign({ userId: user.id, name: user.name }, process.env.JWT_SECRET || 'your_default_secret', { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user.user_id, name: user.name }, process.env.JWT_SECRET || 'your_default_secret', { expiresIn: '1h' });
         res.json({ success: true, token, user: { id: user.id, name: user.name, exp: user.exp, lvl: user.lvl } });
       } else {
         res.status(401).json({ success: false, message: "아이디 또는 비밀번호가 잘못되었습니다." });
@@ -129,7 +129,7 @@ app.post("/api/register", async (req, res) => {
       password: hashedPassword
     }).returning(['user_id', 'id', 'name']);
 
-    const token = jwt.sign({ userId: newUser.id, name: newUser.name }, process.env.JWT_SECRET || 'your_default_secret', { expiresIn: '1h' });
+    const token = jwt.sign({ userId: newUser.user_id, name: newUser.name }, process.env.JWT_SECRET || 'your_default_secret', { expiresIn: '1h' });
 
     res.status(201).json({ success: true, message: "회원가입이 완료되었습니다.", token: token });
 

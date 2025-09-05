@@ -28,7 +28,7 @@ router.post('/change-password', authenticateToken, async (req, res) => {
     }
 
     try {
-        const user = await db('users').where({ id: userId }).first();
+        const user = await db('users').where({ user_id: userId }).first();
 
         if (!user) {
             return res.status(400).json({ success: false, message: "사용자를 찾을 수 없습니다." });
@@ -40,7 +40,7 @@ router.post('/change-password', authenticateToken, async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(newPassword, 10);
-        await db('users').where({ id: userId }).update({ password: hashedPassword });
+        await db('users').where({ user_id: userId }).update({ password: hashedPassword });
 
         return res.json({ success: true, message: "비밀번호가 변경되었습니다." });
     } catch (error) {
@@ -58,7 +58,7 @@ router.delete('/delete-account', authenticateToken, async (req, res) => {
     }
 
     try {
-        const user = await db('users').where({ id: userId }).first();
+        const user = await db('users').where({ user_id: userId }).first();
         if (!user) {
             return res.status(404).json({ success: false, message: "사용자를 찾을 수 없습니다." });
         }
@@ -67,11 +67,12 @@ router.delete('/delete-account', authenticateToken, async (req, res) => {
             return res.status(401).json({ success: false, message: "비밀번호가 일치하지 않습니다." });
         }
 
-        await db('chats').where({ user_id: userId }).del();
-        console.log(`[DB] User ${userId} chat messages deleted`);
+        console.log(`Attempting to delete user with user_id: ${userId}`);
+        const deletedChatsCount = await db('chats').where({ user_id: userId }).del();
+        console.log(`[DB] User ${userId} chat messages deleted: ${deletedChatsCount} rows`);
 
-        await db('users').where({ id: userId }).del();
-        console.log(`[DB] User ${userId} account deleted`);
+        const deletedUserCount = await db('users').where({ user_id: userId }).del();
+        console.log(`[DB] User ${userId} account deleted: ${deletedUserCount} rows`);
 
         res.json({ success: true, message: "회원 탈퇴에 성공했습니다." });
     } catch (error) {

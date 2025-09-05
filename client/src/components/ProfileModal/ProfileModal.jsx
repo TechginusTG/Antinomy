@@ -53,8 +53,41 @@ const ProfileModal = () => {
     }
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
+    try {
+      const values = await deleteAccountForm.validateFields();
+      const { passwordConfirm } = values;
 
+      const response = await fetch('/api/user/delete-account', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        },
+        body: JSON.stringify({ passwordConfirm })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        message.success(data.message || "회원 탈퇴에 성공했습니다.");
+        setShowDeleteAccountConfirm(false);
+        deleteAccountForm.resetFields();
+
+        logout();
+        setIsProfileModalOpen(false);
+        navigate('/');
+      } else {
+        message.error(data.message || '회원 탈퇴에 실패했습니다.');
+      }
+    } catch (errorInfo) {
+      console.error('회원 탈퇴 중 오류 발생:', errorInfo);
+      if (errorInfo.errorFields) {
+        message.error('비밀번호를 입력해주세요.');
+      } else {
+        message.error('회원 탈퇴 중 알 수 없는 오류가 발생했습니다.');
+      }
+    }
   };
 
   return (
