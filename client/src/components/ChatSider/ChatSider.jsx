@@ -111,8 +111,6 @@ const ChatSider = ({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  
-
   useEffect(() => {
     const handleNewRecommendations = (newRecommendations) => {
       setRecommendations(newRecommendations);
@@ -142,7 +140,6 @@ const ChatSider = ({
     // Pass the full chat log and conversationId to chatService.sendMessage
     chatService.sendMessage(message, newChatLog, conversationId);
     setIsTyping(true);
-    increaseExp(5);
   };
 
   const handleOpenEditModal = (message) => {
@@ -260,8 +257,14 @@ const ChatSider = ({
                 const length = text.length;
                 // Prefer short center-styled bubbles for very short texts,
                 // long bubbles for long texts. Thresholds adjustable.
-                if (length <= 40) return `${styles.bubble} ${styles[m.sender]} ${styles.bubbleShort}`;
-                if (length >= 200) return `${styles.bubble} ${styles[m.sender]} ${styles.bubbleLong}`;
+                if (length <= 40)
+                  return `${styles.bubble} ${styles[m.sender]} ${
+                    styles.bubbleShort
+                  }`;
+                if (length >= 200)
+                  return `${styles.bubble} ${styles[m.sender]} ${
+                    styles.bubbleLong
+                  }`;
                 return `${styles.bubble} ${styles[m.sender]}`;
               };
 
