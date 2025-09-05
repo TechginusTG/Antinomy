@@ -10,6 +10,8 @@ const ProfileModal = () => {
   const { username, logout } = useUserStore(); 
   const [showChangePasswordForm, setShowChangePasswordForm] = useState(false);
   const [passwordChangeForm] = Form.useForm();
+  const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false);
+  const [deleteAccountForm] = Form.useForm();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -113,9 +115,30 @@ const ProfileModal = () => {
         </Button>
         <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
           <Button onClick={() => setShowChangePasswordForm(!showChangePasswordForm)}>비밀번호 변경</Button>
-          <Button type="danger">회원 탈퇴</Button>
+          <Button type="danger" onClick={() => setShowDeleteAccountConfirm(true)}>회원 탈퇴</Button>
         </div>
       </div>
+      <Modal
+        title="회원 탈퇴"
+        open={showDeleteAccountConfirm}
+        onOk={handleDeleteAccount}
+        onCancel={() => setShowDeleteAccountConfirm(false)}
+        okText="탈퇴하기"
+        cancelText="취소"
+        okButtonProps={{ danger: true }}
+      >
+        <p>정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
+        <p>모든 데이터(채팅 기록, 다이어그램 등)가 삭제됩니다.</p>
+        <Form form={deleteAccountForm} layout="vertical" style={{ marginTop: '15px' }}>
+          <Form.Item
+            label="비밀번호 확인"
+            name="passwordConfirm"
+            rules={[{ required: true, message: "탈퇴를 위해 비밀번호를 입력해주세요." }]}
+          >
+            <Input.Password />
+          </Form.Item>
+        </Form>
+      </Modal>
     </Modal>
   );
 };
