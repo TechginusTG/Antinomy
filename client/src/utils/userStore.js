@@ -15,6 +15,7 @@ const useUserStore = create(
         set({ username: null, userNote: "", exp: 0, lvl: 1 });
         localStorage.removeItem('authToken');
       },
+      setStats: (stats) => set(stats),
       updateStats: async (stats) => {
         set(stats);
         const token = localStorage.getItem('authToken');

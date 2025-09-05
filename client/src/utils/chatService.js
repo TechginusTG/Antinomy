@@ -41,6 +41,11 @@ class ChatService {
       console.error("연결 에러:", err);
       setIsConnected(false);
     });
+
+    this.socket.on("get_exp", (stats) => {
+      console.log("Received stats update:", stats);
+      useUserStore.getState().setStats(stats);
+    });
   }
 
   onNewRecommendations(callback) {

@@ -100,9 +100,44 @@ async function callOpenAI(socket, session, conversationId) {
     });
     const reply = res.choices[0].message.content;
     handleOpenAIResponse(socket, reply, conversationId);
+    return true;
   } catch (err) {
     console.error("GPT 에러:", err);
     socket.emit("chat message", { message: "GPT 고장 💀" });
+    return false;
+  }
+}
+
+async function grantExp(socket, userId, expToGrant) {
+  if (!userId) return;
+
+  try {
+    const user = await db("users").where({ user_id: userId }).first();
+    if (user) {
+      const currentExp = user.exp || 0;
+      const currentLvl = user.lvl || 1;
+      let newExp = currentExp + expToGrant;
+      let newLvl = currentLvl;
+      let requiredExp = newLvl * 100;
+
+      while (newExp >= requiredExp) {
+        newExp -= requiredExp;
+        newLvl++;
+        requiredExp = newLvl * 100;
+      }
+
+      await db("users")
+        .where({ user_id: userId })
+        .update({ exp: newExp, lvl: newLvl });
+
+      console.log(
+        `[EXP] User ${userId} granted ${expToGrant} EXP. New stats: LVL ${newLvl}, EXP ${newExp}`
+      );
+
+      socket.emit("get_exp", { lvl: newLvl, exp: newExp });
+    }
+  } catch (dbError) {
+    console.error("[DB] Error updating user EXP:", dbError);
   }
 }
 
@@ -166,7 +201,15 @@ export function registerSocketHandlers(io) {
       sessions[socket.id] = buildSession(socket.id, chatLog, text);
 
       // Call the OpenAI API with the constructed session
-      await callOpenAI(socket, sessions[socket.id], conversationId);
+      const success = await callOpenAI(
+        socket,
+        sessions[socket.id],
+        conversationId
+      );
+
+      if (success) {
+        await grantExp(socket, socket.userId, 10);
+      }
     });
 
     socket.on("load chat history", (chatHistory) => {
