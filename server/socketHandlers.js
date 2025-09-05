@@ -157,7 +157,7 @@ export function registerSocketHandlers(io) {
           process.env.JWT_SECRET || "your_default_secret"
         );
         // The token payload has the integer user_id, so we query by that.
-        const user = await db("users").where({ user_id: decoded.userId }).first();
+        const user = await db("users").where({ id: decoded.userId }).first();
 
         if (user) {
           socket.userId = user.user_id; // Attach the integer PK to the socket
@@ -171,7 +171,7 @@ export function registerSocketHandlers(io) {
   });
 
   io.on("connection", (socket) => {
-    socket.emit('ready'); 
+    socket.emit("ready");
     console.log(`클라이언트 연결: ${socket.id}`);
 
     socket.on("chat message", async ({ msgPayload = {}, chatLog }) => {
