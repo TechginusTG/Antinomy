@@ -236,6 +236,19 @@ const MainApp = () => {
     };
   }, [undo, redo]);
 
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
+
   const handleFileSelect = (event) => {
     const file = event.target.files[0];
     if (!file) {
@@ -482,7 +495,7 @@ const MainApp = () => {
                     return;
                   }
 
-                  const filenameBase = 
+                  const filenameBase =
                     userInput.trim() === "" ? defaultName : userInput.trim();
 
                   const sanitizedFilenameBase = filenameBase
