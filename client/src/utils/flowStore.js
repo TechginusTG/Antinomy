@@ -301,17 +301,14 @@ const useFlowStore = create((set, get) => {
       });
     },
 
-    save: (finalFilename, quests, completedQuests) => {
+    save: (finalFilename, chatHistory, quests, completedQuests) => {
       if (!finalFilename) {
-        console.error("Save function called without a filename.");
+        console.error("저장 함수가 파일 이름 없이 호출되었습니다.");
         return;
       }
 
       const { nodes, edges } = get();
       const diagramData = { nodes, edges };
-
-      const chatLogString = localStorage.getItem("chatLog");
-      const chatHistory = chatLogString ? JSON.parse(chatLogString) : [];
 
       const combinedData = {
         diagramData,
@@ -331,6 +328,47 @@ const useFlowStore = create((set, get) => {
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+    },
+
+    importFromFile: (fileContent) => {
+      const { setFlow, loadTheme } = get();
+      try {
+        const data = JSON.parse(fileContent);
+
+        // 이전 버전 파일 형식 변환
+        if (
+          data.chatHistory &&
+          data.chatHistory.length > 0 &&
+          data.chatHistory[0].text !== undefined
+        ) {
+          data.chatHistory = data.chatHistory.map((msg, index) => ({
+            id: msg.id || Date.now() + index,
+            content: msg.text,
+            sender: msg.sender,
+          }));
+        }
+
+        if (data.diagramData && data.chatHistory) {
+            setFlow(data.diagramData);
+            // 컴포넌트에서 상태를 업데이트할 수 있도록 데이터 반환
+            return {
+                chatHistory: data.chatHistory,
+                quests: data.quests,
+                completedQuests: data.completedQuests,
+                error: null,
+            };
+        } else {
+            // 테마 파일일 경우 처리
+            if (data.customThemeColors) {
+                loadTheme(data);
+                return { error: null };
+            }
+            throw new Error("지원하지 않는 파일 형식입니다.");
+        }
+      } catch (e) {
+          console.error("파일을 불러오는 데 실패했습니다:", e);
+          return { error: "파일을 불러오는 데 실패했습니다. 손상되었거나 유효한 파일이 아닐 수 있습니다." };
+      }
     },
 
     saveTheme: (finalFilename) => {

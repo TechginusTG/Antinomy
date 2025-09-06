@@ -1,9 +1,9 @@
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
-import { Layout, Button, Modal } from "antd";
+import { Layout, Button, Modal, Tooltip } from "antd";
 import {
-  SaveOutlined,
-  FolderOpenOutlined,
+  DownloadOutlined,
+  UploadOutlined,
   SettingFilled,
   BulbOutlined,
   QuestionCircleOutlined,
@@ -46,6 +46,7 @@ const MainApp = () => {
     undo,
     redo,
     save,
+    importFromFile,
     loadDiagram,
     setFlow,
     addNode,
@@ -277,44 +278,25 @@ const MainApp = () => {
 
     const reader = new FileReader();
     reader.onload = (e) => {
-      try {
-        const content = e.target.result;
-        let data = JSON.parse(content);
+      const content = e.target.result;
+      const result = importFromFile(content);
 
-        // Check for old format and migrate
-        if (
-          data.chatHistory &&
-          data.chatHistory.length > 0 &&
-          data.chatHistory[0].text !== undefined
-        ) {
-          data.chatHistory = data.chatHistory.map((msg, index) => ({
-            id: msg.id || Date.now() + index, // Use existing id or create new one
-            content: msg.text,
-            sender: msg.sender,
-          }));
+      if (result.error) {
+        alert(result.error);
+      } else {
+        if (result.chatHistory) {
+          setChatLog(result.chatHistory);
         }
+        if (result.quests) {
+          setQuests(result.quests);
+        }
+        if (result.completedQuests) {
+          setCompletedQuests(result.completedQuests);
+        }
+      }
 
-        if (data.diagramData && data.chatHistory) {
-          setFlow(data.diagramData);
-          setChatLog(data.chatHistory);
-          if (data.quests) {
-            setQuests(data.quests);
-          }
-          if (data.completedQuests) {
-            setCompletedQuests(data.completedQuests);
-          }
-        } else {
-          alert("Invalid file format.");
-        }
-      } catch (error) {
-        console.error("Failed to load or parse file:", error);
-        alert(
-          "Failed to load file. It might be corrupted or not a valid JSON file."
-        );
-      } finally {
-        if (fileInputRef.current) {
-          fileInputRef.current.value = null;
-        }
+      if (fileInputRef.current) {
+        fileInputRef.current.value = null;
       }
     };
     reader.readAsText(file);
@@ -397,7 +379,7 @@ const MainApp = () => {
       diagramState: { nodes, edges },
     };
     chatService.makeDiagram(payload, (diagram) => {
-      const { nodes: layoutedNodes, edges: layoutedEdges } =
+      const { nodes: layoutedNodes, edges: layoutedEdges } = 
         getLayoutedElements(diagram.nodes, diagram.edges);
 
       setFlow({ nodes: layoutedNodes, edges: layoutedEdges });
@@ -431,7 +413,7 @@ const MainApp = () => {
     if (authView === 'login') {
       return <Login onLoginSuccess={validateToken} onGuestLogin={() => setAuthStatus('guest')} switchToRegister={() => setAuthView('register')} />; 
     } else {
-      return <Register switchToLogin={() => setAuthView('login')} />;
+      return <Register switchToLogin={() => setAuthView('login')} />; 
     }
   }
 
@@ -494,42 +476,56 @@ const MainApp = () => {
                 accept=".json"
               />
               <Button
+                className={styles["tail-button"]}
                 type="default"
-                icon={<FolderOpenOutlined />}
+                icon={<UploadOutlined />}
                 onClick={handleLoadClick}
                 style={{ right: "7.5rem" }}
               >
-                Load
+                Import
               </Button>
-              <Button
-                type="primary"
-                icon={<SaveOutlined />}
-                onClick={() => {
-                  const defaultName = "flow-diagram";
-                  const userInput = prompt(
-                    "저장할 파일 이름을 입력하세요:",
-                    defaultName
-                  );
-
-                  if (userInput === null) {
-                    return;
-                  }
-
-                  const filenameBase =
-                    userInput.trim() === "" ? defaultName : userInput.trim();
-
-                  const sanitizedFilenameBase = filenameBase
-                    .replace(/[\\/:*?'"<>|]/g, "_")
-                    .replace(/\.json$/i, "");
-
-                  const diagramFilename = `${sanitizedFilenameBase}.antinomy.json`;
-
-                  save(diagramFilename, quests, completedQuests);
-                }}
-                style={{ right: "0.9375rem" }}
+              <Tooltip
+                title={
+                  authStatus !== "loggedIn" ? "로그인이 필요한 기능입니다." : ""
+                }
               >
-                Save
-              </Button>
+                <span
+                  className={styles["tail-button"]}
+                  style={{ right: "0.9375rem" }}
+                >
+                  <Button
+                    type="primary"
+                    icon={<DownloadOutlined />}
+                    onClick={() => {
+                      const defaultName = "flow-diagram";
+                      const userInput = prompt(
+                        "저장할 파일 이름을 입력하세요:",
+                        defaultName
+                      );
+
+                      if (userInput === null) {
+                        return;
+                      }
+
+                      const filenameBase = 
+                        userInput.trim() === "" 
+                          ? defaultName 
+                          : userInput.trim();
+
+                      const sanitizedFilenameBase = filenameBase
+                        .replace(/[\\/:*?'"<>|]/g, "_")
+                        .replace(/\.json$/i, "");
+
+                      const diagramFilename = `${sanitizedFilenameBase}.antinomy.json`;
+
+                      save(diagramFilename, chatLog, quests, completedQuests);
+                    }}
+                    disabled={authStatus !== "loggedIn"}
+                  >
+                    Export
+                  </Button>
+                </span>
+              </Tooltip>
             </div>
             <div className={styles["action-buttons"]}>
               <Button
