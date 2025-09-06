@@ -14,6 +14,8 @@ import knexConfig from '../knexfile.cjs';
 import bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import userRoutes from './routes/userRoutes.js';
+import diagramRoutes from './routes/diagramRoutes.js';
+import authenticateToken from './authenticateToken.js';
 
 // ESM에서 __dirname을 사용하기 위한 설정
 const __filename = fileURLToPath(import.meta.url);
@@ -25,6 +27,7 @@ const db = knex(knexConfig.development);
 app.use(express.json());
 
 app.use('/api/user', userRoutes);
+app.use('/api/diagram', diagramRoutes);
 // Canonical host 리다이렉션 미들웨어
 app.use((req, res, next) => {
   const canonicalHost = 'syncro.tg-antinomy.kro.kr';
@@ -142,18 +145,7 @@ app.post("/api/register", async (req, res) => {
   }
 });
 
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
 
-  if (token == null) return res.sendStatus(401);
-
-  jwt.verify(token, process.env.JWT_SECRET || 'your_default_secret', (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
-  });
-};
 
 app.post("/api/user/stats", authenticateToken, async (req, res) => {
   const { exp, lvl } = req.body;

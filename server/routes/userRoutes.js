@@ -1,23 +1,9 @@
 import express from 'express';
 import db from '../db.js';
 import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
-import { ConsoleSqlOutlined } from '@ant-design/icons';
+import authenticateToken from '../authenticateToken.js';
 
 const router = express.Router();
-
-const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-
-    if (token == null) return res.sendStatus(401);
-
-    jwt.verify(token, process.env.JWT_SECRET || 'your_default_secret', (err, user) => {
-        if (err) return res.sendStatus(403);
-        req.user = user;
-        next();
-    });
-};
 
 router.post('/change-password', authenticateToken, async (req, res) => {
     const { currentPassword, newPassword } = req.body;

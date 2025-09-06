@@ -132,6 +132,25 @@ const MainApp = () => {
           }
           
           setAuthStatus('loggedIn');
+
+          // Fetch diagram data after successful login
+          try {
+            const diagramResponse = await fetch('/api/diagram', { headers });
+            if (diagramResponse.ok && diagramResponse.status !== 204) {
+              const diagram = await diagramResponse.json();
+              if (diagram && diagram.diagram_data) {
+                localStorage.setItem("diagram-data", diagram.diagram_data);
+              } else {
+                localStorage.removeItem("diagram-data");
+              }
+            } else {
+              localStorage.removeItem("diagram-data");
+            }
+          } catch (error) {
+            console.error("Failed to fetch diagram:", error);
+            localStorage.removeItem("diagram-data");
+          }
+
         } else {
           localStorage.removeItem('authToken');
           setAuthStatus('loggedOut');
@@ -143,10 +162,11 @@ const MainApp = () => {
     } else {
       setAuthStatus('loggedOut');
     }
+    // Always load from local storage after attempting to validate and fetch.
+    useFlowStore.getState().loadDiagramFromLocalStorage();
   }, []);
 
   useEffect(() => {
-    useFlowStore.getState().loadDiagram();
     validateToken();
   }, [validateToken]);
 

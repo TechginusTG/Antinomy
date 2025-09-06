@@ -9,25 +9,27 @@ const initialNodes = [
     id: "1",
     type: "custom",
     position: { x: 100, y: 150 },
-    data: { label: "문제", shape: "rectangle" },
+    data: { label: "\uBB60\uC81C", shape: "rectangle" },
   },
   {
     id: "2",
     type: "custom",
     position: { x: 200, y: 250 },
-    data: { label: "과정", shape: "rectangle" },
+    data: { label: "\uACFC\uC815", shape: "rectangle" },
   },
   {
     id: "3",
     type: "custom",
     position: { x: 300, y: 350 },
-    data: { label: "해결", shape: "rectangle" },
+    data: { label: "\uD574\uACB0", shape: "rectangle" },
   },
 ];
 const initialEdges = [
   { id: "e1-2", source: "1", target: "2" },
   { id: "e2-3", source: "2", target: "3" },
 ];
+
+let debounceTimer;
 
 const useFlowStore = create((set, get) => {
   // Create deep copies of the initial state to prevent mutation.
@@ -98,7 +100,7 @@ const useFlowStore = create((set, get) => {
     },
 
     setRecommendations: (newRecommendations) => 
-      set({ 
+      set({
         recommendations: newRecommendations 
       }),
 
@@ -155,7 +157,10 @@ const useFlowStore = create((set, get) => {
       autoSaveDiagram();
     },
 
-    saveDiagramToLocalStorage: () => {
+    saveDiagramToDb: async () => {
+      const token = localStorage.getItem('authToken');
+      if (!token) return;
+
       const { nodes, edges } = get();
       const diagramData = { nodes, edges };
 
@@ -166,11 +171,29 @@ const useFlowStore = create((set, get) => {
         .replace(/\+/g, "-")
         .replace(/\//g, "_")
         .replace(/=/g, "");
+      
+      // Also save to localStorage for quick reloads and offline access
       localStorage.setItem("diagram-data", safeEncodedData);
+
+      try {
+        await fetch('/api/diagram', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ diagram_data: safeEncodedData }),
+        });
+      } catch (error) {
+        console.error("Failed to save diagram to DB:", error);
+      }
     },
 
     autoSaveDiagram: () => {
-      get().saveDiagramToLocalStorage();
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        get().saveDiagramToDb();
+      }, 1000);
     },
 
     onNodesChange: (changes) => {
@@ -344,7 +367,7 @@ const useFlowStore = create((set, get) => {
       }
     },
 
-    loadDiagram: () => {
+    loadDiagramFromLocalStorage: () => {
       const safeEncodedData = localStorage.getItem("diagram-data");
 
       if (!safeEncodedData) {
