@@ -3,6 +3,7 @@ import { addEdge, applyNodeChanges, applyEdgeChanges } from "reactflow";
 import pako from "pako";
 import chatService from "./chatService";
 import { getUnlockedThemes } from "./themeManager";
+import useUserStore from "./userStore"; // userStore import 추가
 
 const initialNodes = [
   {
@@ -29,10 +30,10 @@ const initialEdges = [
   { id: "e2-3", source: "2", target: "3" },
 ];
 
-let debounceTimer;
+let diagramDebounceTimer;
+let settingsDebounceTimer; // 설정 저장용 디바운스 타이머
 
 const useFlowStore = create((set, get) => {
-  // Create deep copies of the initial state to prevent mutation.
   const nodes = JSON.parse(JSON.stringify(initialNodes));
   const edges = JSON.parse(JSON.stringify(initialEdges));
 
@@ -67,10 +68,14 @@ const useFlowStore = create((set, get) => {
 
     setIsTyping: (isTyping) => set({ isTyping }),
     setIsConnected: (isConnected) => set({ isConnected }),
+    
+    // --- 설정 관련 함수들 수정 ---
     setTheme: (theme) => {
       set({ theme });
       localStorage.setItem("theme", theme);
       document.body.setAttribute("data-theme", theme);
+      useUserStore.getState().updateSetting('theme', theme);
+      get().autoSaveSettings();
     },
     setCustomThemeColors: (index, color) => {
       const { customThemeColors } = get();
@@ -81,6 +86,8 @@ const useFlowStore = create((set, get) => {
       if (get().theme === 'custom') {
         document.documentElement.style.setProperty(get().getCustomColorVarName(index), color);
       }
+      useUserStore.getState().updateSetting('customThemeColors', newColors);
+      get().autoSaveSettings();
     },
     setChatWidth: (width) => {
       set({ chatWidth: width });
@@ -90,14 +97,17 @@ const useFlowStore = create((set, get) => {
       set({ chatFontSize: size });
       localStorage.setItem("chatFontSize", size);
     },
+    setMode: (mode) => {
+      set({ mode });
+      localStorage.setItem('mode', mode);
+      useUserStore.getState().updateSetting('mode', mode);
+      get().autoSaveSettings();
+    },
+
     setIsSettingsOpen: (isOpen) => set({ isSettingsOpen: isOpen }),
     setIsProfileModalOpen: (isOpen) => set({ isProfileModalOpen: isOpen }),
     setIsQuestOpen: (isOpen) => set({ isQuestOpen: isOpen }),
     setEditingNodeId: (nodeId) => set({ editingNodeId: nodeId }),
-    setMode: (mode) => {
-      set({ mode });
-      localStorage.setItem('mode', mode);
-    },
 
     setRecommendations: (newRecommendations) => 
       set({
@@ -126,6 +136,8 @@ const useFlowStore = create((set, get) => {
           document.documentElement.style.setProperty(get().getCustomColorVarName(index), color);
         });
       }
+      useUserStore.getState().updateSetting('customThemeColors', defaultColors);
+      get().autoSaveSettings();
     },
 
     getCustomColorVarName: (index) => {
@@ -157,6 +169,7 @@ const useFlowStore = create((set, get) => {
       autoSaveDiagram();
     },
 
+    // --- DB 저장 관련 함수 ---
     saveDiagramToDb: async () => {
       const token = localStorage.getItem('authToken');
       if (!token) return;
@@ -172,7 +185,6 @@ const useFlowStore = create((set, get) => {
         .replace(/\//g, "_")
         .replace(/=/g, "");
       
-      // Also save to localStorage for quick reloads and offline access
       localStorage.setItem("diagram-data", safeEncodedData);
 
       try {
@@ -190,10 +202,37 @@ const useFlowStore = create((set, get) => {
     },
 
     autoSaveDiagram: () => {
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(() => {
+      clearTimeout(diagramDebounceTimer);
+      diagramDebounceTimer = setTimeout(() => {
         get().saveDiagramToDb();
       }, 1000);
+    },
+
+    saveSettings: async () => {
+      const token = localStorage.getItem('authToken');
+      if (!token) return;
+
+      const { settings } = useUserStore.getState();
+
+      try {
+        await fetch('/api/user/settings', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify(settings),
+        });
+      } catch (error) {
+        console.error("Failed to save settings to DB:", error);
+      }
+    },
+
+    autoSaveSettings: () => {
+      clearTimeout(settingsDebounceTimer);
+      settingsDebounceTimer = setTimeout(() => {
+        get().saveSettings();
+      }, 1500);
     },
 
     onNodesChange: (changes) => {
@@ -335,7 +374,6 @@ const useFlowStore = create((set, get) => {
       try {
         const data = JSON.parse(fileContent);
 
-        // 이전 버전 파일 형식 변환
         if (
           data.chatHistory &&
           data.chatHistory.length > 0 &&
@@ -350,7 +388,6 @@ const useFlowStore = create((set, get) => {
 
         if (data.diagramData && data.chatHistory) {
             setFlow(data.diagramData);
-            // 컴포넌트에서 상태를 업데이트할 수 있도록 데이터 반환
             return {
                 chatHistory: data.chatHistory,
                 quests: data.quests,
@@ -358,7 +395,6 @@ const useFlowStore = create((set, get) => {
                 error: null,
             };
         } else {
-            // 테마 파일일 경우 처리
             if (data.customThemeColors) {
                 loadTheme(data);
                 return { error: null };
@@ -402,7 +438,21 @@ const useFlowStore = create((set, get) => {
             document.documentElement.style.setProperty(get().getCustomColorVarName(index), color);
           });
         }
+        useUserStore.getState().updateSetting('customThemeColors', customThemeColors);
+        get().autoSaveSettings();
       }
+    },
+
+    setAllCustomThemeColors: (colors) => {
+      set({ customThemeColors: colors });
+      localStorage.setItem("customThemeColors", JSON.stringify(colors));
+      if (get().theme === 'custom') {
+        colors.forEach((color, index) => {
+          document.documentElement.style.setProperty(get().getCustomColorVarName(index), color);
+        });
+      }
+      useUserStore.getState().updateSetting('customThemeColors', colors);
+      get().autoSaveSettings();
     },
 
     loadDiagramFromLocalStorage: () => {
@@ -444,7 +494,6 @@ const useFlowStore = create((set, get) => {
 
       if (messageIndex > -1) {
         chatHistory.splice(messageIndex);
-        // The component will update localStorage via its useEffect
         setChatLog(chatHistory);
       }
     },
@@ -455,17 +504,11 @@ const useFlowStore = create((set, get) => {
       const messageIndex = chatHistory.findIndex((msg) => msg.id === messageId);
 
       if (messageIndex > -1) {
-        // Update the content of the message being edited
         chatHistory[messageIndex].content = newText;
-        // Remove all messages after the edited one
         chatHistory.splice(messageIndex + 1);
 
-        // Update the UI with the truncated log
         setChatLog(chatHistory);
 
-        // Resubmit the truncated history to the server.
-        // The server will respond with a "chat message" event,
-        // which will be handled by the global listener in ChatSider.
         chatService.resubmit(chatHistory);
       }
     }

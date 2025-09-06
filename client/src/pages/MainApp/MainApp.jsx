@@ -53,17 +53,23 @@ const MainApp = () => {
     setIsSettingsOpen,
     setIsQuestOpen,
     chatWidth,
+    setChatWidth, // setter 추가
     deleteMessage,
     editMessage,
     deleteNode,
     setEditingNodeId,
     updateEdgeLabel,
     theme,
+    setTheme, // setter 추가
     customThemeColors,
     getCustomColorVarName,
     setRecommendations,
     setIsTyping,
+    setChatFontSize, // setter 추가
+    setMode, // setter 추가
+    setAllCustomThemeColors, // setter 추가
   } = useFlowStore();
+  const { setUserSettings } = useUserStore(); // userStore에서 setter 추가
   const reactFlowWrapper = useRef(null);
   const [chatLog, setChatLog] = useState([]);
   const fileInputRef = useRef(null);
@@ -134,6 +140,28 @@ const MainApp = () => {
           
           setAuthStatus('loggedIn');
 
+          // --- NEW: 설정 동기화 로직 ---
+          try {
+            const settingsResponse = await fetch('/api/user/settings', { headers });
+            if (settingsResponse.ok) {
+              const settingsData = await settingsResponse.json();
+              
+              // 1. userStore에 마스터 데이터 저장
+              setUserSettings(settingsData);
+
+              // 2. 현재 세션(flowStore)에 설정 적용
+              const { settings } = useUserStore.getState();
+              if (settings.theme) setTheme(settings.theme);
+              if (settings.chatWidth) setChatWidth(settings.chatWidth);
+              if (settings.chatFontSize) setChatFontSize(settings.chatFontSize);
+              if (settings.mode) setMode(settings.mode);
+              // TODO: customThemeColors 전체를 설정하는 함수를 flowStore에 추가해야 함
+            }
+          } catch (error) {
+            console.error("Failed to fetch user settings:", error);
+          }
+          // --- 로직 끝 ---
+
           // Fetch diagram data after successful login
           try {
             const diagramResponse = await fetch('/api/diagram', { headers });
@@ -165,7 +193,7 @@ const MainApp = () => {
     }
     // Always load from local storage after attempting to validate and fetch.
     useFlowStore.getState().loadDiagramFromLocalStorage();
-  }, []);
+  }, [setTheme, setChatWidth, setChatFontSize, setMode, setUserSettings]);
 
   useEffect(() => {
     validateToken();
@@ -276,8 +304,19 @@ const MainApp = () => {
       return;
     }
 
+    const isConfirmed = window.confirm(
+      "주의: 임포트하면 현재 작업 내용(다이어그램 및 대화)이 파일의 내용으로 덮어쓰여집니다. 계속하시겠습니까?"
+    );
+
+    if (!isConfirmed) {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = null;
+      }
+      return; 
+    }
+
     const reader = new FileReader();
-    reader.onload = (e) => {
+    reader.onload = async (e) => {
       const content = e.target.result;
       const result = importFromFile(content);
 
@@ -292,6 +331,42 @@ const MainApp = () => {
         }
         if (result.completedQuests) {
           setCompletedQuests(result.completedQuests);
+        }
+
+        // 데이터베이스에 임포트된 데이터 덮어쓰기 요청
+        try {
+          const token = localStorage.getItem('authToken');
+          if (!token || authStatus !== 'loggedIn') {
+            console.warn("Not logged in. Import will not be synced to the database.");
+            return;
+          }
+
+          const { nodes, edges } = useFlowStore.getState();
+          const diagramData = { nodes, edges };
+
+          const response = await fetch('/api/user/import-request', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              diagramData,
+              chatHistory: result.chatHistory || [],
+              conversationId: conversationId, 
+            }),
+          });
+
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to sync imported data.');
+          }
+
+          console.log('Imported data successfully synced to the database.');
+          
+        } catch (error) {
+          console.error('Error syncing imported data:', error);
+          alert(`An error occurred while syncing the imported file: ${error.message}`);
         }
       }
 

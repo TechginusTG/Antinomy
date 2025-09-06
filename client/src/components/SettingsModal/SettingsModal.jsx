@@ -20,9 +20,10 @@ const SettingsModal = () => {
     resetCustomThemeColors,
     saveTheme,
     loadTheme,
+    autoSaveSettings, // 자동 저장 함수 추가
   } = useFlowStore();
   const { mode, setMode } = useFlowStore();
-  const { userNote, setUserNote, lvl } = useUserStore();
+  const { settings, updateSetting, lvl } = useUserStore(); // userStore에서 settings와 updateSetting 사용
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
   const fileInputRef = useRef(null);
 
@@ -274,8 +275,11 @@ const SettingsModal = () => {
         <div style={{ marginTop: 24 }}>
           <p style={{ marginBottom: 8 }}>유저노트</p>
           <textarea
-            value={userNote}
-            onChange={(e) => setUserNote(e.target.value)}
+            value={settings.userNote} // settings에서 값 가져오기
+            onChange={(e) => {
+              updateSetting('userNote', e.target.value); // userStore 업데이트
+              autoSaveSettings(); // 변경사항 자동 저장
+            }}
             style={{
               width: "100%",
               minHeight: "80px",
