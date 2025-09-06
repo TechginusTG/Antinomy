@@ -81,4 +81,33 @@ router.delete('/delete-account', authenticateToken, async (req, res) => {
     }
 });
 
+router.get('/me', authenticateToken, async (req, res) => {
+    try {
+        const user = await db('users').where({ user_id: req.user.userId }).first();
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        let conversationId = user.conversation_id;
+        const clientConversationId = req.headers['x-conversation-id'];
+
+        // DB에 conversation_id가 없고, 클라이언트가 기존 ID를 보내온 경우 DB에 업데이트 (마이그레이션)
+        if (!conversationId && clientConversationId) {
+            await db('users').where({ user_id: req.user.userId }).update({ conversation_id: clientConversationId });
+            conversationId = clientConversationId;
+        }
+
+        res.json({
+            id: user.user_id,
+            name: user.name,
+            exp: user.exp,
+            lvl: user.lvl,
+            conversationId: conversationId
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+
 export default router;

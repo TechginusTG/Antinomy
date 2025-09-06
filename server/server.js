@@ -12,6 +12,7 @@ import jwt from "jsonwebtoken";
 import knex from 'knex';
 import knexConfig from '../knexfile.cjs';
 import bcrypt from 'bcrypt';
+import { randomUUID } from 'crypto';
 import userRoutes from './routes/userRoutes.js';
 
 // ESM에서 __dirname을 사용하기 위한 설정
@@ -94,7 +95,7 @@ app.post("/api/login", async (req, res) => {
 
       if (isValid) {
         const token = jwt.sign({ userId: user.user_id, name: user.name }, process.env.JWT_SECRET || 'your_default_secret', { expiresIn: '1h' });
-        res.json({ success: true, token, user: { id: user.id, name: user.name, exp: user.exp, lvl: user.lvl } });
+        res.json({ success: true, token, user: { id: user.id, name: user.name, exp: user.exp, lvl: user.lvl, conversationId: user.conversation_id } });
       } else {
         res.status(401).json({ success: false, message: "아이디 또는 비밀번호가 잘못되었습니다." });
       }
@@ -122,11 +123,13 @@ app.post("/api/register", async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const conversationId = randomUUID();
 
     const [newUser] = await db('users').insert({
       id: id,
       name: name,
-      password: hashedPassword
+      password: hashedPassword,
+      conversation_id: conversationId
     }).returning(['user_id', 'id', 'name']);
 
     const token = jwt.sign({ userId: newUser.user_id, name: newUser.name }, process.env.JWT_SECRET || 'your_default_secret', { expiresIn: '1h' });

@@ -102,9 +102,8 @@ const MainApp = () => {
     }
   };
 
-  useEffect(() => {
-    useFlowStore.getState().loadDiagram();
-
+  const validateToken = useCallback(async () => {
+    // Welcome Modal 로직
     const hasVisitedBefore = localStorage.getItem("hasVisited");
     if (!hasVisitedBefore) {
       setIsWelcomeModalVisible(true);
@@ -112,29 +111,49 @@ const MainApp = () => {
     }
 
     const token = localStorage.getItem('authToken');
+    const localConversationId = localStorage.getItem('conversationId');
+
     if (token) {
-      setAuthStatus('loggedIn');
+      try {
+        const headers = { 'Authorization': `Bearer ${token}` };
+        if (localConversationId) {
+          headers['X-Conversation-ID'] = localConversationId;
+        }
+
+        const response = await fetch('/api/user/me', { headers });
+        
+        if (response.ok) {
+          const userData = await response.json();
+          useUserStore.getState().login(userData);
+          
+          if (userData.conversationId) {
+            setConversationId(userData.conversationId);
+            localStorage.setItem('conversationId', userData.conversationId);
+          }
+          
+          setAuthStatus('loggedIn');
+        } else {
+          localStorage.removeItem('authToken');
+          setAuthStatus('loggedOut');
+        }
+      } catch (error) {
+        console.error("Token validation error:", error);
+        setAuthStatus('loggedOut');
+      }
     } else {
       setAuthStatus('loggedOut');
     }
+  }, []);
 
-    let convId = localStorage.getItem('conversationId');
-    if (!convId) {
-      convId = crypto.randomUUID();
-      localStorage.setItem('conversationId', convId);
-    }
-    setConversationId(convId);
-  }, []); 
+  useEffect(() => {
+    useFlowStore.getState().loadDiagram();
+    validateToken();
+  }, [validateToken]);
 
   useEffect(() => {
     console.log("Auth status is:", authStatus, "Setting up connection...");
 
     if (authStatus === null) return;
-
-    if (authStatus === 'loggedIn') {
-      const { exp, lvl } = useUserStore.getState();
-      useUserStore.getState().updateStats({ exp, lvl });
-    }
 
     chatService.disconnect(); 
 
@@ -377,7 +396,7 @@ const MainApp = () => {
 
   if (authStatus === 'loggedOut') {
     if (authView === 'login') {
-      return <Login onLoginSuccess={() => setAuthStatus('loggedIn')} onGuestLogin={() => setAuthStatus('guest')} switchToRegister={() => setAuthView('register')} />;
+      return <Login onLoginSuccess={validateToken} onGuestLogin={() => setAuthStatus('guest')} switchToRegister={() => setAuthView('register')} />; 
     } else {
       return <Register switchToLogin={() => setAuthView('login')} />;
     }

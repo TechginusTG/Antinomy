@@ -25,6 +25,10 @@ const Login = ({ onLoginSuccess, onGuestLogin, switchToRegister }) => {
 
       if (response.ok && data.success) {
         console.log('Login successful', data);
+
+        // 새로운 ID를 받아오기 전, 기존 localStorage의 guest용 ID를 삭제
+        localStorage.removeItem('conversationId');
+
         localStorage.setItem('authToken', data.token);
         login(data.user);
         onLoginSuccess(); 
