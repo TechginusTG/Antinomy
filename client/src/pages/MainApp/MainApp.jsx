@@ -553,7 +553,7 @@ const MainApp = () => {
               <Button
                 className={styles["tail-button"]}
                 type="default"
-                icon={<UploadOutlined />}
+                icon={<DownloadOutlined />}
                 onClick={handleLoadClick}
                 style={{ right: "7.5rem" }}
               >
@@ -570,7 +570,7 @@ const MainApp = () => {
                 >
                   <Button
                     type="primary"
-                    icon={<DownloadOutlined />}
+                    icon={<UploadOutlined />}
                     onClick={() => {
                       const defaultName = "flow-diagram";
                       const userInput = prompt(
