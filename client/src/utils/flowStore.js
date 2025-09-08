@@ -10,7 +10,7 @@ const initialNodes = [
     id: "1",
     type: "custom",
     position: { x: 100, y: 150 },
-    data: { label: "\uBB60\uC81C", shape: "rectangle" },
+    data: { label: "\uBB38\uC81C", shape: "rectangle" },
   },
   {
     id: "2",
@@ -43,7 +43,9 @@ const useFlowStore = create((set, get) => {
     history: [{ nodes, edges }],
     historyIndex: 0,
     theme: localStorage.getItem("theme") || "light",
-    customThemeColors: JSON.parse(localStorage.getItem("customThemeColors")) || [
+    customThemeColors: JSON.parse(
+      localStorage.getItem("customThemeColors")
+    ) || [
       "#ffffff",
       "#f0f2f5",
       "#ffffff",
@@ -57,7 +59,7 @@ const useFlowStore = create((set, get) => {
     ],
     chatWidth: parseInt(localStorage.getItem("chatWidth"), 10) || 30,
     chatFontSize: parseInt(localStorage.getItem("chatFontSize"), 10) || 14,
-    mode: localStorage.getItem("mode") || 'basic',
+    mode: localStorage.getItem("mode") || "basic",
     isSettingsOpen: false,
     isProfileModalOpen: false,
     isQuestOpen: false,
@@ -68,13 +70,13 @@ const useFlowStore = create((set, get) => {
 
     setIsTyping: (isTyping) => set({ isTyping }),
     setIsConnected: (isConnected) => set({ isConnected }),
-    
+
     // --- 설정 관련 함수들 수정 ---
     setTheme: (theme) => {
       set({ theme });
       localStorage.setItem("theme", theme);
       document.body.setAttribute("data-theme", theme);
-      useUserStore.getState().updateSetting('theme', theme);
+      useUserStore.getState().updateSetting("theme", theme);
       get().autoSaveSettings();
     },
     setCustomThemeColors: (index, color) => {
@@ -83,10 +85,13 @@ const useFlowStore = create((set, get) => {
       newColors[index] = color;
       set({ customThemeColors: newColors });
       localStorage.setItem("customThemeColors", JSON.stringify(newColors));
-      if (get().theme === 'custom') {
-        document.documentElement.style.setProperty(get().getCustomColorVarName(index), color);
+      if (get().theme === "custom") {
+        document.documentElement.style.setProperty(
+          get().getCustomColorVarName(index),
+          color
+        );
       }
-      useUserStore.getState().updateSetting('customThemeColors', newColors);
+      useUserStore.getState().updateSetting("customThemeColors", newColors);
       get().autoSaveSettings();
     },
     setChatWidth: (width) => {
@@ -99,8 +104,8 @@ const useFlowStore = create((set, get) => {
     },
     setMode: (mode) => {
       set({ mode });
-      localStorage.setItem('mode', mode);
-      useUserStore.getState().updateSetting('mode', mode);
+      localStorage.setItem("mode", mode);
+      useUserStore.getState().updateSetting("mode", mode);
       get().autoSaveSettings();
     },
 
@@ -109,9 +114,9 @@ const useFlowStore = create((set, get) => {
     setIsQuestOpen: (isOpen) => set({ isQuestOpen: isOpen }),
     setEditingNodeId: (nodeId) => set({ editingNodeId: nodeId }),
 
-    setRecommendations: (newRecommendations) => 
+    setRecommendations: (newRecommendations) =>
       set({
-        recommendations: newRecommendations 
+        recommendations: newRecommendations,
       }),
 
     clearRecommendations: () => set({ recommendations: [] }),
@@ -131,12 +136,15 @@ const useFlowStore = create((set, get) => {
       ];
       set({ customThemeColors: defaultColors });
       localStorage.setItem("customThemeColors", JSON.stringify(defaultColors));
-      if (get().theme === 'custom') {
+      if (get().theme === "custom") {
         defaultColors.forEach((color, index) => {
-          document.documentElement.style.setProperty(get().getCustomColorVarName(index), color);
+          document.documentElement.style.setProperty(
+            get().getCustomColorVarName(index),
+            color
+          );
         });
       }
-      useUserStore.getState().updateSetting('customThemeColors', defaultColors);
+      useUserStore.getState().updateSetting("customThemeColors", defaultColors);
       get().autoSaveSettings();
     },
 
@@ -171,7 +179,7 @@ const useFlowStore = create((set, get) => {
 
     // --- DB 저장 관련 함수 ---
     saveDiagramToDb: async () => {
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem("authToken");
       if (!token) return;
 
       const { nodes, edges } = get();
@@ -184,15 +192,15 @@ const useFlowStore = create((set, get) => {
         .replace(/\+/g, "-")
         .replace(/\//g, "_")
         .replace(/=/g, "");
-      
+
       localStorage.setItem("diagram-data", safeEncodedData);
 
       try {
-        await fetch('/api/diagram', {
-          method: 'POST',
+        await fetch("/api/diagram", {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ diagram_data: safeEncodedData }),
         });
@@ -209,17 +217,17 @@ const useFlowStore = create((set, get) => {
     },
 
     saveSettings: async () => {
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem("authToken");
       if (!token) return;
 
       const { settings } = useUserStore.getState();
 
       try {
-        await fetch('/api/user/settings', {
-          method: 'PUT',
+        await fetch("/api/user/settings", {
+          method: "PUT",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(settings),
         });
@@ -254,11 +262,11 @@ const useFlowStore = create((set, get) => {
 
     onConnect: (connection) => {
       const { nodes, edges, _updateHistory } = get();
-      const nextEdges = addEdge({ ...connection, label: 'edge' }, edges);
+      const nextEdges = addEdge({ ...connection, label: "edge" }, edges);
       _updateHistory({ nodes, edges: nextEdges });
     },
 
-    addNode: (position, shape = 'rectangle') => {
+    addNode: (position, shape = "rectangle") => {
       const { nodes, edges, _updateHistory } = get();
       const newNodeId =
         (nodes.length > 0 ? Math.max(...nodes.map((n) => parseInt(n.id))) : 0) +
@@ -287,7 +295,9 @@ const useFlowStore = create((set, get) => {
     deleteNode: (nodeId) => {
       const { nodes, edges, _updateHistory } = get();
       const nextNodes = nodes.filter((node) => node.id !== nodeId);
-      const nextEdges = edges.filter((edge) => edge.source !== nodeId && edge.target !== nodeId);
+      const nextEdges = edges.filter(
+        (edge) => edge.source !== nodeId && edge.target !== nodeId
+      );
       _updateHistory({ nodes: nextNodes, edges: nextEdges });
     },
 
@@ -385,23 +395,26 @@ const useFlowStore = create((set, get) => {
         }
 
         if (data.diagramData && data.chatHistory) {
-            setFlow(data.diagramData);
-            return {
-                chatHistory: data.chatHistory,
-                quests: data.quests,
-                completedQuests: data.completedQuests,
-                error: null,
-            };
+          setFlow(data.diagramData);
+          return {
+            chatHistory: data.chatHistory,
+            quests: data.quests,
+            completedQuests: data.completedQuests,
+            error: null,
+          };
         } else {
-            if (data.customThemeColors) {
-                loadTheme(data);
-                return { error: null };
-            }
-            throw new Error("지원하지 않는 파일 형식입니다.");
+          if (data.customThemeColors) {
+            loadTheme(data);
+            return { error: null };
+          }
+          throw new Error("지원하지 않는 파일 형식입니다.");
         }
       } catch (e) {
-          console.error("파일을 불러오는 데 실패했습니다:", e);
-          return { error: "파일을 불러오는 데 실패했습니다. 손상되었거나 유효한 파일이 아닐 수 있습니다." };
+        console.error("파일을 불러오는 데 실패했습니다:", e);
+        return {
+          error:
+            "파일을 불러오는 데 실패했습니다. 손상되었거나 유효한 파일이 아닐 수 있습니다.",
+        };
       }
     },
 
@@ -430,13 +443,21 @@ const useFlowStore = create((set, get) => {
       const { customThemeColors } = fileContent;
       if (customThemeColors) {
         set({ customThemeColors });
-        localStorage.setItem("customThemeColors", JSON.stringify(customThemeColors));
-        if (get().theme === 'custom') {
+        localStorage.setItem(
+          "customThemeColors",
+          JSON.stringify(customThemeColors)
+        );
+        if (get().theme === "custom") {
           customThemeColors.forEach((color, index) => {
-            document.documentElement.style.setProperty(get().getCustomColorVarName(index), color);
+            document.documentElement.style.setProperty(
+              get().getCustomColorVarName(index),
+              color
+            );
           });
         }
-        useUserStore.getState().updateSetting('customThemeColors', customThemeColors);
+        useUserStore
+          .getState()
+          .updateSetting("customThemeColors", customThemeColors);
         get().autoSaveSettings();
       }
     },
@@ -444,12 +465,15 @@ const useFlowStore = create((set, get) => {
     setAllCustomThemeColors: (colors) => {
       set({ customThemeColors: colors });
       localStorage.setItem("customThemeColors", JSON.stringify(colors));
-      if (get().theme === 'custom') {
+      if (get().theme === "custom") {
         colors.forEach((color, index) => {
-          document.documentElement.style.setProperty(get().getCustomColorVarName(index), color);
+          document.documentElement.style.setProperty(
+            get().getCustomColorVarName(index),
+            color
+          );
         });
       }
-      useUserStore.getState().updateSetting('customThemeColors', colors);
+      useUserStore.getState().updateSetting("customThemeColors", colors);
       get().autoSaveSettings();
     },
 
@@ -471,13 +495,12 @@ const useFlowStore = create((set, get) => {
         const len = decodedData.length;
         const compressed = new Uint8Array(len);
         for (let i = 0; i < len; i++) {
-            compressed[i] = decodedData.charCodeAt(i);
+          compressed[i] = decodedData.charCodeAt(i);
         }
         const jsonString = pako.inflate(compressed, { to: "string" });
         const data = JSON.parse(jsonString);
 
         get().setFlow(data);
-
       } catch (error) {
         console.error("Failed to load from localStorage:", error);
         localStorage.removeItem("diagram-data");
@@ -509,7 +532,7 @@ const useFlowStore = create((set, get) => {
 
         chatService.resubmit(chatHistory);
       }
-    }
+    },
   };
 });
 
