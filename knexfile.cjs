@@ -4,7 +4,7 @@ const path = require('path');
 module.exports = {
   development: {
     client: 'pg',
-    connection: process.env.DATABASE_URL,
+    connection: process.env.DEV_DATABASE_URL || process.env.DATABASE_URL,
     migrations: {
       directory: path.join(__dirname, 'migrations')
     },
@@ -14,7 +14,10 @@ module.exports = {
   },
   production: {
     client: 'pg',
-    connection: process.env.DATABASE_URL,
+    connection: {
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+    },
     migrations: {
       directory: path.join(__dirname, 'migrations')
     },
