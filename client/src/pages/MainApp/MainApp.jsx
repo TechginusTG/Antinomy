@@ -43,6 +43,7 @@ const MainApp = () => {
     onNodesChange,
     onEdgesChange,
     onConnect,
+    onNodeDragStop, 
     undo,
     redo,
     save,
@@ -270,10 +271,15 @@ const MainApp = () => {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      if (event.ctrlKey && event.key === "z") {
+      const isUndo = (event.ctrlKey || event.metaKey) && event.key === 'z';
+      const isRedo = (event.ctrlKey || event.metaKey) && event.key === 'y';
+
+      if (isUndo) {
+        event.preventDefault();
         undo();
       }
-      if (event.ctrlKey && event.key === "y") {
+      if (isRedo) {
+        event.preventDefault();
         redo();
       }
     };
@@ -535,6 +541,7 @@ const MainApp = () => {
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
+                onNodeDragStop={onNodeDragStop} 
                 nodeTypes={nodeTypes}
                 onPaneClick={onPaneClick}
                 onInit={setReactFlowInstance}

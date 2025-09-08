@@ -236,22 +236,20 @@ const useFlowStore = create((set, get) => {
     },
 
     onNodesChange: (changes) => {
-      const { nodes, edges, _updateHistory } = get();
-      const nextNodes = applyNodeChanges(changes, nodes);
-      const isDragging = changes.some(
-        (c) => c.type === "position" && c.dragging
-      );
-      if (isDragging) {
-        set({ nodes: nextNodes });
-      } else {
-        _updateHistory({ nodes: nextNodes, edges });
-      }
+      set({
+        nodes: applyNodeChanges(changes, get().nodes),
+      });
     },
 
     onEdgesChange: (changes) => {
+      set({
+        edges: applyEdgeChanges(changes, get().edges),
+      });
+    },
+
+    onNodeDragStop: () => {
       const { nodes, edges, _updateHistory } = get();
-      const nextEdges = applyEdgeChanges(changes, edges);
-      _updateHistory({ nodes, edges: nextEdges });
+      _updateHistory({ nodes, edges });
     },
 
     onConnect: (connection) => {
