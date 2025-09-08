@@ -249,7 +249,7 @@ const ChatSider = ({
         <div className={styles["chat-log"]} ref={chatLogRef}>
           <ul>
             <li style={{ listStyle: "none", textAlign: "center" }}>
-              <i>해결하고픈 문제나, 고민, 하고싶은 일을 적어보세요</i>
+              <i>해결하고픈 뭠제나, 고민, 하고싶은 일을 적어보세요</i>
             </li>
             {messages.map((msg) => {
               const getBubbleClass = (m) => {
