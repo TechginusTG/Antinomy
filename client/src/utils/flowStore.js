@@ -10,7 +10,7 @@ const initialNodes = [
     id: "1",
     type: "custom",
     position: { x: 100, y: 150 },
-    data: { label: "\uBB38\uC81C", shape: "rectangle" },
+    data: { label: "\uBB60\uC81C", shape: "rectangle" },
   },
   {
     id: "2",
