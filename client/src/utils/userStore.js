@@ -79,6 +79,13 @@ const useUserStore = create((set) => ({
     localStorage.removeItem('conversationId');
     localStorage.removeItem('diagram-data');
   },
+
+  setStats: (stats) => {
+    set({
+      exp: stats.exp,
+      lvl: stats.lvl,
+    });
+  },
 }));
 
 export default useUserStore;
