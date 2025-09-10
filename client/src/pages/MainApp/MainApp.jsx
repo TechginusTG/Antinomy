@@ -300,10 +300,36 @@ const MainApp = () => {
     setIsGuideOpen(false);
   };
 
+  const exportHandler = useCallback(() => {
+    const defaultName = "flow-diagram";
+    const userInput = prompt(
+      "저장할 파일 이름을 입력하세요:",
+      defaultName
+    );
+
+    if (userInput === null) {
+      return;
+    }
+
+    const filenameBase =
+      userInput.trim() === ""
+        ? defaultName
+        : userInput.trim();
+
+    const sanitizedFilenameBase = filenameBase
+      .replace(/[\/:*?'"<>|]/g, "_")
+      .replace(/\.json$/i, "");
+
+    const diagramFilename = `${sanitizedFilenameBase}.antinomy.json`;
+
+    save(diagramFilename, chatLog, quests, completedQuests);
+  }, [save, chatLog, quests, completedQuests]);
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       const isUndo = (event.ctrlKey || event.metaKey) && event.key === 'z';
       const isRedo = (event.ctrlKey || event.metaKey) && event.key === 'y';
+      const isSave = (event.ctrlKey || event.metaKey) && event.key === 's';
 
       if (isUndo) {
         event.preventDefault();
@@ -313,6 +339,12 @@ const MainApp = () => {
         event.preventDefault();
         redo();
       }
+      if (isSave) {
+        event.preventDefault();
+        if (authStatus === "loggedIn") {
+          exportHandler();
+        }
+      }
     };
 
     document.addEventListener("keydown", handleKeyDown);
@@ -320,7 +352,7 @@ const MainApp = () => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [undo, redo]);
+  }, [undo, redo, exportHandler, authStatus]);
 
   useEffect(() => {
     const handleBeforeUnload = (event) => {
@@ -529,30 +561,7 @@ const MainApp = () => {
     }
   }
 
-  const exportHandler = () => {
-    const defaultName = "flow-diagram";
-    const userInput = prompt(
-      "저장할 파일 이름을 입력하세요:",
-      defaultName
-    );
-
-    if (userInput === null) {
-      return;
-    }
-
-    const filenameBase =
-      userInput.trim() === ""
-        ? defaultName
-        : userInput.trim();
-
-    const sanitizedFilenameBase = filenameBase
-      .replace(/[\/:*?'"<>|]/g, "_")
-      .replace(/\.json$/i, "");
-
-    const diagramFilename = `${sanitizedFilenameBase}.antinomy.json`;
-
-    save(diagramFilename, chatLog, quests, completedQuests);
-  };
+  
 
   
 
