@@ -4,6 +4,7 @@ import useFlowStore from "../../utils/flowStore";
 import useUserStore from "../../utils/userStore";
 import { useNavigate } from 'react-router-dom';
 import { Form, Input } from 'antd';
+import styles from "./ProfileModal.module.css";
 
 const ProfileModal = () => {
   const { isProfileModalOpen, setIsProfileModalOpen } = useFlowStore();
@@ -96,6 +97,7 @@ const ProfileModal = () => {
       open={isProfileModalOpen}
       onCancel={() => setIsProfileModalOpen(false)}
       footer={null} 
+      wrapClassName={styles.modalOverride}
     >
       {showChangePasswordForm && (
         <Form
