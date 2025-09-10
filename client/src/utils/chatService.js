@@ -84,12 +84,12 @@ class ChatService {
     }
   }
 
-  resubmit(chatHistory) {
+  editMessage(messageId, newContent, conversationId) {
     if (this.socket) {
-      this.socket.emit("resubmit chat", chatHistory);
+      this.socket.emit("edit message", { messageId, newContent, conversationId });
     }
   }
-  
+
   makeDiagram(payload, callback) {
     if (this.socket) {
       this.socket.emit("make diagram", payload, (response) => {

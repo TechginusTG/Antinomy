@@ -25,7 +25,6 @@ const ChatSider = ({
   isDiagramMaking,
   onResetQuests,
   onDelete,
-  onEdit,
   isSiderVisible,
   conversationId,
 }) => {
@@ -149,10 +148,31 @@ const ChatSider = ({
 
   const handleModalEditSave = () => {
     if (!editingMessage) return;
-    setIsTyping(true);
-    onEdit(editingMessage.id, editingText);
+
+    const editedMessageIndex = messages.findIndex(
+      (msg) => msg.id === editingMessage.id
+    );
+    if (editedMessageIndex === -1) return;
+
+    // Create a new history truncated up to the edited message
+    const truncatedMessages = messages.slice(0, editedMessageIndex + 1);
+
+    // Update the content of the last message (the one being edited)
+    truncatedMessages[editedMessageIndex] = {
+      ...truncatedMessages[editedMessageIndex],
+      content: editingText,
+    };
+
+    // Update the state to reflect the change and remove subsequent messages
+    setMessages(truncatedMessages);
+
+    // Call the service to notify the backend
+    chatService.editMessage(editingMessage.id, editingText, conversationId);
+
+    // Close the modal and show typing indicator
     setEditingMessage(null);
     setEditingText("");
+    setIsTyping(true);
   };
 
   const handleModalCancel = () => {

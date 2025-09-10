@@ -219,19 +219,74 @@ export function registerSocketHandlers(io) {
       }
     });
 
+    socket.on(
+      "edit message",
+      async ({ messageId, newContent, conversationId }) => {
+        console.log(
+          `'edit message' request from ${socket.id} for message: ${messageId}`
+        );
+
+        if (!socket.userId || !conversationId) return;
+
+        try {
+          // 1. Update the message and verify ownership.
+          const updatedRows = await db("chats")
+            .where({ id: messageId, user_id: socket.userId })
+            .update({ message: newContent });
+
+          if (updatedRows === 0) {
+            console.warn(
+              `[DB] Edit failed: Message ${messageId} not found or not owned by user ${socket.userId}`
+            );
+            return;
+          }
+          console.log(`[DB] Message ${messageId} updated.`);
+
+          // 2. Fetch all messages in the conversation to find the position of the edited one.
+          const allMessages = await db("chats")
+            .where({ conversation_id: conversationId })
+            .orderBy("created_at", "asc");
+
+          const editedMessageIndex = allMessages.findIndex(
+            (m) => m.id === messageId
+          );
+
+          if (editedMessageIndex === -1) {
+            console.error(
+              `[Logic Error] Edited message ${messageId} not found in history after DB update.`
+            );
+            return;
+          }
+
+          // 3. Create the history context for the AI, up to the edited message.
+          const historyForAI = allMessages
+            .slice(0, editedMessageIndex + 1)
+            .map((msg) => ({
+              sender: msg.sender,
+              content: msg.message,
+            }));
+
+          // 4. Build the session and call OpenAI.
+          sessions[socket.id] = buildSession(socket.id, historyForAI);
+          await callOpenAI(socket, sessions[socket.id], conversationId);
+        } catch (error) {
+          console.error(
+            `[DB] Error during message edit for message ${messageId}:`,
+            error
+          );
+          socket.emit("chat message", {
+            message: "메시지 수정 중 오류가 발생했습니다.",
+          });
+        }
+      }
+    );
+
     socket.on("load chat history", (chatHistory) => {
       console.log(`'load chat history' request from ${socket.id}`);
       sessions[socket.id] = buildSession(socket.id, chatHistory);
       console.log(
         `Session for ${socket.id} has been replaced with loaded history.`
       );
-    });
-
-    socket.on("resubmit chat", async (chatHistory) => {
-      console.log(`'resubmit chat' request from ${socket.id}`);
-      const session = buildSession(socket.id, chatHistory);
-      sessions[socket.id] = session;
-      await callOpenAI(socket, session);
     });
 
     socket.on("make diagram", async (payload, callback) => {
