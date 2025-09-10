@@ -36,9 +36,13 @@ body {
 }
 
 .tail-buttons {
+  position: absolute;
+  bottom: 5rem;
+  right: 0.9375rem; /* 15px */
+  z-index: 10;
   display: flex;
-  justify-content: flex-end;
-  padding: 0.5rem 1rem; /* 8px 16px */
+  flex-direction: row;
+  gap: 0.5rem;
 }
 
 .chat-sider {
@@ -50,12 +54,6 @@ body {
 .ant-layout-content {
   margin: 0 !important;
   padding: 0 !important;
-}
-
-.tail-button {
-  position: absolute;
-  bottom: 5rem;
-  z-index: 10;
 }
 
 .action-buttons {
@@ -112,7 +110,8 @@ body {
     transform: translateX(0);
   }
 
-  .tail-buttons :global(.ant-btn) {
+  .tail-buttons {
+    flex-direction: column;
     bottom: 3.5rem;
   }
 
@@ -128,3 +127,11 @@ body {
     font-size: 1rem;
   }
 }
+
+.mobileButtonContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+

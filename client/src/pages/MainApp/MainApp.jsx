@@ -7,6 +7,8 @@ import {
   SettingFilled,
   BulbOutlined,
   QuestionCircleOutlined,
+  CloseOutlined,
+  FolderOutlined,
 } from "@ant-design/icons";
 import ChatSider from "../../components/ChatSider/ChatSider";
 import Header from "../../components/HeaderBar/HeaderBar";
@@ -88,6 +90,35 @@ const MainApp = () => {
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [isWelcomeModalVisible, setIsWelcomeModalVisible] = useState(false);
   const [conversationId, setConversationId] = useState(null);
+
+  const [isMobile, setIsMobile] = useState(false);
+  const [showFileOptions, setShowFileOptions] = useState(false);
+  const fileOptionsRef = useRef(null);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (fileOptionsRef.current && !fileOptionsRef.current.contains(event.target)) {
+        setShowFileOptions(false);
+      }
+    };
+
+    if (showFileOptions) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showFileOptions]);
+
+  
 
   const toggleSider = () => {
     setIsSiderVisible(!isSiderVisible);
@@ -498,6 +529,33 @@ const MainApp = () => {
     }
   }
 
+  const exportHandler = () => {
+    const defaultName = "flow-diagram";
+    const userInput = prompt(
+      "저장할 파일 이름을 입력하세요:",
+      defaultName
+    );
+
+    if (userInput === null) {
+      return;
+    }
+
+    const filenameBase =
+      userInput.trim() === ""
+        ? defaultName
+        : userInput.trim();
+
+    const sanitizedFilenameBase = filenameBase
+      .replace(/[\/:*?'"<>|]/g, "_")
+      .replace(/\.json$/i, "");
+
+    const diagramFilename = `${sanitizedFilenameBase}.antinomy.json`;
+
+    save(diagramFilename, chatLog, quests, completedQuests);
+  };
+
+  
+
   return (
     <Layout style={{ height: "100dvh" }}>
       <Helmet>
@@ -557,57 +615,45 @@ const MainApp = () => {
                 onChange={handleFileSelect}
                 accept=".json"
               />
-              <Button
-                className={styles["tail-button"]}
-                type="default"
-                icon={<DownloadOutlined />}
-                onClick={handleLoadClick}
-                style={{ right: "7.5rem" }}
-              >
-                Import
-              </Button>
-              <Tooltip
-                title={
-                  authStatus !== "loggedIn" ? "로그인이 필요한 기능입니다." : ""
-                }
-              >
-                <span
-                  className={styles["tail-button"]}
-                  style={{ right: "0.9375rem" }}
-                >
+              {isMobile ? (
+                <div ref={fileOptionsRef} className={styles.mobileButtonContainer}>
+                  {showFileOptions ? (
+                    <>
+                      <Button icon={<DownloadOutlined />} onClick={handleLoadClick}>Import</Button>
+                      <Tooltip title={authStatus !== "loggedIn" ? "로그인이 필요한 기능입니다." : ""}>
+                        <Button type="primary" icon={<UploadOutlined />} onClick={exportHandler} disabled={authStatus !== "loggedIn"}>Export</Button>
+                      </Tooltip>
+                      <Button icon={<CloseOutlined />} onClick={() => setShowFileOptions(false)}>Close</Button>
+                    </>
+                  ) : (
+                    <Button icon={<FolderOutlined />} onClick={() => setShowFileOptions(true)}>Files</Button>
+                  )}
+                </div>
+              ) : (
+                <>
                   <Button
-                    type="primary"
-                    icon={<UploadOutlined />}
-                    onClick={() => {
-                      const defaultName = "flow-diagram";
-                      const userInput = prompt(
-                        "저장할 파일 이름을 입력하세요:",
-                        defaultName
-                      );
-
-                      if (userInput === null) {
-                        return;
-                      }
-
-                      const filenameBase = 
-                        userInput.trim() === "" 
-                          ? defaultName 
-                          : userInput.trim();
-
-                      const sanitizedFilenameBase = filenameBase
-                        .replace(/[\\/:*?'"<>|]/g, "_")
-                        .replace(/\.json$/i, "");
-
-                      const diagramFilename = `${sanitizedFilenameBase}.antinomy.json`;
-
-                      save(diagramFilename, chatLog, quests, completedQuests);
-                    }}
-                    disabled={authStatus !== "loggedIn"}
+                    type="default"
+                    icon={<DownloadOutlined />}
+                    onClick={handleLoadClick}
                   >
-                    Export
+                    Import
                   </Button>
-                </span>
-              </Tooltip>
+                  <Tooltip
+                    title={
+                      authStatus !== "loggedIn" ? "로그인이 필요한 기능입니다." : ""
+                    }
+                  >
+                    <Button
+                      type="primary"
+                      icon={<UploadOutlined />}
+                      onClick={exportHandler}
+                      disabled={authStatus !== "loggedIn"}
+                    >
+                      Export
+                    </Button>
+                  </Tooltip>
+                </>
+              )}
             </div>
             <div className={styles["action-buttons"]}>
               <Button
