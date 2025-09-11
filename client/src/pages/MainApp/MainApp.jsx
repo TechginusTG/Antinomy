@@ -52,7 +52,7 @@ const MainApp = () => {
     redo,
     save,
     importFromFile,
-    loadDiagramFromLocalStorage,
+    loadDiagram,
     setFlow,
     addNode,
     setIsSettingsOpen,
@@ -266,8 +266,9 @@ const MainApp = () => {
   useEffect(() => {
     if (activeChatRoomId) {
       chatService.loadChatHistory(activeChatRoomId);
+      loadDiagram(activeChatRoomId);
     }
-  }, [activeChatRoomId]);
+  }, [activeChatRoomId, loadDiagram]);
 
   const validateToken = useCallback(async () => {
     // Welcome Modal 로직
@@ -351,8 +352,7 @@ const MainApp = () => {
     } else {
       setAuthStatus('loggedOut');
     }
-    // Always load from local storage after attempting to validate and fetch.
-    useFlowStore.getState().loadDiagramFromLocalStorage();
+    useFlowStore.getState();
   }, [setTheme, setChatWidth, setChatFontSize, setMode, setUserSettings]);
 
   useEffect(() => {
@@ -722,8 +722,8 @@ const MainApp = () => {
             >
               <DiagramMessage message={diagramMessage} />
               <ReactFlow
-                nodes={nodes}
-                edges={edges}
+                nodes={nodes()}
+                edges={edges()}
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
