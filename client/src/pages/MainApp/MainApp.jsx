@@ -50,7 +50,7 @@ const MainApp = () => {
     redo,
     save,
     importFromFile,
-    loadDiagram,
+    loadDiagramFromLocalStorage,
     setFlow,
     addNode,
     setIsSettingsOpen,

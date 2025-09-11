@@ -206,3 +206,38 @@
 .modalOverride {
   z-index: var(--z-modal, 1002) !important;
 }
+
+.chatRoomHeader {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.chatRoomList {
+  overflow-y: auto;
+  flex-shrink: 0;
+  max-height: 200px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.chatRoomItem {
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chatRoomItem:last-child {
+  border-bottom: none;
+}
+
+.chatRoomItem:hover {
+  background-color: var(--background-secondary);
+}
+
+.active {
+  background-color: var(--bubble-user-bg) !important; 
+  color: white;
+}

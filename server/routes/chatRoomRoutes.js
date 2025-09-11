@@ -16,4 +16,20 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
+router.post('/', authenticateToken, async (req, res) => {
+  const { title } = req.body;
+  const newChatRoom = {
+    user_id: req.user.userId,
+    title: title || 'New Chat',
+  };
+
+  try {
+    const [createdChatRoom] = await db('chat_rooms').insert(newChatRoom).returning('*');
+    res.status(201).json(createdChatRoom);
+  } catch (error) {
+    console.error('Error creating chat room:', error);
+    res.status(500).send('Server error');
+  }
+});
+
 export default router;
