@@ -6,7 +6,7 @@
     "dev": "npm install && concurrently \"npm:dev:server\" \"npm:dev:client\"",
     "dev:server": "nodemon server/server.js",
     "dev:client": "vite",
-    "build": "vite build",
+    "build": "node --max-old-space-size=4096 ./node_modules/.bin/vite build",
     "start": "NODE_ENV=production node server/server.js"
   },
   "repository": {
