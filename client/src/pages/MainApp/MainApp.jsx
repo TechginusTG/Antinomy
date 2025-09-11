@@ -203,6 +203,66 @@ const MainApp = () => {
     }
   };
 
+  const handleRenameChatRoom = async (roomId) => {
+    const newTitle = prompt('Enter new chat room title:');
+    if (!newTitle) return;
+
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+
+    try {
+      const response = await fetch(`/api/chat_rooms/${roomId}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ title: newTitle }),
+        }
+      );
+
+      if (response.ok) {
+        const updatedRoom = await response.json();
+        setChatRooms(
+          chatRooms.map((room) =>
+            room.id === roomId ? updatedRoom : room
+          )
+        );
+      }
+    } catch (error) {
+      console.error("Failed to rename chat room:", error);
+    }
+  };
+
+  const handleDeleteChatRoom = async (roomId) => {
+    if (!window.confirm('Are you sure you want to delete this chat room?')) return;
+
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+
+    try {
+      const response = await fetch(`/api/chat_rooms/${roomId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.ok) {
+        const newChatRooms = chatRooms.filter((room) => room.id !== roomId);
+        setChatRooms(newChatRooms);
+        if (activeChatRoomId === roomId) {
+          setActiveChatRoomId(newChatRooms.length > 0 ? newChatRooms[0].id : null);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to delete chat room:", error);
+    }
+  };
+
   useEffect(() => {
     if (activeChatRoomId) {
       chatService.loadChatHistory(activeChatRoomId);
@@ -764,6 +824,8 @@ const MainApp = () => {
           setIsChatRoomPanelVisible(false);
         }}
         onNewChat={handleNewChat}
+        onRenameChatRoom={handleRenameChatRoom}
+        onDeleteChatRoom={handleDeleteChatRoom}
       />
 
       {contextMenu && (
