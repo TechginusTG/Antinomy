@@ -338,6 +338,7 @@ const useFlowStore = create((set, get) => {
         history: [newState],
         historyIndex: 0,
       });
+      get().autoSaveDiagram();
     },
 
     resetFlow: () => {
