@@ -3,7 +3,6 @@ import {
   SendOutlined,
   ExclamationCircleFilled,
   DownOutlined,
-  PlusOutlined,
 } from "@ant-design/icons";
 import React, { useState, useEffect, useRef } from "react";
 import ReactMarkdown from "react-markdown";
@@ -27,6 +26,7 @@ const ChatSider = ({
   onResetQuests,
   onDelete,
   isSiderVisible,
+  activeChatRoomId,
 }) => {
   const {
     chatWidth,
@@ -41,72 +41,11 @@ const ChatSider = ({
   } = useFlowStore();
   const chatLogRef = useRef(null);
 
-  const [chatRooms, setChatRooms] = useState([]);
-  const [activeChatRoomId, setActiveChatRoomId] = useState(null);
-
   const [editingMessage, setEditingMessage] = useState(null);
   const [editingText, setEditingText] = useState("");
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
-
-  useEffect(() => {
-    const fetchChatRooms = async () => {
-      const token = localStorage.getItem("authToken");
-      if (!token) return;
-
-      try {
-        const response = await fetch("/api/chat_rooms", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.ok) {
-          const rooms = await response.json();
-          setChatRooms(rooms);
-          if (rooms.length > 0) {
-            setActiveChatRoomId(rooms[0].id);
-          }
-        }
-      } catch (error) {
-        console.error("Failed to fetch chat rooms:", error);
-      }
-    };
-
-    fetchChatRooms();
-  }, []);
-
-  const handleNewChat = async () => {
-    const token = localStorage.getItem("authToken");
-    if (!token) return;
-
-    try {
-      const response = await fetch("/api/chat_rooms", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ title: 'New Conversation' })
-      });
-
-      if (response.ok) {
-        const newRoom = await response.json();
-        setChatRooms([newRoom, ...chatRooms]);
-        setActiveChatRoomId(newRoom.id);
-        setMessages([]); 
-      }
-    } catch (error) {
-      console.error("Failed to create new chat room:", error);
-    }
-  };
-
-  useEffect(() => {
-    if (activeChatRoomId) {
-      chatService.loadChatHistory(activeChatRoomId);
-    }
-  }, [activeChatRoomId]);
-
 
   const handleMouseDown = (e) => {
     e.preventDefault();
@@ -239,20 +178,6 @@ const ChatSider = ({
       collapsedWidth={0}
     >
       <div className={styles.chat}>
-        <div className={styles.chatRoomHeader}>
-          <Button icon={<PlusOutlined />} onClick={handleNewChat} block>New Chat</Button>
-        </div>
-        <div className={styles.chatRoomList}>
-          {chatRooms.map(room => (
-            <div 
-              key={room.id}
-              className={`${styles.chatRoomItem} ${activeChatRoomId === room.id ? styles.active : ''}`}
-              onClick={() => setActiveChatRoomId(room.id)}
-            >
-              {room.title}
-            </div>
-          ))}
-        </div>
         <div className={styles["chat-header"]}>
           <Button onClick={onGenerateDiagram} disabled={isDiagramMaking}>
             {isDiagramMaking ? "Making..." : "Make Diagram"}

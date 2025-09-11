@@ -42,7 +42,6 @@
 }
 
 .menuButton {
-  display: none;
   background: transparent;
   border: none;
   color: var(--text-primary);
@@ -52,9 +51,6 @@
 @media (max-width: 768px) {
   .logo {
     margin-left: auto;
-  }
-  .menuButton {
-    display: block;
   }
   .teamInfo {
     font-size: smaller;

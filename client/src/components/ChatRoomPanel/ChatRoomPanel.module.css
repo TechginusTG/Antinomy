@@ -1,0 +1,65 @@
+
+.panel {
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 300px;
+  height: 100%;
+  background: var(--background-header);
+  opacity: 1;
+  border-right: 1px solid var(--border-color);
+  transition: left 0.3s ease-in-out;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+.panel.visible {
+  left: 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.header h3 {
+  margin: 0;
+}
+
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+.chatRoomList {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.chatRoomItem {
+  padding: 0.75rem;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.chatRoomItem:hover {
+  background-color: var(--background-color-tertiary);
+}
+
+.chatRoomItem.active {
+  background-color: var(--primary-color);
+  color: var(--text-color-on-primary);
+}
+
+.footer {
+  margin-top: 1rem;
+}

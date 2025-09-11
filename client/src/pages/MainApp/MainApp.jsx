@@ -1,3 +1,4 @@
+
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { Layout, Button, Modal, Tooltip } from "antd";
@@ -20,6 +21,7 @@ import CustomNode from "../../components/CustomNode/CustomNode";
 import ContextMenu from "../../components/ContextMenu/ContextMenu";
 import DiagramMessage from "../../components/DiagramMessage/DiagramMessage";
 import chatService from "../../utils/chatService";
+import ChatRoomPanel from "../../components/ChatRoomPanel/ChatRoomPanel";
 
 import { getLayoutedElements } from "../../utils/prettyDia.js";
 import SettingsModal from "../../components/SettingsModal/SettingsModal";
@@ -87,9 +89,13 @@ const MainApp = () => {
   });
 
   const [isSiderVisible, setIsSiderVisible] = useState(false);
+  const [isChatRoomPanelVisible, setIsChatRoomPanelVisible] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [isWelcomeModalVisible, setIsWelcomeModalVisible] = useState(false);
   const [conversationId, setConversationId] = useState(null);
+
+  const [chatRooms, setChatRooms] = useState([]);
+  const [activeChatRoomId, setActiveChatRoomId] = useState(null);
 
   const [isMobile, setIsMobile] = useState(false);
   const [showFileOptions, setShowFileOptions] = useState(false);
@@ -118,11 +124,14 @@ const MainApp = () => {
     };
   }, [showFileOptions]);
 
-  
-
   const toggleSider = () => {
     setIsSiderVisible(!isSiderVisible);
   };
+
+  const toggleChatRoomPanel = () => {
+    setIsChatRoomPanelVisible(!isChatRoomPanelVisible);
+  };
+
   const [completedQuests, setCompletedQuests] = useState(() => {
     const saved = localStorage.getItem("completedQuests");
     return saved ? JSON.parse(saved) : [];
@@ -140,6 +149,65 @@ const MainApp = () => {
       setCompletedQuests(completedQuests.filter((i) => i !== index));
     }
   };
+
+  useEffect(() => {
+    const fetchChatRooms = async () => {
+      const token = localStorage.getItem("authToken");
+      if (!token) return;
+
+      try {
+        const response = await fetch("/api/chat_rooms", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const rooms = await response.json();
+          setChatRooms(rooms);
+          if (rooms.length > 0 && !activeChatRoomId) {
+            setActiveChatRoomId(rooms[0].id);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch chat rooms:", error);
+      }
+    };
+
+    if (authStatus === 'loggedIn') {
+      fetchChatRooms();
+    }
+  }, [authStatus, activeChatRoomId]);
+
+  const handleNewChat = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
+
+    try {
+      const response = await fetch("/api/chat_rooms", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title: 'New Conversation' })
+      });
+
+      if (response.ok) {
+        const newRoom = await response.json();
+        setChatRooms([newRoom, ...chatRooms]);
+        setActiveChatRoomId(newRoom.id);
+        setChatLog([]); 
+      }
+    } catch (error) {
+      console.error("Failed to create new chat room:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (activeChatRoomId) {
+      chatService.loadChatHistory(activeChatRoomId);
+    }
+  }, [activeChatRoomId]);
 
   const validateToken = useCallback(async () => {
     // Welcome Modal 로직
@@ -244,9 +312,8 @@ const MainApp = () => {
     };
 
     const onConnect = () => {
-      const convId = localStorage.getItem('conversationId');
-      if (convId) {
-        chatService.loadChatHistory(convId);
+      if (activeChatRoomId) {
+        chatService.loadChatHistory(activeChatRoomId);
       }
     };
 
@@ -264,7 +331,7 @@ const MainApp = () => {
       chatService.offChatHistoryLoaded(handleChatHistoryLoaded);
       chatService.disconnect();
     };
-  }, [authStatus]); 
+  }, [authStatus, activeChatRoomId]); 
 
   useEffect(() => {
     localStorage.setItem("quests", JSON.stringify(quests));
@@ -273,10 +340,6 @@ const MainApp = () => {
   useEffect(() => {
     localStorage.setItem("completedQuests", JSON.stringify(completedQuests));
   }, [completedQuests]);
-
-  
-
-  
 
   useEffect(() => {
     document.body.setAttribute("data-theme", theme);
@@ -422,7 +485,7 @@ const MainApp = () => {
             body: JSON.stringify({
               diagramData,
               chatHistory: result.chatHistory || [],
-              conversationId: conversationId, 
+              conversationId: activeChatRoomId, 
             }),
           });
 
@@ -506,7 +569,7 @@ const MainApp = () => {
     };
     const newChatLog = [...chatLog, userMessage];
     setChatLog(newChatLog);
-    chatService.sendMessage(recommendation, newChatLog);
+    chatService.sendMessage(recommendation, newChatLog, activeChatRoomId);
   };
 
   const handleGenerateDiagram = () => {
@@ -561,10 +624,6 @@ const MainApp = () => {
     }
   }
 
-  
-
-  
-
   return (
     <Layout style={{ height: "100dvh" }}>
       <Helmet>
@@ -575,7 +634,7 @@ const MainApp = () => {
         <meta property="og:url" content="https://syncro.tg-antinomy.kro.kr/app" />
         <meta property="og:type" content="website" />
       </Helmet>
-      <Header className={styles["header"]} toggleSider={toggleSider} authStatus={authStatus} onLogout={handleLogout} />
+      <Header className={styles["header"]} toggleSider={toggleSider} toggleChatRoomPanel={toggleChatRoomPanel} authStatus={authStatus} onLogout={handleLogout} />
       <Layout>
         <ChatSider
           className={`${styles["chat-sider"]} ${ 
@@ -592,7 +651,7 @@ const MainApp = () => {
           onEdit={(messageId, newText) =>
             editMessage(messageId, newText, setChatLog)
           }
-          conversationId={conversationId}
+          activeChatRoomId={activeChatRoomId}
         />
         <Layout className={styles["content-layout"]}>
           <Content className={styles["main-content"]}>
@@ -694,6 +753,18 @@ const MainApp = () => {
           </Content>
         </Layout>
       </Layout>
+
+      <ChatRoomPanel
+        visible={isChatRoomPanelVisible}
+        onClose={() => setIsChatRoomPanelVisible(false)}
+        chatRooms={chatRooms}
+        activeChatRoomId={activeChatRoomId}
+        onSelectChatRoom={(id) => {
+          setActiveChatRoomId(id);
+          setIsChatRoomPanelVisible(false);
+        }}
+        onNewChat={handleNewChat}
+      />
 
       {contextMenu && (
         <ContextMenu
