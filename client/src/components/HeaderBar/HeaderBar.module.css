@@ -48,9 +48,20 @@
   font-size: 1.5rem;
 }
 
+.mobileMenuButton {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-primary);
+  font-size: 1.5rem;
+}
+
 @media (max-width: 768px) {
   .logo {
     margin-left: auto;
+  }
+  .mobileMenuButton {
+    display: block;
   }
   .teamInfo {
     font-size: smaller;

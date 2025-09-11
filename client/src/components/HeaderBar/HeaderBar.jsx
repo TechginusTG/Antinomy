@@ -48,7 +48,7 @@ const HeaderBar = ({ className, toggleSider, toggleChatRoomPanel, authStatus, on
     <Layout.Header className={`${styles.header} ${className}`}>
       <div className={styles.leftSection}>
         <Button
-          className={styles.menuButton}
+          className={styles.mobileMenuButton}
           icon={<MenuOutlined />}
           onClick={toggleSider}
         />
