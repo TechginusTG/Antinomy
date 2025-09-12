@@ -136,6 +136,13 @@ app.post("/api/register", async (req, res) => {
       password: hashedPassword
     }).returning(['user_id', 'id', 'name']);
 
+    const initialChatRoomId = randomUUID();
+    await db('chat_rooms').insert({
+      id: initialChatRoomId, 
+      user_id: newUser.user_id,
+      title: 'ChatRoom 1'
+    });
+
     const token = jwt.sign({ userId: newUser.user_id, name: newUser.name }, process.env.JWT_SECRET || 'your_default_secret', { expiresIn: '1h' });
 
     res.status(201).json({ success: true, message: "회원가입이 완료되었습니다.", token: token });
