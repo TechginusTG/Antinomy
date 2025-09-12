@@ -133,8 +133,7 @@ app.post("/api/register", async (req, res) => {
     const [newUser] = await db('users').insert({
       id: id,
       name: name,
-      password: hashedPassword,
-      conversation_id: conversationId
+      password: hashedPassword
     }).returning(['user_id', 'id', 'name']);
 
     const token = jwt.sign({ userId: newUser.user_id, name: newUser.name }, process.env.JWT_SECRET || 'your_default_secret', { expiresIn: '1h' });
