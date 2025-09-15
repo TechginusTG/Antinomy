@@ -69,7 +69,7 @@ router.get('/', authenticateToken, async (req, res) => {
     const likedChats = await db('liked_chats')
       .join('chats', 'liked_chats.chat_id', 'chats.id')
       .where('liked_chats.user_id', userId)
-      .select('chats.*, liked_chats.mode', 'liked_chats.created_at as liked_at')
+      .select('chats.*', 'liked_chats.mode', 'liked_chats.created_at as liked_at')
       .orderBy('liked_at', 'desc');
 
     res.json({ success: true, data: likedChats });
