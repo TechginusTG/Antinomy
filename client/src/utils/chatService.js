@@ -90,6 +90,39 @@ class ChatService {
     }
   }
 
+  async likeMessage(chatId, mode) {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.error('Authentication token not found.');
+      return false;
+    }
+
+    try {
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ chatId, mode }),
+      });
+
+      if (response.ok) {
+        console.log(`Message ${chatId} liked successfully.`);
+        return true;
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to like message:', errorData.message);
+        alert(`Error: ${errorData.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.error('Error liking message:', error);
+      alert('A network error occurred. Please try again.');
+      return false;
+    }
+  }
+
   makeDiagram(payload, callback) {
     if (this.socket) {
       this.socket.emit("make diagram", payload, (response) => {
