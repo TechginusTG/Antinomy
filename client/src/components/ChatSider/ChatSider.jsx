@@ -203,7 +203,7 @@ const ChatSider = ({
               >
                 {msg.sender === "ai" ? (
                   <div className={styles.markdownContent}>
-                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    <ReactMarkdown>{msg.content.replace(/KEYWORDS:.*/s, '').trim()}</ReactMarkdown>
                   </div>
                 ) : (
                   msg.content
