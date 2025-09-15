@@ -39,6 +39,7 @@ const useFlowStore = create((set, get) => ({
   isSettingsOpen: false,
   isProfileModalOpen: false,
   isQuestOpen: false,
+  isLikedMessagesModalOpen: false,
   isConnected: false,
   editingNodeId: null,
   recommendations: [],
@@ -92,6 +93,7 @@ const useFlowStore = create((set, get) => ({
   setIsSettingsOpen: (isOpen) => set({ isSettingsOpen: isOpen }),
   setIsProfileModalOpen: (isOpen) => set({ isProfileModalOpen: isOpen }),
   setIsQuestOpen: (isOpen) => set({ isQuestOpen: isOpen }),
+  setIsLikedMessagesModalOpen: (isOpen) => set({ isLikedMessagesModalOpen: isOpen }),
   setEditingNodeId: (nodeId) => set({ editingNodeId: nodeId }),
 
   setRecommendations: (newRecommendations) =>

@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from 'react-router-dom';
 import { Layout, Button, Popover } from "antd";
-import { MenuOutlined, UserOutlined, MessageOutlined } from "@ant-design/icons";
+import { MenuOutlined, UserOutlined, MessageOutlined, StarOutlined } from "@ant-design/icons";
 import ConnectionStatus from "../ConnectionStatus/ConnectionStatus";
 import styles from "./HeaderBar.module.css";
 import logo from "../../assets/img/logo.png"; // Adjust the path as necessary
@@ -10,6 +10,7 @@ import useFlowStore from "../../utils/flowStore";
 const HeaderBar = ({ className, toggleSider, toggleChatRoomPanel, authStatus, onLogout }) => {
   const theme = useFlowStore((state) => state.theme);
   const setIsProfileModalOpen = useFlowStore((state) => state.setIsProfileModalOpen);
+  const setIsLikedMessagesModalOpen = useFlowStore((state) => state.setIsLikedMessagesModalOpen);
   const navigate = useNavigate();
 
   const handleAuthActionClick = () => {
@@ -67,9 +68,14 @@ const HeaderBar = ({ className, toggleSider, toggleChatRoomPanel, authStatus, on
         <h2 className={styles.title}>ANTINOMY</h2>
         <ConnectionStatus />
         {authStatus === 'loggedIn' && (
-          <Button onClick={() => setIsProfileModalOpen(true)} className={styles.authButton}>
-            <UserOutlined /> Profile
-          </Button>
+          <>
+            <Button onClick={() => setIsProfileModalOpen(true)} className={styles.authButton}>
+              <UserOutlined /> Profile
+            </Button>
+            <Button onClick={() => setIsLikedMessagesModalOpen(true)} className={styles.authButton}>
+              <StarOutlined /> Likes
+            </Button>
+          </>
         )}
         {authStatus === 'guest' && (
           <Button onClick={handleAuthActionClick} className={styles.authButton}>

@@ -28,6 +28,7 @@ import SettingsModal from "../../components/SettingsModal/SettingsModal";
 import QuestModal from "../../components/QuestModal/QuestModal";
 import GuideModal from "../../components/GuideModal/GuideModal";
 import ProfileModal from "../../components/ProfileModal/ProfileModal";
+import LikedMessagesModal from "../../components/LikedMessagesModal/LikedMessagesModal";
 import Login from "../Login/Login";
 import Register from "../Register/Register";
 
@@ -838,6 +839,7 @@ const MainApp = () => {
               onRecommendationClick={onRecommendationClick}
             />
             <ProfileModal />
+            <LikedMessagesModal />
           </Content>
         </Layout>
       </Layout>
