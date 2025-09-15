@@ -58,15 +58,36 @@ Antinomy는 아래 웹사이트에서 바로 이용하실 수 있습니다.
     ```
 
 3.  **환경 변수 설정**
-    프로젝트 루트 디렉토리에 `.env` 파일을 생성하고, 발급받은 OpenAI API 키를 추가합니다.
+    프로젝트 루트 디렉토리에 `.env` 파일을 생성하고, 다음 내용을 추가합니다.
+
     ```
+    # OpenAI API Key (필수)
     OPENAI_API_KEY=your_openai_api_key
+
+    # JWT (JSON Web Token) 비밀 키 (필수)
+    # 사용자 인증 토큰 생성 및 검증에 사용됩니다. 보안을 위해 강력하고 유니크한 문자열을 사용하세요.
+    JWT_SECRET=your_jwt_secret_key
+
+    # 데이터베이스 연결 URL (필수)
+    # Knex.js를 통해 PostgreSQL 데이터베이스에 연결하는 데 사용됩니다.
+    # 예: postgresql://user:password@host:port/database
+    DATABASE_URL=your_database_connection_string
+
+    # 프론트엔드 소켓 연결 URL (선택 사항, 로컬 개발 시 기본값 사용)
+    # 프로덕션 환경에서는 프론트엔드가 백엔드 소켓 서버에 연결할 주소를 지정합니다.
+    # 예: VITE_SOCKET_URL=https://api.yourdomain.com
+    VITE_SOCKET_URL=
+
+    # 환경 (프로덕션 서버 실행 시 필요)
+    # 'production'으로 설정하면 프로덕션 빌드 및 최적화가 적용됩니다.
+    # npm run dev 사용 시에는 자동으로 'development'로 설정됩니다.
+    NODE_ENV=production
     ```
 
 4.  **데이터베이스 마이그레이션**
     최신 데이터베이스 스키마를 적용합니다.
     ```bash
-    npx knex migrate:latest
+    npx knex migrate:latest --knexfile knexfile.cjs
     ```
 
 5.  **개발 서버 실행**
