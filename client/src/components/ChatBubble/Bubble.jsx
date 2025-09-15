@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import { FiEdit, FiTrash2, FiThumbsUp } from 'react-icons/fi';
 import styles from './Bubble.module.css';
 
 const Bubble = ({
@@ -9,6 +9,7 @@ const Bubble = ({
     isUser,
     onDelete,
     onEdit,
+    onLike, 
     chatWidth,
     isMobile,
     chatFontSize,
@@ -38,7 +39,7 @@ const Bubble = ({
 
     return (
         <li
-            className={`${className} ${isUser ? styles.userBubbleContainer : ''}`}
+            className={`${className} ${isUser ? styles.userBubbleContainer : styles.aiBubbleContainer}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             style={{ fontSize: finalFontSize }}
@@ -54,6 +55,16 @@ const Bubble = ({
                     </button>
                     <button onClick={() => onDelete(id)} className={styles.bubbleActionBtn}>
                         <FiTrash2 />
+                    </button>
+                </div>
+            )}
+            {!isUser && isHovered && (
+                <div className={styles.bubbleActions}>
+                    <button
+                        onClick={() => onLike(id)}
+                        className={styles.bubbleActionBtn}
+                    >
+                        <FiThumbsUp />
                     </button>
                 </div>
             )}

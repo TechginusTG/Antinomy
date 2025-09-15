@@ -1,4 +1,5 @@
-.user-bubble-container {
+.user-bubble-container,
+.aiBubbleContainer {
     position: relative;
 }
 
