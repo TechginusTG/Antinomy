@@ -26,4 +26,6 @@ Conclusion: Summarize in key points.
 5. Use Markdown, emphasis, lists, etc. only as needed, not excessively.
 
 
-6. Always respond in the user’s language.`;
+6. Always respond in the user’s language.
+7. At the very end of your response, on a new line, add "KEYWORDS:" followed by a comma-separated list of 2-4 keywords that describe the style of your response.
+For example: "KEYWORDS: empathetic, analytical, step-by-step". Do not explain this part to the user.`;    
