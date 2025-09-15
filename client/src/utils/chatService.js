@@ -163,6 +163,35 @@ class ChatService {
       this.socket = null;
     }
   }
+
+  async getLikedMessages() {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.error('Authentication token not found.');
+      return [];
+    }
+
+    try {
+      const response = await fetch('/api/feedback', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        return result.data; 
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to fetch liked messages:', errorData.message);
+        return [];
+      }
+    } catch (error) {
+      console.error('Error fetching liked messages:', error);
+      return [];
+    }
+  }
 }
 
 const chatService = new ChatService();

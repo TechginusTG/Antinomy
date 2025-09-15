@@ -93,6 +93,7 @@ const MainApp = () => {
   const [isGuideOpen, setIsGuideOpen] = useState(false);
   const [isWelcomeModalVisible, setIsWelcomeModalVisible] = useState(false);
   const [conversationId, setConversationId] = useState(null);
+  const [likedChatIds, setLikedChatIds] = useState(new Set());
 
   const [chatRooms, setChatRooms] = useState([]);
   const [activeChatRoomId, setActiveChatRoomId] = useState(null);
@@ -358,6 +359,22 @@ const MainApp = () => {
   useEffect(() => {
     validateToken();
   }, [validateToken]);
+
+  useEffect(() => {
+    const fetchLikedChats = async () => {
+      const likedChats = await chatService.getLikedMessages();
+      if (likedChats && likedChats.length > 0) {
+        const ids = likedChats.map(chat => chat.id);
+        setLikedChatIds(new Set(ids));
+      }
+    };
+
+    if (authStatus === 'loggedIn') {
+      fetchLikedChats();
+    } else {
+      setLikedChatIds(new Set());
+    }
+  }, [authStatus]);
 
   useEffect(() => {
     console.log("Auth status is:", authStatus, "Setting up connection...");
@@ -671,6 +688,15 @@ const MainApp = () => {
     setIsWelcomeModalVisible(false);
   };
 
+  const handleLikeMessage = useCallback(async (chatId) => {
+    const currentMode = useFlowStore.getState().mode;
+    const success = await chatService.likeMessage(chatId, currentMode);
+
+    if (success) {
+      setLikedChatIds(prevIds => new Set(prevIds).add(chatId));
+    }
+  }, []);
+
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     setAuthStatus('loggedOut');
@@ -711,6 +737,8 @@ const MainApp = () => {
           onEdit={(messageId, newText) =>
             editMessage(messageId, newText, setChatLog)
           }
+          onLike={handleLikeMessage}
+          likedChatIds={likedChatIds}
           activeChatRoomId={activeChatRoomId}
         />
         <Layout className={styles["content-layout"]}>

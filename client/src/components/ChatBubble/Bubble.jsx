@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FiEdit, FiTrash2, FiThumbsUp } from 'react-icons/fi';
+import { AiFillLike } from 'react-icons/ai';
 import styles from './Bubble.module.css';
 
 const Bubble = ({
@@ -9,7 +10,8 @@ const Bubble = ({
     isUser,
     onDelete,
     onEdit,
-    onLike, 
+    onLike,
+    isLiked,
     chatWidth,
     isMobile,
     chatFontSize,
@@ -63,8 +65,9 @@ const Bubble = ({
                     <button
                         onClick={() => onLike(id)}
                         className={styles.bubbleActionBtn}
+                        disabled={isLiked}
                     >
-                        <FiThumbsUp />
+                        {isLiked ? <AiFillLike /> : <FiThumbsUp />}
                     </button>
                 </div>
             )}

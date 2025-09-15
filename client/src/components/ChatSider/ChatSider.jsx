@@ -25,6 +25,8 @@ const ChatSider = ({
   isDiagramMaking,
   onResetQuests,
   onDelete,
+  onLike,
+  likedChatIds,
   isSiderVisible,
   activeChatRoomId,
 }) => {
@@ -193,6 +195,8 @@ const ChatSider = ({
                 isUser={msg.sender === "user"}
                 onDelete={onDelete}
                 onEdit={() => handleOpenEditModal(msg)}
+                onLike={onLike}
+                isLiked={likedChatIds.has(msg.id)}
                 chatWidth={chatWidth}
                 isMobile={isMobile}
                 chatFontSize={chatFontSize}
