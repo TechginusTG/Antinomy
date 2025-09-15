@@ -16,6 +16,7 @@ import { randomUUID } from 'crypto';
 import userRoutes from './routes/userRoutes.js';
 import diagramRoutes from './routes/diagramRoutes.js';
 import chatRoomRoutes from './routes/chatRoomRoutes.js';
+import feedbackRoutes from './routes/feedbackRoutes.js';
 import authenticateToken from './authenticateToken.js';
 
 // ESM에서 __dirname을 사용하기 위한 설정
@@ -30,6 +31,7 @@ app.use(express.json());
 app.use('/api/user', userRoutes);
 app.use('/api/diagram', diagramRoutes);
 app.use('/api/chat_rooms', chatRoomRoutes);
+app.use('/api/feedback', feedbackRoutes);
 // Canonical host 리다이렉션 미들웨어
 app.use((req, res, next) => {
   const canonicalHost = 'syncro.tg-antinomy.kro.kr';
