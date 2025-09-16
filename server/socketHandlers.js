@@ -298,7 +298,7 @@ export function registerSocketHandlers(io) {
         .replace(
           "__NODES__",
           JSON.stringify(
-            diagramState.nodes.map((n) => n.data.label),
+            (diagramState?.nodes || []).map((n) => n.data.label),
             null,
             2
           )
