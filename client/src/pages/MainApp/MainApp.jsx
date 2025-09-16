@@ -1,4 +1,3 @@
-
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
 import { Layout, Button, Modal, Tooltip } from "antd";
@@ -69,7 +68,9 @@ const MainApp = () => {
     setTheme, // setter 추가
     customThemeColors,
     getCustomColorVarName,
+    recommendations,
     setRecommendations,
+    clearRecommendations,
     setIsTyping,
     setChatFontSize, // setter 추가
     setMode, // setter 추가
@@ -395,6 +396,10 @@ const MainApp = () => {
       }
     };
 
+    const handleNewRecommendations = (newRecommendations) => {
+      setRecommendations(newRecommendations);
+    };
+
     chatService.connect(
       (message) => {
         useFlowStore.getState().setIsTyping(false);
@@ -404,12 +409,14 @@ const MainApp = () => {
     );
 
     chatService.onChatHistoryLoaded(handleChatHistoryLoaded);
+    chatService.onNewRecommendations(handleNewRecommendations);
 
     return () => {
       chatService.offChatHistoryLoaded(handleChatHistoryLoaded);
+      chatService.offNewRecommendations(handleNewRecommendations);
       chatService.disconnect();
     };
-  }, [authStatus, activeChatRoomId]); 
+  }, [authStatus, activeChatRoomId, setRecommendations]); 
 
   useEffect(() => {
     localStorage.setItem("quests", JSON.stringify(quests));
@@ -643,11 +650,11 @@ const MainApp = () => {
       id: Date.now(),
       content: recommendation,
       sender: "user",
-      hasCodeBlock: recommendation.includes("```"),
     };
     const newChatLog = [...chatLog, userMessage];
     setChatLog(newChatLog);
     chatService.sendMessage(recommendation, newChatLog, activeChatRoomId);
+    clearRecommendations();
   };
 
   const handleGenerateDiagram = () => {
@@ -741,6 +748,9 @@ const MainApp = () => {
           onLike={handleLikeMessage}
           likedChatIds={likedChatIds}
           activeChatRoomId={activeChatRoomId}
+          recommendations={recommendations}
+          onRecommendationClick={onRecommendationClick}
+          onClearRecommendations={clearRecommendations}
         />
         <Layout className={styles["content-layout"]}>
           <Content className={styles["main-content"]}>

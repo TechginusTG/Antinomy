@@ -29,14 +29,13 @@ const ChatSider = ({
   likedChatIds,
   isSiderVisible,
   activeChatRoomId,
+  recommendations,
+  onRecommendationClick,
+  onClearRecommendations,
 }) => {
   const {
     chatWidth,
     setChatWidth,
-    resetFlow,
-    recommendations,
-    clearRecommendations,
-    setRecommendations,
     chatFontSize,
     isTyping,
     setIsTyping,
@@ -100,18 +99,6 @@ const ChatSider = ({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  useEffect(() => {
-    const handleNewRecommendations = (newRecommendations) => {
-      setRecommendations(newRecommendations);
-    };
-
-    chatService.onNewRecommendations(handleNewRecommendations);
-
-    return () => {
-      chatService.offNewRecommendations(handleNewRecommendations);
-    };
-  }, [setRecommendations]);
 
   useEffect(() => {
     if (chatLogRef.current) {
@@ -241,11 +228,8 @@ const ChatSider = ({
         <div className={styles["chat-footer"]}>
           <RecommendationList
             recommendations={recommendations}
-            onRecommendationClick={(rec) => {
-              sendMessage(rec);
-              clearRecommendations();
-            }}
-            onClearRecommendations={clearRecommendations}
+            onRecommendationClick={onRecommendationClick}
+            onClearRecommendations={onClearRecommendations}
           />
           <ChatInput onSendMessage={sendMessage} key={activeChatRoomId} />
         </div>
