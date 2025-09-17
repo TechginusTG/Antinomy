@@ -12,7 +12,7 @@ const EXP_REWARDS = {
 
 const userSpecial = {}; 
 
-function handleAiResponse(socket, reply, conversationId) {
+function handleAiResponse(socket, reply, conversationId, userMessageDbId = null) {
   const saveAiMessage = async (message) => {
     if (socket.userId && conversationId && message) {
       try {
@@ -36,7 +36,7 @@ function handleAiResponse(socket, reply, conversationId) {
     if (parsedReply.chat_response && parsedReply.recommendations) {
       const chatMessage = parsedReply.chat_response;
       saveAiMessage(chatMessage);
-      socket.emit("chat message", { message: chatMessage });
+      socket.emit("chat message", { message: chatMessage, id: userMessageDbId });
       socket.emit("new_recommendations", parsedReply.recommendations);
       console.log(`Gemini 응답 (추천 포함) [${socket.id}]:`, parsedReply);
     } else {
@@ -44,8 +44,8 @@ function handleAiResponse(socket, reply, conversationId) {
     }
   } catch (parseError) {
     saveAiMessage(reply);
+    socket.emit("chat message", { message: reply, id: userMessageDbId });
     console.log(`Gemini 응답 [${socket.id}]:`, reply);
-    socket.emit("chat message", { message: reply });
   }
 }
 
@@ -82,7 +82,7 @@ function convertToGeminiHistory(chatHistory, socketId) {
   return history;
 }
 
-async function callGemini(socket, chatLog, conversationId) {
+async function callGemini(socket, chatLog, conversationId, userMessageDbId = null) { // userMessageDbId 추가
   if (!genAI) {
     console.error("Gemini client is not initialized. Check your GEMINI_API_KEY.");
     socket.emit("chat message", { message: "AI 서비스가 설정되지 않았습니다. 💀" });
@@ -101,7 +101,7 @@ async function callGemini(socket, chatLog, conversationId) {
     const result = await chat.sendMessage(lastMessage.parts[0].text);
     const reply = result.response.text();
 
-    handleAiResponse(socket, reply, conversationId);
+    handleAiResponse(socket, reply, conversationId, userMessageDbId);
     return true;
   } catch (err) {
     console.error("Gemini Error:", err);
@@ -157,16 +157,26 @@ export function registerSocketHandlers(io) {
     socket.emit("ready");
     console.log(`클라이언트 연결: ${socket.id}`);
 
+    const userSpecial = {};
+
     socket.on("chat message", async ({ msgPayload = {}, chatLog }) => {
       const text = msgPayload.text ?? "";
       const mode = msgPayload.mode ?? "basic";
       const userNote = msgPayload.userNote ?? "";
       const conversationId = msgPayload.conversationId;
 
+      let dbGeneratedId = null; 
+
       if (socket.userId && conversationId && text) {
         try {
-          await db("chats").insert({ user_id: socket.userId, conversation_id: conversationId, sender: "user", message: text });
-          console.log(`[DB] User message saved for user: ${socket.userId}, conversation: ${conversationId}`);
+          const [id] = await db("chats").insert({ 
+            user_id: socket.userId,
+            conversation_id: conversationId,
+            sender: "user",
+            message: text,
+          }).returning('id');
+          dbGeneratedId = id; 
+          console.log(`[DB] User message saved for user: ${socket.userId}, conversation: ${conversationId}, ID: ${dbGeneratedId}`);
         } catch (error) {
           console.error("[DB] Error saving user message:", error);
         }
@@ -176,7 +186,7 @@ export function registerSocketHandlers(io) {
       userSpecial[socket.id].mode = mode;
       userSpecial[socket.id].userNote = userNote;
 
-      const success = await callGemini(socket, chatLog, conversationId);
+      const success = await callGemini(socket, chatLog, conversationId, dbGeneratedId);
 
       if (success) {
         await grantExp(socket, socket.userId, EXP_REWARDS.CHAT);
@@ -198,7 +208,7 @@ export function registerSocketHandlers(io) {
           return;
         }
         const historyForAI = allMessages.slice(0, editedMessageIndex + 1).map((msg) => ({ sender: msg.sender, content: msg.message }));
-        await callGemini(socket, historyForAI, conversationId);
+        await callGemini(socket, historyForAI, conversationId, messageId); 
       } catch (error) {
         console.error(`[DB] Error during message edit for message ${messageId}:`, error);
         socket.emit("chat message", { message: "메시지 수정 중 오류가 발생했습니다." });
