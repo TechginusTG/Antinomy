@@ -23,6 +23,7 @@
   "description": "",
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
+    "@google/generative-ai": "^0.24.1",
     "antd": "^5.27.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
