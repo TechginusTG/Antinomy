@@ -1,5 +1,8 @@
 # Antinomy Alpha 0.2.0
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+
 AI와 함께, 당신의 아이디어를 현실로 만드는 첫 걸음.
 
 ## ✨ Alpha 0.2.0 주요 변경 사항
