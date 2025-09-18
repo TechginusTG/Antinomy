@@ -39,15 +39,15 @@ const { Content } = Layout;
 const nodeTypes = { custom: CustomNode };
 
 const MainApp = () => {
-  const [authStatus, setAuthStatus] = useState('loggedOut'); 
-  const [authView, setAuthView] = useState('login'); // 'login' or 'register'
+  const [authStatus, setAuthStatus] = useState("loggedOut");
+  const [authView, setAuthView] = useState("login"); // 'login' or 'register'
   const {
     nodes,
     edges,
     onNodesChange,
     onEdgesChange,
     onConnect,
-    onNodeDragStop, 
+    onNodeDragStop,
     undo,
     redo,
     save,
@@ -108,13 +108,16 @@ const MainApp = () => {
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (fileOptionsRef.current && !fileOptionsRef.current.contains(event.target)) {
+      if (
+        fileOptionsRef.current &&
+        !fileOptionsRef.current.contains(event.target)
+      ) {
         setShowFileOptions(false);
       }
     };
@@ -177,7 +180,7 @@ const MainApp = () => {
       }
     };
 
-    if (authStatus === 'loggedIn') {
+    if (authStatus === "loggedIn") {
       fetchChatRooms();
     }
   }, [authStatus, activeChatRoomId]);
@@ -188,19 +191,19 @@ const MainApp = () => {
 
     try {
       const response = await fetch("/api/chat_rooms", {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ title: 'New Conversation' })
+        body: JSON.stringify({ title: "New Conversation" }),
       });
 
       if (response.ok) {
         const newRoom = await response.json();
         setChatRooms([newRoom, ...chatRooms]);
         setActiveChatRoomId(newRoom.id);
-        setChatLog([]); 
+        setChatLog([]);
       }
     } catch (error) {
       console.error("Failed to create new chat room:", error);
@@ -208,30 +211,26 @@ const MainApp = () => {
   };
 
   const handleRenameChatRoom = async (roomId) => {
-    const newTitle = prompt('Enter new chat room title:');
+    const newTitle = prompt("Enter new chat room title:");
     if (!newTitle) return;
 
     const token = localStorage.getItem("authToken");
     if (!token) return;
 
     try {
-      const response = await fetch(`/api/chat_rooms/${roomId}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ title: newTitle }),
-        }
-      );
+      const response = await fetch(`/api/chat_rooms/${roomId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title: newTitle }),
+      });
 
       if (response.ok) {
         const updatedRoom = await response.json();
         setChatRooms(
-          chatRooms.map((room) =>
-            room.id === roomId ? updatedRoom : room
-          )
+          chatRooms.map((room) => (room.id === roomId ? updatedRoom : room))
         );
       }
     } catch (error) {
@@ -240,26 +239,27 @@ const MainApp = () => {
   };
 
   const handleDeleteChatRoom = async (roomId) => {
-    if (!window.confirm('Are you sure you want to delete this chat room?')) return;
+    if (!window.confirm("Are you sure you want to delete this chat room?"))
+      return;
 
     const token = localStorage.getItem("authToken");
     if (!token) return;
 
     try {
-      const response = await fetch(`/api/chat_rooms/${roomId}`,
-        {
-          method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`/api/chat_rooms/${roomId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.ok) {
         const newChatRooms = chatRooms.filter((room) => room.id !== roomId);
         setChatRooms(newChatRooms);
         if (activeChatRoomId === roomId) {
-          setActiveChatRoomId(newChatRooms.length > 0 ? newChatRooms[0].id : null);
+          setActiveChatRoomId(
+            newChatRooms.length > 0 ? newChatRooms[0].id : null
+          );
         }
       }
     } catch (error) {
@@ -282,35 +282,37 @@ const MainApp = () => {
       localStorage.setItem("hasVisited", "true");
     }
 
-    const token = localStorage.getItem('authToken');
-    const localConversationId = localStorage.getItem('conversationId');
+    const token = localStorage.getItem("authToken");
+    const localConversationId = localStorage.getItem("conversationId");
 
     if (token) {
       try {
-        const headers = { 'Authorization': `Bearer ${token}` };
+        const headers = { Authorization: `Bearer ${token}` };
         if (localConversationId) {
-          headers['X-Conversation-ID'] = localConversationId;
+          headers["X-Conversation-ID"] = localConversationId;
         }
 
-        const response = await fetch('/api/user/me', { headers });
-        
+        const response = await fetch("/api/user/me", { headers });
+
         if (response.ok) {
           const userData = await response.json();
           useUserStore.getState().login(userData);
-          
+
           if (userData.conversationId) {
             setConversationId(userData.conversationId);
-            localStorage.setItem('conversationId', userData.conversationId);
+            localStorage.setItem("conversationId", userData.conversationId);
           }
-          
-          setAuthStatus('loggedIn');
+
+          setAuthStatus("loggedIn");
 
           // --- NEW: 설정 동기화 로직 ---
           try {
-            const settingsResponse = await fetch('/api/user/settings', { headers });
+            const settingsResponse = await fetch("/api/user/settings", {
+              headers,
+            });
             if (settingsResponse.ok) {
               const settingsData = await settingsResponse.json();
-              
+
               // 1. userStore에 마스터 데이터 저장
               setUserSettings(settingsData);
 
@@ -329,7 +331,7 @@ const MainApp = () => {
 
           // Fetch diagram data after successful login
           try {
-            const diagramResponse = await fetch('/api/diagram', { headers });
+            const diagramResponse = await fetch("/api/diagram", { headers });
             if (diagramResponse.ok && diagramResponse.status !== 204) {
               const diagram = await diagramResponse.json();
               if (diagram && diagram.diagram_data) {
@@ -344,17 +346,16 @@ const MainApp = () => {
             console.error("Failed to fetch diagram:", error);
             localStorage.removeItem("diagram-data");
           }
-
         } else {
-          localStorage.removeItem('authToken');
-          setAuthStatus('loggedOut');
+          localStorage.removeItem("authToken");
+          setAuthStatus("loggedOut");
         }
       } catch (error) {
         console.error("Token validation error:", error);
-        setAuthStatus('loggedOut');
+        setAuthStatus("loggedOut");
       }
     } else {
-      setAuthStatus('loggedOut');
+      setAuthStatus("loggedOut");
     }
     useFlowStore.getState();
   }, [setTheme, setChatWidth, setChatFontSize, setMode, setUserSettings]);
@@ -367,12 +368,12 @@ const MainApp = () => {
     const fetchLikedChats = async () => {
       const likedChats = await chatService.getLikedMessages();
       if (likedChats && likedChats.length > 0) {
-        const ids = likedChats.map(chat => chat.id);
+        const ids = likedChats.map((chat) => chat.id);
         setLikedChatIds(new Set(ids));
       }
     };
 
-    if (authStatus === 'loggedIn') {
+    if (authStatus === "loggedIn") {
       fetchLikedChats();
     } else {
       setLikedChatIds(new Set());
@@ -384,10 +385,10 @@ const MainApp = () => {
 
     if (authStatus === null) return;
 
-    chatService.disconnect(); 
+    chatService.disconnect();
 
     const handleChatHistoryLoaded = (history) => {
-      console.log('Chat history loaded from DB:', history);
+      console.log("Chat history loaded from DB:", history);
       setChatLog([...history]);
     };
 
@@ -401,32 +402,43 @@ const MainApp = () => {
       setRecommendations(newRecommendations);
     };
 
-    chatService.connect(
-      (data) => {
-        console.log("Received chat data from server:", data);
-        setIsTyping(false);
-        if (data.isEdit) {
-          setChatLog(prevChatLog => 
-            prevChatLog.map(msg => 
-              msg.id === data.aiMessage.id ? data.aiMessage : msg
-            )
-          );
-        } else {
-          setChatLog((prevChatLog) => [...prevChatLog, data.aiMessage]);
-        }
-      },
-      onConnect
-    );
+    chatService.connect((data) => {
+      console.log("Received chat data from server:", data);
+      setIsTyping(false);
+      if (data.isEdit) {
+        setChatLog((prevChatLog) =>
+          prevChatLog.map((msg) =>
+            msg.id === data.aiMessage.id ? data.aiMessage : msg
+          )
+        );
+      } else {
+        setChatLog((prevChatLog) => [...prevChatLog, data.aiMessage]);
+      }
+    }, onConnect);
 
     chatService.onChatHistoryLoaded(handleChatHistoryLoaded);
     chatService.onNewRecommendations(handleNewRecommendations);
 
+    const handleMessagesDeleted = ({ messageId }) => {
+      setChatLog((prevChatLog) => {
+        const messageIndex = prevChatLog.findIndex(
+          (msg) => msg.id === messageId
+        );
+        if (messageIndex > -1) {
+          return prevChatLog.slice(0, messageIndex);
+        }
+        return prevChatLog;
+      });
+    };
+    chatService.onMessagesDeleted(handleMessagesDeleted);
+
     return () => {
       chatService.offChatHistoryLoaded(handleChatHistoryLoaded);
       chatService.offNewRecommendations(handleNewRecommendations);
+      chatService.offMessagesDeleted(handleMessagesDeleted);
       chatService.disconnect();
     };
-  }, [authStatus, activeChatRoomId, setRecommendations]); 
+  }, [authStatus, activeChatRoomId, setRecommendations]);
 
   useEffect(() => {
     localStorage.setItem("quests", JSON.stringify(quests));
@@ -460,19 +472,14 @@ const MainApp = () => {
 
   const exportHandler = useCallback(() => {
     const defaultName = "flow-diagram";
-    const userInput = prompt(
-      "저장할 파일 이름을 입력하세요:",
-      defaultName
-    );
+    const userInput = prompt("저장할 파일 이름을 입력하세요:", defaultName);
 
     if (userInput === null) {
       return;
     }
 
     const filenameBase =
-      userInput.trim() === ""
-        ? defaultName
-        : userInput.trim();
+      userInput.trim() === "" ? defaultName : userInput.trim();
 
     const sanitizedFilenameBase = filenameBase
       .replace(/[\/:*?'"<>|]/g, "_")
@@ -485,9 +492,9 @@ const MainApp = () => {
 
   useEffect(() => {
     const handleKeyDown = (event) => {
-      const isUndo = (event.ctrlKey || event.metaKey) && event.key === 'z';
-      const isRedo = (event.ctrlKey || event.metaKey) && event.key === 'y';
-      const isSave = (event.ctrlKey || event.metaKey) && event.key === 's';
+      const isUndo = (event.ctrlKey || event.metaKey) && event.key === "z";
+      const isRedo = (event.ctrlKey || event.metaKey) && event.key === "y";
+      const isSave = (event.ctrlKey || event.metaKey) && event.key === "s";
 
       if (isUndo) {
         event.preventDefault();
@@ -515,13 +522,13 @@ const MainApp = () => {
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       event.preventDefault();
-      event.returnValue = '';
+      event.returnValue = "";
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
 
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
   }, []);
 
@@ -539,7 +546,7 @@ const MainApp = () => {
       if (fileInputRef.current) {
         fileInputRef.current.value = null;
       }
-      return; 
+      return;
     }
 
     const reader = new FileReader();
@@ -562,38 +569,43 @@ const MainApp = () => {
 
         // 데이터베이스에 임포트된 데이터 덮어쓰기 요청
         try {
-          const token = localStorage.getItem('authToken');
-          if (!token || authStatus !== 'loggedIn') {
-            console.warn("Not logged in. Import will not be synced to the database.");
+          const token = localStorage.getItem("authToken");
+          if (!token || authStatus !== "loggedIn") {
+            console.warn(
+              "Not logged in. Import will not be synced to the database."
+            );
             return;
           }
 
           const { nodes, edges } = useFlowStore.getState();
           const diagramData = { nodes, edges };
 
-          const response = await fetch('/api/user/import-request', {
-            method: 'POST',
+          const response = await fetch("/api/user/import-request", {
+            method: "POST",
             headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
               diagramData,
               chatHistory: result.chatHistory || [],
-              conversationId: activeChatRoomId, 
+              conversationId: activeChatRoomId,
             }),
           });
 
           if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to sync imported data.');
+            throw new Error(
+              errorData.message || "Failed to sync imported data."
+            );
           }
 
-          console.log('Imported data successfully synced to the database.');
-          
+          console.log("Imported data successfully synced to the database.");
         } catch (error) {
-          console.error('Error syncing imported data:', error);
-          alert(`An error occurred while syncing the imported file: ${error.message}`);
+          console.error("Error syncing imported data:", error);
+          alert(
+            `An error occurred while syncing the imported file: ${error.message}`
+          );
         }
       }
 
@@ -643,17 +655,20 @@ const MainApp = () => {
 
   const onPaneClick = useCallback(() => setContextMenu(null), []);
 
-  const onAddNode = useCallback((shape) => {
-    if (contextMenu && reactFlowInstance && reactFlowWrapper.current) {
-      const bounds = reactFlowWrapper.current.getBoundingClientRect();
-      const position = reactFlowInstance.project({
-        x: contextMenu.x - bounds.left,
-        y: contextMenu.y - bounds.top,
-      });
-      addNode(position, shape);
-      setContextMenu(null);
-    }
-  }, [reactFlowInstance, contextMenu, addNode]);
+  const onAddNode = useCallback(
+    (shape) => {
+      if (contextMenu && reactFlowInstance && reactFlowWrapper.current) {
+        const bounds = reactFlowWrapper.current.getBoundingClientRect();
+        const position = reactFlowInstance.project({
+          x: contextMenu.x - bounds.left,
+          y: contextMenu.y - bounds.top,
+        });
+        addNode(position, shape);
+        setContextMenu(null);
+      }
+    },
+    [reactFlowInstance, contextMenu, addNode]
+  );
 
   const onRecommendationClick = (recommendation) => {
     const userMessage = {
@@ -681,7 +696,7 @@ const MainApp = () => {
       diagramState: { nodes, edges },
     };
     chatService.makeDiagram(payload, (diagram) => {
-      const { nodes: layoutedNodes, edges: layoutedEdges } = 
+      const { nodes: layoutedNodes, edges: layoutedEdges } =
         getLayoutedElements(diagram.nodes, diagram.edges);
 
       setFlow({ nodes: layoutedNodes, edges: layoutedEdges });
@@ -711,14 +726,25 @@ const MainApp = () => {
     const success = await chatService.likeMessage(chatId, currentMode);
 
     if (success) {
-      setLikedChatIds(prevIds => new Set(prevIds).add(chatId));
+      setLikedChatIds((prevIds) => new Set(prevIds).add(chatId));
     }
   }, []);
+
+  const handleDeleteMessage = (messageId) => {
+    if (
+      !window.confirm(
+        "이 메시지부터 대화 끝까지 모두 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+      )
+    ) {
+      return;
+    }
+    chatService.deleteMessagesFrom(messageId, activeChatRoomId);
+  };
 
   const handleUnlikeMessage = async (chatId) => {
     const success = await chatService.unlikeMessage(chatId);
     if (success) {
-      setLikedChatIds(prevIds => {
+      setLikedChatIds((prevIds) => {
         const newIds = new Set(prevIds);
         newIds.delete(chatId);
         return newIds;
@@ -728,8 +754,8 @@ const MainApp = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken');
-    setAuthStatus('loggedOut');
+    localStorage.removeItem("authToken");
+    setAuthStatus("loggedOut");
   };
 
   const handleOpenEditModal = (message) => {
@@ -740,16 +766,27 @@ const MainApp = () => {
   const handleModalEditSave = () => {
     if (!editingMessage) return;
 
-    setChatLog(prevChatLog => {
+    setChatLog((prevChatLog) => {
       const newChatLog = [...prevChatLog];
-      const editedMsgIndex = newChatLog.findIndex(msg => msg.id === editingMessage.id);
+      const editedMsgIndex = newChatLog.findIndex(
+        (msg) => msg.id === editingMessage.id
+      );
 
       if (editedMsgIndex === -1) return prevChatLog;
 
-      newChatLog[editedMsgIndex] = { ...newChatLog[editedMsgIndex], content: editingText };
+      newChatLog[editedMsgIndex] = {
+        ...newChatLog[editedMsgIndex],
+        content: editingText,
+      };
 
-      if (editedMsgIndex + 1 < newChatLog.length && newChatLog[editedMsgIndex + 1].sender === 'ai') {
-        newChatLog[editedMsgIndex + 1] = { ...newChatLog[editedMsgIndex + 1], isLoading: true };
+      if (
+        editedMsgIndex + 1 < newChatLog.length &&
+        newChatLog[editedMsgIndex + 1].sender === "ai"
+      ) {
+        newChatLog[editedMsgIndex + 1] = {
+          ...newChatLog[editedMsgIndex + 1],
+          isLoading: true,
+        };
       }
 
       return newChatLog;
@@ -766,11 +803,17 @@ const MainApp = () => {
     setEditingText("");
   };
 
-  if (authStatus === 'loggedOut') {
-    if (authView === 'login') {
-      return <Login onLoginSuccess={validateToken} onGuestLogin={() => setAuthStatus('guest')} switchToRegister={() => setAuthView('register')} />; 
+  if (authStatus === "loggedOut") {
+    if (authView === "login") {
+      return (
+        <Login
+          onLoginSuccess={validateToken}
+          onGuestLogin={() => setAuthStatus("guest")}
+          switchToRegister={() => setAuthView("register")}
+        />
+      );
     } else {
-      return <Register switchToLogin={() => setAuthView('login')} />; 
+      return <Register switchToLogin={() => setAuthView("login")} />;
     }
   }
 
@@ -778,17 +821,32 @@ const MainApp = () => {
     <Layout style={{ height: "100dvh" }}>
       <Helmet>
         <title>Antinomy | AI 채팅 및 다이어그램</title>
-        <meta name="description" content="AI와 대화하며 생각을 정리하고, 실시간으로 다이어그램을 생성하여 아이디어를 시각화하세요. Antinomy는 당신의 복잡한 문제 해결과 기획을 돕는 파트너입니다." />
+        <meta
+          name="description"
+          content="AI와 대화하며 생각을 정리하고, 실시간으로 다이어그램을 생성하여 아이디어를 시각화하세요. Antinomy는 당신의 복잡한 문제 해결과 기획을 돕는 파트너입니다."
+        />
         <meta property="og:title" content="Antinomy | AI 채팅 및 다이어그램" />
-        <meta property="og:description" content="AI와 대화하며 생각을 정리하고, 실시간으로 다이어그램을 생성하여 아이디어를 시각화하세요." />
-        <meta property="og:url" content="https://syncro.tg-antinomy.kro.kr/app" />
+        <meta
+          property="og:description"
+          content="AI와 대화하며 생각을 정리하고, 실시간으로 다이어그램을 생성하여 아이디어를 시각화하세요."
+        />
+        <meta
+          property="og:url"
+          content="https://syncro.tg-antinomy.kro.kr/app"
+        />
         <meta property="og:type" content="website" />
       </Helmet>
-      <Header className={styles["header"]} toggleSider={toggleSider} toggleChatRoomPanel={toggleChatRoomPanel} authStatus={authStatus} onLogout={handleLogout} />
+      <Header
+        className={styles["header"]}
+        toggleSider={toggleSider}
+        toggleChatRoomPanel={toggleChatRoomPanel}
+        authStatus={authStatus}
+        onLogout={handleLogout}
+      />
       <Layout>
         <ChatSider
-          className={`${styles["chat-sider"]} ${ 
-            isSiderVisible ? styles.visible : "" 
+          className={`${styles["chat-sider"]} ${
+            isSiderVisible ? styles.visible : ""
           }`}
           isSiderVisible={isSiderVisible}
           chatWidth={chatWidth}
@@ -797,7 +855,7 @@ const MainApp = () => {
           onGenerateDiagram={handleGenerateDiagram}
           isDiagramMaking={isDiagramMaking}
           onResetQuests={handleResetQuests}
-          onDelete={() => {}}
+          onDelete={handleDeleteMessage}
           onEdit={handleOpenEditModal}
           onLike={handleLikeMessage}
           likedChatIds={likedChatIds}
@@ -820,7 +878,7 @@ const MainApp = () => {
                 onNodesChange={onNodesChange}
                 onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
-                onNodeDragStop={onNodeDragStop} 
+                onNodeDragStop={onNodeDragStop}
                 nodeTypes={nodeTypes}
                 onPaneClick={onPaneClick}
                 onInit={setReactFlowInstance}
@@ -837,17 +895,48 @@ const MainApp = () => {
                 accept=".json"
               />
               {isMobile ? (
-                <div ref={fileOptionsRef} className={styles.mobileButtonContainer}>
+                <div
+                  ref={fileOptionsRef}
+                  className={styles.mobileButtonContainer}
+                >
                   {showFileOptions ? (
                     <>
-                      <Button icon={<DownloadOutlined />} onClick={handleLoadClick}>Import</Button>
-                      <Tooltip title={authStatus !== "loggedIn" ? "로그인이 필요한 기능입니다." : ""}>
-                        <Button type="primary" icon={<UploadOutlined />} onClick={exportHandler} disabled={authStatus !== "loggedIn"}>Export</Button>
+                      <Button
+                        icon={<DownloadOutlined />}
+                        onClick={handleLoadClick}
+                      >
+                        Import
+                      </Button>
+                      <Tooltip
+                        title={
+                          authStatus !== "loggedIn"
+                            ? "로그인이 필요한 기능입니다."
+                            : ""
+                        }
+                      >
+                        <Button
+                          type="primary"
+                          icon={<UploadOutlined />}
+                          onClick={exportHandler}
+                          disabled={authStatus !== "loggedIn"}
+                        >
+                          Export
+                        </Button>
                       </Tooltip>
-                      <Button icon={<CloseOutlined />} onClick={() => setShowFileOptions(false)}>Close</Button>
+                      <Button
+                        icon={<CloseOutlined />}
+                        onClick={() => setShowFileOptions(false)}
+                      >
+                        Close
+                      </Button>
                     </>
                   ) : (
-                    <Button icon={<FolderOutlined />} onClick={() => setShowFileOptions(true)}>Files</Button>
+                    <Button
+                      icon={<FolderOutlined />}
+                      onClick={() => setShowFileOptions(true)}
+                    >
+                      Files
+                    </Button>
                   )}
                 </div>
               ) : (
@@ -861,7 +950,9 @@ const MainApp = () => {
                   </Button>
                   <Tooltip
                     title={
-                      authStatus !== "loggedIn" ? "로그인이 필요한 기능입니다." : ""
+                      authStatus !== "loggedIn"
+                        ? "로그인이 필요한 기능입니다."
+                        : ""
                     }
                   >
                     <Button
@@ -974,7 +1065,6 @@ const MainApp = () => {
           }}
         />
       </Modal>
-
     </Layout>
   );
 };

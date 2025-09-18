@@ -177,6 +177,27 @@ class ChatService {
     }
   }
 
+  deleteMessagesFrom(messageId, conversationId) {
+    if (this.socket) {
+      this.socket.emit("delete msg", {
+        messageId,
+        conversationId,
+      });
+    }
+  }
+
+  onMessagesDeleted(callback) {
+    if (this.socket) {
+      this.socket.on("msg deleted", callback);
+    }
+  }
+
+  offMessagesDeleted(callback) {
+    if (this.socket) {
+      this.socket.off("msg deleted", callback);
+    }
+  }
+
   makeDiagram(payload, callback) {
     if (this.socket) {
       this.socket.emit("make diagram", payload, (response) => {

@@ -284,6 +284,35 @@ export function registerSocketHandlers(io) {
       }
     });
 
+    socket.on("delete msg", async ({ messageId, conversationId }) => {
+      if (!socket.userId || !conversationId || !messageId) return;
+
+      try {
+        const messageToDelete = await db("chats")
+          .where({ id: messageId, conversation_id: conversationId })
+          .first();
+
+        if (!messageToDelete || messageToDelete.user_id !== socket.userId) {
+          console.warn(`[Auth] User ${socket.userId} attempted to delete unauthorized or non-existent message ${messageId}`);
+          socket.emit("delete-error", { message: "You can only delete your own messages." });
+          return;
+        }
+
+        const deletedCount = await db("chats")
+          .where({ conversation_id: conversationId })
+          .andWhere("created_at", ">=", messageToDelete.created_at)
+          .del();
+
+        console.log(`[DB] User ${socket.userId} deleted ${deletedCount} messages from conversation ${conversationId} starting from message ${messageId}`);
+
+        socket.emit("msg deleted", { messageId });
+
+      } catch (error) {
+        console.error(`[DB] Error during message deletion for message ${messageId}:`, error);
+        socket.emit("delete-error", { message: "An error occurred while deleting messages." });
+      }
+    });
+
     socket.on("make diagram", async (payload, callback) => {
       if (!genAI) {
         console.error("Gemini client is not initialized. Check your API keys.");
