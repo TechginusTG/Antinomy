@@ -90,11 +90,6 @@ class ChatService {
           userNote,
           conversationId,
         };
-        if (payload.options && payload.options.attachDiagram) {
-          const { nodes, edges, viewport } = useFlowStore.getState();
-          const diagramData = { nodes, edges, viewport };
-          msgPayload.diagramData = diagramData;
-        }
       } else {
         msgPayload = {
           text: String(payload),

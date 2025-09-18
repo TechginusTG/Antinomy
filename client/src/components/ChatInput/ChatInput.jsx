@@ -1,10 +1,10 @@
-import React, { useState, useRef } from 'react';
-import { Input, Button, Dropdown, Menu, Checkbox } from 'antd';
-import { SendOutlined, PlusOutlined } from '@ant-design/icons';
-import styles from './ChatInput.module.css';
+import React, { useState, useRef } from "react";
+import { Input, Button, Dropdown, Menu, Checkbox } from "antd";
+import { SendOutlined, PlusOutlined } from "@ant-design/icons";
+import styles from "./ChatInput.module.css";
 
 const ChatInput = ({ onSendMessage }) => {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
   const [attachDiagram, setAttachDiagram] = useState(false);
   const fileInputRef = useRef(null);
 
@@ -20,14 +20,14 @@ const ChatInput = ({ onSendMessage }) => {
           attachDiagram: attachDiagram,
         },
       });
-      setInputValue('');
+      setInputValue("");
     }
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      console.log('Selected file:', file);
+      console.log("Selected file:", file);
       // 파일 업로드 로직은 여기에 추가될 예정입니다.
       // 예: onSendMessage({ file: file });
     }
@@ -41,15 +41,18 @@ const ChatInput = ({ onSendMessage }) => {
   const menu = (
     <Menu>
       {/* 메뉴가 닫히는 것을 방지하기 위해 이벤트 전파를 중단합니다. */}
-      <Menu.Item key="1" onClick={(e) => e.stopPropagation()}>
+      <Menu.Item key="1" onClick={({ domEvent }) => domEvent.stopPropagation()}>
         <Checkbox
           checked={attachDiagram}
-          onChange={(e) => setAttachDiagram(e.target.checked)}
+          onChange={(e) => {
+            console.log("Checkbox state changed:", e.target.checked);
+            setAttachDiagram(e.target.checked);
+          }}
         >
           다이어그램 첨부
         </Checkbox>
       </Menu.Item>
-      <Menu.Item key="2" onClick={handleAttachFileClick}>
+      <Menu.Item key="2" onClick={handleAttachFileClick} disabled>
         첨부파일
       </Menu.Item>
     </Menu>
@@ -57,13 +60,13 @@ const ChatInput = ({ onSendMessage }) => {
 
   return (
     <div className={styles.chatInputContainer}>
-      <Dropdown overlay={menu} trigger={['click']}>
+      <Dropdown overlay={menu} trigger={["click"]}>
         <Button icon={<PlusOutlined />} className={styles.plusButton} />
       </Dropdown>
       <input
         type="file"
         ref={fileInputRef}
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
         onChange={handleFileChange}
         accept="image/*,video/*"
       />

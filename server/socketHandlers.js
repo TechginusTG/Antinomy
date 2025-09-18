@@ -184,38 +184,40 @@ export function registerSocketHandlers(io) {
       const mode = msgPayload.mode ?? "basic";
       const userNote = msgPayload.userNote ?? "";
       const conversationId = msgPayload.conversationId;
-      const diagramData = msgPayload.diagramData;
+      const attachDiagramFlag = msgPayload.options?.attachDiagram;
 
-      let dbGeneratedId = null; 
+      let diagramData = null;
+      let dbGeneratedId = null;
 
-      if (socket.userId && conversationId && text) {
+      if (attachDiagramFlag && socket.userId && conversationId) {
         try {
-          const [id] = await db("chats").insert({
-            user_id: socket.userId,
-            conversation_id: conversationId,
-            sender: "user",
-            message: text,
-          }).returning('id');
-          dbGeneratedId = id; 
-          console.log(`[DB] User message saved for user: ${socket.userId}, conversation: ${conversationId}, ID: ${dbGeneratedId}`);
+          const diagramRecord = await db("diagrams")
+            .where({ user_id: socket.userId, chat_room_id: conversationId })
+            .first();
+          if (diagramRecord && diagramRecord.diagram_data) {
+            diagramData = JSON.parse(diagramRecord.diagram_data);
+          }
         } catch (error) {
-          console.error("[DB] Error saving user message:", error);
+          console.error("[DB] Error reading diagram:", error);
         }
       }
 
-      if (diagramData && socket.userId && conversationId) {
+      if (socket.userId && conversationId && text) {
         try {
-          await db('diagrams')
+          const [idObject] = await db("chats")
             .insert({
               user_id: socket.userId,
-              chat_room_id: conversationId,
-              diagram_data: JSON.stringify(diagramData),
+              conversation_id: conversationId,
+              sender: "user",
+              message: text,
             })
-            .onConflict(['user_id', 'chat_room_id'])
-            .merge();
-          console.log(`[DB] Diagram saved for conversation: ${conversationId}`);
+            .returning("id");
+          dbGeneratedId = idObject.id;
+          console.log(
+            `[DB] User message saved for user: ${socket.userId}, conversation: ${conversationId}, ID: ${dbGeneratedId}`
+          );
         } catch (error) {
-          console.error('[DB] Error saving diagram:', error);
+          console.error("[DB] Error saving user message:", error);
         }
       }
 
@@ -223,7 +225,14 @@ export function registerSocketHandlers(io) {
       userSpecial[socket.id].mode = mode;
       userSpecial[socket.id].userNote = userNote;
 
-      const success = await callGemini(socket, chatLog, conversationId, dbGeneratedId, null, diagramData);
+      const success = await callGemini(
+        socket,
+        chatLog,
+        conversationId,
+        dbGeneratedId,
+        null,
+        diagramData
+      );
 
       if (success) {
         await grantExp(socket, socket.userId, EXP_REWARDS.CHAT);
