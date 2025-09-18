@@ -79,4 +79,62 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
+router.delete('/:chatId', authenticateToken, async (req, res) => {
+  const { chatId } = req.params;
+  const userId = req.user.userId;
+
+  if (!chatId) {
+    return res.status(400).json({ success: false, message: 'chatId is required.' });
+  }
+
+  const trx = await db.transaction();
+  try {
+    const likedChat = await trx('liked_chats').where({ user_id: userId, chat_id: chatId }).first();
+    if (!likedChat) {
+      await trx.rollback();
+      return res.status(404).json({ success: false, message: 'You have not liked this message.' });
+    }
+
+    const mode = likedChat.mode;
+
+    const chat = await trx('chats').where({ id: chatId }).first();
+    if (chat && chat.message) {
+      const keywordMatch = chat.message.match(/KEYWORDS:(.*)/s);
+      if (keywordMatch && keywordMatch[1]) {
+        const keywords = keywordMatch[1].split(',').map(k => k.trim()).filter(k => k);
+        
+        if (keywords.length > 0) {
+          const user = await trx('users').where({ user_id: userId }).first();
+          const currentPrefs = user.keyword_preferences || {};
+
+          if (currentPrefs[mode]) {
+            keywords.forEach(keyword => {
+              if (currentPrefs[mode][keyword]) {
+                currentPrefs[mode][keyword] -= 1;
+                if (currentPrefs[mode][keyword] <= 0) {
+                  delete currentPrefs[mode][keyword];
+                }
+              }
+            });
+            if (Object.keys(currentPrefs[mode]).length === 0) {
+              delete currentPrefs[mode];
+            }
+          }
+          
+          await trx('users').where({ user_id: userId }).update({ keyword_preferences: currentPrefs });
+        }
+      }
+    }
+
+    await trx('liked_chats').where({ user_id: userId, chat_id: chatId }).del();
+
+    await trx.commit();
+    res.status(200).json({ success: true, message: 'Like removed.' });
+  } catch (error) {
+    await trx.rollback();
+    console.error('Error removing like:', error);
+    res.status(500).json({ success: false, message: 'Server error while removing like.' });
+  }
+});
+
 export default router;
