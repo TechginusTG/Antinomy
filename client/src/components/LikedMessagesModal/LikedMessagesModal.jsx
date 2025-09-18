@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, List, Typography } from 'antd';
+import { Modal, List, Typography, Button } from 'antd';
+import { DeleteOutlined } from '@ant-design/icons';
 import useFlowStore from '../../utils/flowStore';
 import chatService from '../../utils/chatService';
 
 const { Text } = Typography;
 
-const LikedMessagesModal = () => {
+const LikedMessagesModal = ({ onUnlike }) => {
   const { isLikedMessagesModalOpen, setIsLikedMessagesModalOpen } = useFlowStore();
   const [likedMessages, setLikedMessages] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -29,12 +30,18 @@ const LikedMessagesModal = () => {
     setIsLikedMessagesModalOpen(false);
   };
 
+  const handleUnlikeClick = async (chatId) => {
+    const success = await onUnlike(chatId);
+    if (success) {
+      setLikedMessages(prevMessages => prevMessages.filter(msg => msg.id !== chatId));
+    }
+  };
+
   return (
     <Modal
       title="Liked Messages"
       open={isLikedMessagesModalOpen}
       onCancel={handleCancel}
-      onOk={handleCancel}
       width={600}
       footer={null}
     >
@@ -43,7 +50,18 @@ const LikedMessagesModal = () => {
         itemLayout="vertical"
         dataSource={likedMessages}
         renderItem={(item) => (
-          <List.Item key={item.id}>
+          <List.Item
+            key={item.id}
+            actions={[
+              <Button
+                icon={<DeleteOutlined />}
+                onClick={() => handleUnlikeClick(item.id)}
+                danger
+              >
+                Unlike
+              </Button>
+            ]}
+          >
             <List.Item.Meta
               title={`Liked on: ${new Date(item.liked_at).toLocaleString()}`}
               description={`Mode: ${item.mode}`}
