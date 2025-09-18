@@ -153,7 +153,19 @@ const ChatSider = ({
                 isMobile={isMobile}
                 chatFontSize={chatFontSize}
               >
-                {msg.sender === "ai" ? (
+                {msg.isLoading ? (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{
+                      duration: 1,
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                    }}
+                  >
+                    AI가 생각중이에요...
+                  </motion.div>
+                ) : msg.sender === "ai" ? (
                   <div className={styles.markdownContent}>
                     <ReactMarkdown>{msg.content.replace(/KEYWORDS:.*/s, '').trim()}</ReactMarkdown>
                   </div>

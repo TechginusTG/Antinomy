@@ -403,11 +403,12 @@ const MainApp = () => {
 
     chatService.connect(
       (data) => {
-        useFlowStore.getState().setIsTyping(false);
+        console.log("Received chat data from server:", data);
+        setIsTyping(false);
         if (data.isEdit) {
           setChatLog(prevChatLog => 
             prevChatLog.map(msg => 
-              msg.id === data.aiMessage.id ? { ...msg, content: data.aiMessage.content } : msg
+              msg.id === data.aiMessage.id ? data.aiMessage : msg
             )
           );
         } else {
@@ -727,17 +728,25 @@ const MainApp = () => {
   const handleModalEditSave = () => {
     if (!editingMessage) return;
 
-    setChatLog(prevChatLog =>
-      prevChatLog.map(msg =>
-        msg.id === editingMessage.id ? { ...msg, content: editingText } : msg
-      )
-    );
+    setChatLog(prevChatLog => {
+      const newChatLog = [...prevChatLog];
+      const editedMsgIndex = newChatLog.findIndex(msg => msg.id === editingMessage.id);
+
+      if (editedMsgIndex === -1) return prevChatLog;
+
+      newChatLog[editedMsgIndex] = { ...newChatLog[editedMsgIndex], content: editingText };
+
+      if (editedMsgIndex + 1 < newChatLog.length && newChatLog[editedMsgIndex + 1].sender === 'ai') {
+        newChatLog[editedMsgIndex + 1] = { ...newChatLog[editedMsgIndex + 1], isLoading: true };
+      }
+
+      return newChatLog;
+    });
 
     chatService.editMessage(editingMessage.id, editingText, activeChatRoomId);
 
     setEditingMessage(null);
     setEditingText("");
-    setIsTyping(true); 
   };
 
   const handleModalCancel = () => {
