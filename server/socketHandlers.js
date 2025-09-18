@@ -12,39 +12,51 @@ const EXP_REWARDS = {
 
 const userSpecial = {}; 
 
-function handleAiResponse(socket, reply, conversationId, userMessageDbId = null) {
+async function handleAiResponse(socket, reply, conversationId, userMessageDbId = null, aiMessageIdToUpdate = null) {
   const saveAiMessage = async (message) => {
-    if (socket.userId && conversationId && message) {
-      try {
-        await db("chats").insert({
-          user_id: socket.userId,
+    if (!conversationId || !message) return null;
+    try {
+      if (aiMessageIdToUpdate) {
+        await db("chats").where({ id: aiMessageIdToUpdate }).update({ message: message });
+        console.log(`[DB] AI message updated for id: ${aiMessageIdToUpdate}`);
+        const updatedMessage = await db("chats").where({ id: aiMessageIdToUpdate }).first();
+        return { id: updatedMessage.id, content: updatedMessage.message, sender: 'ai' };
+      } else {
+        const [newId] = await db("chats").insert({
+          user_id: null, 
           conversation_id: conversationId,
           sender: "ai",
           message: message,
-        });
-        console.log(
-          `[DB] AI message saved for user: ${socket.userId}, conversation: ${conversationId}`
-        );
-      } catch (error) {
-        console.error("[DB] Error saving AI message:", error);
+        }).returning('id');
+        console.log(`[DB] AI message saved for conversation: ${conversationId}`);
+        return { id: newId.id, content: message, sender: 'ai' };
       }
+    } catch (error) {
+      console.error("[DB] Error saving/updating AI message:", error);
+      return null;
     }
   };
 
   try {
     const parsedReply = JSON.parse(reply);
-    if (parsedReply.chat_response && parsedReply.recommendations) {
-      const chatMessage = parsedReply.chat_response;
-      saveAiMessage(chatMessage);
-      socket.emit("chat message", { message: chatMessage, id: userMessageDbId });
+    const chatMessage = parsedReply.chat_response || reply;
+    const aiMessage = await saveAiMessage(chatMessage);
+
+    if (aiMessage) {
+      socket.emit("chat message", { aiMessage, isEdit: !!aiMessageIdToUpdate });
+    }
+
+    if (parsedReply.recommendations) {
       socket.emit("new_recommendations", parsedReply.recommendations);
       console.log(`Gemini 응답 (추천 포함) [${socket.id}]:`, parsedReply);
     } else {
-      throw new Error("Invalid JSON format for recommendations");
+        console.log(`Gemini 응답 [${socket.id}]:`, reply);
     }
   } catch (parseError) {
-    saveAiMessage(reply);
-    socket.emit("chat message", { message: reply, id: userMessageDbId });
+    const aiMessage = await saveAiMessage(reply);
+     if (aiMessage) {
+      socket.emit("chat message", { aiMessage, isEdit: !!aiMessageIdToUpdate });
+    }
     console.log(`Gemini 응답 [${socket.id}]:`, reply);
   }
 }
@@ -82,7 +94,7 @@ function convertToGeminiHistory(chatHistory, socketId) {
   return history;
 }
 
-async function callGemini(socket, chatLog, conversationId, userMessageDbId = null) { // userMessageDbId 추가
+async function callGemini(socket, chatLog, conversationId, userMessageDbId = null, aiMessageIdToUpdate = null) { // userMessageDbId 추가
   if (!genAI) {
     console.error("Gemini client is not initialized. Check your GEMINI_API_KEY.");
     socket.emit("chat message", { message: "AI 서비스가 설정되지 않았습니다. 💀" });
@@ -101,7 +113,7 @@ async function callGemini(socket, chatLog, conversationId, userMessageDbId = nul
     const result = await chat.sendMessage(lastMessage.parts[0].text);
     const reply = result.response.text();
 
-    handleAiResponse(socket, reply, conversationId, userMessageDbId);
+    await handleAiResponse(socket, reply, conversationId, userMessageDbId, aiMessageIdToUpdate);
     return true;
   } catch (err) {
     console.error("Gemini Error:", err);
@@ -186,7 +198,7 @@ export function registerSocketHandlers(io) {
       userSpecial[socket.id].mode = mode;
       userSpecial[socket.id].userNote = userNote;
 
-      const success = await callGemini(socket, chatLog, conversationId, dbGeneratedId);
+      const success = await callGemini(socket, chatLog, conversationId, dbGeneratedId, null);
 
       if (success) {
         await grantExp(socket, socket.userId, EXP_REWARDS.CHAT);
@@ -207,8 +219,18 @@ export function registerSocketHandlers(io) {
           console.error(`[Logic Error] Edited message ${messageId} not found in history after DB update.`);
           return;
         }
+
+        let aiMessageToUpdate = null;
+        if (editedMessageIndex > -1 && editedMessageIndex + 1 < allMessages.length) {
+            const nextMessage = allMessages[editedMessageIndex + 1];
+            if (nextMessage.sender === 'ai') {
+                aiMessageToUpdate = nextMessage;
+            }
+        }
+        const aiMessageIdToUpdate = aiMessageToUpdate ? aiMessageToUpdate.id : null;
+
         const historyForAI = allMessages.slice(0, editedMessageIndex + 1).map((msg) => ({ sender: msg.sender, content: msg.message }));
-        await callGemini(socket, historyForAI, conversationId, messageId); 
+        await callGemini(socket, historyForAI, conversationId, messageId, aiMessageIdToUpdate); 
       } catch (error) {
         console.error(`[DB] Error during message edit for message ${messageId}:`, error);
         socket.emit("chat message", { message: "메시지 수정 중 오류가 발생했습니다." });
@@ -254,7 +276,15 @@ export function registerSocketHandlers(io) {
     socket.on("load latest chat", async ({ conversationId }) => {
       if (socket.userId && conversationId) {
         try {
-          const chatHistory = await db("chats").where({ conversation_id: conversationId, user_id: socket.userId }).orderBy("created_at", "asc");
+          const room = await db("chat_rooms").where({ id: conversationId, user_id: socket.userId }).first();
+          
+          if (!room) {
+            console.warn(`[Auth] User ${socket.userId} attempted to access unauthorized chat room ${conversationId}`);
+            socket.emit("chat history error", "Unauthorized access to chat room.");
+            return;
+          }
+          
+          const chatHistory = await db("chats").where({ conversation_id: conversationId }).orderBy("created_at", "asc");
           const formattedHistory = chatHistory.map((msg) => ({ id: msg.id, content: msg.message, sender: msg.sender }));
           socket.emit("chat history loaded", formattedHistory);
         } catch (error) {

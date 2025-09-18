@@ -40,7 +40,7 @@ class ChatService {
 
     this.socket.on("chat message", (data) => {
       if (this.messageListener) {
-        this.messageListener(data.message);
+        this.messageListener(data);
       }
     });
 

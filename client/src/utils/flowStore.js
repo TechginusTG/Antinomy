@@ -470,31 +470,7 @@ const useFlowStore = create((set, get) => ({
     }
   },
 
-  deleteMessage: (messageId, setChatLog) => {
-    const chatLogString = localStorage.getItem("chatLog");
-    let chatHistory = chatLogString ? JSON.parse(chatLogString) : [];
-    const messageIndex = chatHistory.findIndex((msg) => msg.id === messageId);
-
-    if (messageIndex > -1) {
-      chatHistory.splice(messageIndex);
-      setChatLog(chatHistory);
-    }
-  },
-
-  editMessage: (messageId, newText, setChatLog) => {
-    const chatLogString = localStorage.getItem("chatLog");
-    let chatHistory = chatLogString ? JSON.parse(chatLogString) : [];
-    const messageIndex = chatHistory.findIndex((msg) => msg.id === messageId);
-
-    if (messageIndex > -1) {
-      chatHistory[messageIndex].content = newText;
-      chatHistory.splice(messageIndex + 1);
-
-      setChatLog(chatHistory);
-
-      chatService.resubmit(chatHistory);
-    }
-  },
+  
 }));
 
 export default useFlowStore;

@@ -1,6 +1,6 @@
 import React, { useCallback, useState, useEffect, useRef } from "react";
 import { Helmet } from "react-helmet-async";
-import { Layout, Button, Modal, Tooltip } from "antd";
+import { Layout, Button, Modal, Tooltip, Input } from "antd";
 import {
   DownloadOutlined,
   UploadOutlined,
@@ -59,8 +59,6 @@ const MainApp = () => {
     setIsQuestOpen,
     chatWidth,
     setChatWidth, // setter 추가
-    deleteMessage,
-    editMessage,
     deleteNode,
     setEditingNodeId,
     updateEdgeLabel,
@@ -103,6 +101,9 @@ const MainApp = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [showFileOptions, setShowFileOptions] = useState(false);
   const fileOptionsRef = useRef(null);
+
+  const [editingMessage, setEditingMessage] = useState(null);
+  const [editingText, setEditingText] = useState("");
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -401,9 +402,17 @@ const MainApp = () => {
     };
 
     chatService.connect(
-      (message) => {
+      (data) => {
         useFlowStore.getState().setIsTyping(false);
-        setChatLog((prevChatLog) => [...prevChatLog, { id: Date.now(), content: message, sender: 'ai' }]);
+        if (data.isEdit) {
+          setChatLog(prevChatLog => 
+            prevChatLog.map(msg => 
+              msg.id === data.aiMessage.id ? { ...msg, content: data.aiMessage.content } : msg
+            )
+          );
+        } else {
+          setChatLog((prevChatLog) => [...prevChatLog, data.aiMessage]);
+        }
       },
       onConnect
     );
@@ -710,6 +719,32 @@ const MainApp = () => {
     setAuthStatus('loggedOut');
   };
 
+  const handleOpenEditModal = (message) => {
+    setEditingMessage(message);
+    setEditingText(message.content);
+  };
+
+  const handleModalEditSave = () => {
+    if (!editingMessage) return;
+
+    setChatLog(prevChatLog =>
+      prevChatLog.map(msg =>
+        msg.id === editingMessage.id ? { ...msg, content: editingText } : msg
+      )
+    );
+
+    chatService.editMessage(editingMessage.id, editingText, activeChatRoomId);
+
+    setEditingMessage(null);
+    setEditingText("");
+    setIsTyping(true); 
+  };
+
+  const handleModalCancel = () => {
+    setEditingMessage(null);
+    setEditingText("");
+  };
+
   if (authStatus === 'loggedOut') {
     if (authView === 'login') {
       return <Login onLoginSuccess={validateToken} onGuestLogin={() => setAuthStatus('guest')} switchToRegister={() => setAuthView('register')} />; 
@@ -741,10 +776,8 @@ const MainApp = () => {
           onGenerateDiagram={handleGenerateDiagram}
           isDiagramMaking={isDiagramMaking}
           onResetQuests={handleResetQuests}
-          onDelete={(messageId) => deleteMessage(messageId, setChatLog)}
-          onEdit={(messageId, newText) =>
-            editMessage(messageId, newText, setChatLog)
-          }
+          onDelete={() => {}}
+          onEdit={handleOpenEditModal}
           onLike={handleLikeMessage}
           likedChatIds={likedChatIds}
           activeChatRoomId={activeChatRoomId}
@@ -899,6 +932,28 @@ const MainApp = () => {
         </p>
         <p>사용법이 궁금하신가요? 가이드를 확인해 보세요.</p>
       </Modal>
+
+      <Modal
+        title="메시지 수정"
+        open={!!editingMessage}
+        onOk={handleModalEditSave}
+        onCancel={handleModalCancel}
+        okText="수정"
+        cancelText="취소"
+      >
+        <Input.TextArea
+          value={editingText}
+          onChange={(e) => setEditingText(e.target.value)}
+          autoSize={{ minRows: 5, maxRows: 15 }}
+          onPressEnter={(e) => {
+            if (!e.shiftKey) {
+              e.preventDefault();
+              handleModalEditSave();
+            }
+          }}
+        />
+      </Modal>
+
     </Layout>
   );
 };

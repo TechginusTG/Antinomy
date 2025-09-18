@@ -25,6 +25,7 @@ const ChatSider = ({
   isDiagramMaking,
   onResetQuests,
   onDelete,
+  onEdit,
   onLike,
   likedChatIds,
   isSiderVisible,
@@ -42,8 +43,6 @@ const ChatSider = ({
   } = useFlowStore();
   const chatLogRef = useRef(null);
 
-  const [editingMessage, setEditingMessage] = useState(null);
-  const [editingText, setEditingText] = useState("");
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [showScrollToBottom, setShowScrollToBottom] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
@@ -118,40 +117,6 @@ const ChatSider = ({
     setIsTyping(true);
   };
 
-  const handleOpenEditModal = (message) => {
-    setEditingMessage(message);
-    setEditingText(message.content);
-  };
-
-  const handleModalEditSave = () => {
-    if (!editingMessage) return;
-
-    const editedMessageIndex = messages.findIndex(
-      (msg) => msg.id === editingMessage.id
-    );
-    if (editedMessageIndex === -1) return;
-
-    const truncatedMessages = messages.slice(0, editedMessageIndex + 1);
-
-    truncatedMessages[editedMessageIndex] = {
-      ...truncatedMessages[editedMessageIndex],
-      content: editingText,
-    };
-
-    setMessages(truncatedMessages);
-
-    chatService.editMessage(editingMessage.id, editingText, activeChatRoomId);
-
-    setEditingMessage(null);
-    setEditingText("");
-    setIsTyping(true);
-  };
-
-  const handleModalCancel = () => {
-    setEditingMessage(null);
-    setEditingText("");
-  };
-
   const mobileClassName = isMobile
     ? `${styles.mobileSider} ${
         isSiderVisible ? styles.mobileSiderVisible : styles.mobileSiderHidden
@@ -181,7 +146,7 @@ const ChatSider = ({
                 className={`${styles.bubble} ${styles[msg.sender]}`}
                 isUser={msg.sender === "user"}
                 onDelete={onDelete}
-                onEdit={() => handleOpenEditModal(msg)}
+                onEdit={() => onEdit(msg)}
                 onLike={onLike}
                 isLiked={likedChatIds.has(msg.id)}
                 chatWidth={chatWidth}
@@ -234,28 +199,6 @@ const ChatSider = ({
           <ChatInput onSendMessage={sendMessage} key={activeChatRoomId} />
         </div>
       </div>
-
-      <Modal
-        title="메시지 수정"
-        open={!!editingMessage}
-        onOk={handleModalEditSave}
-        onCancel={handleModalCancel}
-        okText="수정"
-        cancelText="취소"
-        wrapClassName={styles.modalOverride}
-      >
-        <Input.TextArea
-          value={editingText}
-          onChange={(e) => setEditingText(e.target.value)}
-          autoSize={{ minRows: 5, maxRows: 15 }}
-          onPressEnter={(e) => {
-            if (!e.shiftKey) {
-              e.preventDefault();
-              handleModalEditSave();
-            }
-          }}
-        />
-      </Modal>
 
       <div className={styles.resizeHandle} onMouseDown={handleMouseDown} />
     </Sider>
