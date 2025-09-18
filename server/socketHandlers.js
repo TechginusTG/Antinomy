@@ -5,6 +5,7 @@ import { modes as prompts } from "./prompt/modes.js";
 import { diagramPrompt } from "./prompt/diagramPrompt.js";
 import db from "./db.js";
 import jwt from "jsonwebtoken";
+import pako from "pako";
 
 const EXP_REWARDS = {
   CHAT: 10,
@@ -94,8 +95,8 @@ function convertToGeminiHistory(chatHistory, socketId, diagramData = null) {
   if (diagramData && history.length > 0) {
     const lastMessage = history[history.length - 1];
     if (lastMessage.role === 'user') {
-      const diagramText = `\n\n[The user has attached the following diagram to this message:\n${JSON.stringify(diagramData, null, 2)}\n]`;
-      lastMessage.parts[0].text += diagramText;
+      const diagramText = `[The user has attached the following diagram to this message:\n${JSON.stringify(diagramData, null, 2)}\n]\n\n`;
+      lastMessage.parts[0].text = diagramText + lastMessage.parts[0].text;
     }
   }
 
@@ -195,7 +196,19 @@ export function registerSocketHandlers(io) {
             .where({ user_id: socket.userId, chat_room_id: conversationId })
             .first();
           if (diagramRecord && diagramRecord.diagram_data) {
-            diagramData = JSON.parse(diagramRecord.diagram_data);
+            const safeEncodedData = diagramRecord.diagram_data;
+            let base64 = safeEncodedData.replace(/-/g, "+").replace(/_/g, "/");
+            while (base64.length % 4) {
+              base64 += "=";
+            }
+            const decodedData = atob(base64);
+            const len = decodedData.length;
+            const compressed = new Uint8Array(len);
+            for (let i = 0; i < len; i++) {
+              compressed[i] = decodedData.charCodeAt(i);
+            }
+            const jsonString = pako.inflate(compressed, { to: "string" });
+            diagramData = JSON.parse(jsonString);
           }
         } catch (error) {
           console.error("[DB] Error reading diagram:", error);
@@ -217,7 +230,7 @@ export function registerSocketHandlers(io) {
             `[DB] User message saved for user: ${socket.userId}, conversation: ${conversationId}, ID: ${dbGeneratedId}`
           );
         } catch (error) {
-          console.error("[DB] Error saving user message:", error);
+          console.error("[DB] Error saving user message:", error); 
         }
       }
 
@@ -302,7 +315,7 @@ export function registerSocketHandlers(io) {
           if (callback) { callback({ error: "JSON parsing error", details: parseError.message }); }
         }
       } catch (err) {
-        console.error("Gemini Diagram Error:", err);
+        console.error("Gemini Diagram Error:", err); 
         if (callback) { callback({ error: "AI Diagram Error", details: err.message }); }
       }
     });
