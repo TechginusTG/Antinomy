@@ -140,7 +140,7 @@ const ChatSider = ({
         </div>
         <div className={styles["chat-log"]} ref={chatLogRef}>
           <ul>
-            {messages.map((msg) => (
+            {messages.filter(Boolean).map((msg) => (
               <Bubble
                 key={msg.id}
                 id={msg.id}
