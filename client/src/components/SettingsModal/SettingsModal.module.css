@@ -1,0 +1,84 @@
+.modalBody {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+.themeName {
+  text-transform: uppercase;
+}
+.themeLabel {
+  margin-right: 16px;
+}
+.specialThemesContainer {
+  margin-top: 8px;
+}
+.specialThemeLabel {
+  margin-right: 16px;
+  display: inline-flex;
+  align-items: center;
+}
+.specialThemeName {
+  white-space: nowrap;
+}
+.customThemeContainer {
+  margin-top: 16px;
+}
+.customThemeHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.customThemeTitle {
+  margin: 0;
+}
+.customThemeActions {
+  display: flex;
+  gap: 8px;
+}
+.fileInput {
+  display: none;
+}
+.colorGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.colorPickerContainer {
+  display: flex;
+  flex-direction: column;
+}
+.colorLabel {
+  margin-bottom: 8px;
+}
+.settingsSection {
+  margin-top: 24px;
+}
+.slider {
+  width: 200px;
+}
+.fontSizeContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modeContainer {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modeLabel {
+  margin-right: 8px;
+}
+.userNoteLabel {
+  margin-bottom: 8px;
+}
+.userNoteTextArea {
+  width: 100%;
+  min-height: 80px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 14px;
+  resize: vertical;
+}

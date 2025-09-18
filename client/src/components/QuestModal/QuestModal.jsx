@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal, Checkbox } from 'antd';
 import useFlowStore from '../../utils/flowStore';
+import styles from './QuestModal.module.css';
 
 const QuestModal = ({ quests, completedQuests, handleQuestChange }) => {
   const { isQuestOpen, setIsQuestOpen } = useFlowStore();
@@ -21,11 +22,7 @@ const QuestModal = ({ quests, completedQuests, handleQuestChange }) => {
                   checked={completedQuests.includes(index)}
                   onChange={(e) => handleQuestChange(index, e.target.checked)}
                 />
-                <span style={{
-                  marginLeft: 8,
-                  textDecoration: completedQuests.includes(index) ? 'line-through' : 'none',
-                  color: completedQuests.includes(index) ? '#888' : 'inherit'
-                }}>
+                <span className={`${styles.questText} ${completedQuests.includes(index) ? styles.completed : ''}`}>
                   {quest}
                 </span>
               </li>

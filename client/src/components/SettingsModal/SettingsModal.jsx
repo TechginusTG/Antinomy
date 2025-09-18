@@ -3,6 +3,7 @@ import { Modal, Slider, ColorPicker, Button, InputNumber } from "antd";
 import useFlowStore from "../../utils/flowStore";
 import useUserStore from "../../utils/userStore";
 import { themes } from "../../utils/themeManager";
+import styles from './SettingsModal.module.css';
 
 const SettingsModal = () => {
   const {
@@ -95,13 +96,13 @@ const SettingsModal = () => {
       onOk={() => setIsSettingsOpen(false)}
       width={600}
     >
-      <div style={{ maxHeight: "50vh", overflowY: "auto" }}>
+      <div className={styles.modalBody}>
         <p>
-          테마 선택: <b style={{ textTransform: "uppercase" }}>{theme}</b>
+          테마 선택: <b className={styles.themeName}>{theme}</b>
         </p>
         <div>
           {basicThemes.map((t) => (
-            <label key={t.name} style={{ marginRight: "16px" }}>
+            <label key={t.name} className={styles.themeLabel}>
               <input
                 type="radio"
                 value={t.name}
@@ -112,15 +113,11 @@ const SettingsModal = () => {
             </label>
           ))}
         </div>
-        <div style={{ marginTop: "8px" }}>
+        <div className={styles.specialThemesContainer}>
           {specialThemes.map((t) => (
             <label
               key={t.name}
-              style={{
-                marginRight: "16px",
-                display: "inline-flex",
-                alignItems: "center",
-              }}
+              className={styles.specialThemeLabel}
             >
               <input
                 type="radio"
@@ -129,7 +126,7 @@ const SettingsModal = () => {
                 onChange={handleThemeChange}
                 disabled={lvl < t.level}
               />
-              <span style={{ whiteSpace: "nowrap" }}>
+              <span className={styles.specialThemeName}>
                 {t.label}
                 {lvl < t.level && ` (Lv.${t.level}↑)`}
               </span>
@@ -137,17 +134,12 @@ const SettingsModal = () => {
           ))}
         </div>
         {theme === "custom" && (
-          <div style={{ marginTop: "16px" }}>
+          <div className={styles.customThemeContainer}>
             <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "16px",
-              }}
+              className={styles.customThemeHeader}
             >
-              <p style={{ margin: 0 }}>커스텀 색상 선택:</p>
-              <div style={{ display: "flex", gap: "8px" }}>
+              <p className={styles.customThemeTitle}>커스텀 색상 선택:</p>
+              <div className={styles.customThemeActions}>
                 <Button onClick={resetCustomThemeColors}>Reset</Button>
                 <Button
                   onClick={() => {
@@ -181,25 +173,21 @@ const SettingsModal = () => {
                 <input
                   type="file"
                   ref={fileInputRef}
-                  style={{ display: "none" }}
+                  className={styles.fileInput}
                   onChange={handleFileSelect}
                   accept=".json"
                 />
               </div>
             </div>
             <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-                gap: "16px",
-              }}
+              className={styles.colorGrid}
             >
               {customThemeColors.map((color, index) => (
                 <div
                   key={index}
-                  style={{ display: "flex", flexDirection: "column" }}
+                  className={styles.colorPickerContainer}
                 >
-                  <label style={{ marginBottom: "8px" }}>
+                  <label className={styles.colorLabel}>
                     {colorVarLabels[getCustomColorVarName(index)]}
                   </label>
                   <ColorPicker
@@ -212,8 +200,7 @@ const SettingsModal = () => {
             </div>
           </div>
         )}
-        :{" "}
-        <div style={{ marginTop: 24 }}>
+        <div className={styles.settingsSection}>
           {!isMobile && (
             <>
               <p>
@@ -224,12 +211,12 @@ const SettingsModal = () => {
                 max={50}
                 value={chatWidth}
                 onChange={setChatWidth}
-                style={{ width: 200 }}
+                className={styles.slider}
               />
             </>
           )}
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className={styles.fontSizeContainer}>
             <p>
               채팅 글자 크기: 
             </p>
@@ -244,14 +231,9 @@ const SettingsModal = () => {
 
           {/* 모드 선택 버튼 */}
           <div
-            style={{
-              marginTop: 12,
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-            }}
+            className={styles.modeContainer}
           >
-            <span style={{ marginRight: 8 }}>모드:</span>
+            <span className={styles.modeLabel}>모드:</span>
             <Button
               type={mode === "basic" ? "primary" : "default"}
               onClick={() => setMode("basic")}
@@ -272,23 +254,15 @@ const SettingsModal = () => {
             </Button>
           </div>
         </div>
-        <div style={{ marginTop: 24 }}>
-          <p style={{ marginBottom: 8 }}>유저노트</p>
+        <div className={styles.settingsSection}>
+          <p className={styles.userNoteLabel}>유저노트</p>
           <textarea
             value={settings.userNote} // settings에서 값 가져오기
             onChange={(e) => {
               updateSetting('userNote', e.target.value); // userStore 업데이트
               autoSaveSettings(); // 변경사항 자동 저장
             }}
-            style={{
-              width: "100%",
-              minHeight: "80px",
-              border: "1px solid #d9d9d9",
-              borderRadius: "4px",
-              padding: "8px",
-              fontSize: "14px",
-              resize: "vertical",
-            }}
+            className={styles.userNoteTextArea}
             placeholder="AI가 기억해야할 사용자의 특이사항을 입력해주세요."
           />
         </div>

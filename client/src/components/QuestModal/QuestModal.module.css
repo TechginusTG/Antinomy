@@ -1,0 +1,8 @@
+.questText {
+  margin-left: 8px;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: #888;
+}

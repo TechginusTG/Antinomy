@@ -104,7 +104,7 @@ const ProfileModal = () => {
           form={passwordChangeForm}
           layout="vertical"
           name="password_change_form"
-          style={{ marginTop: '20px' }}
+          className={styles.form}
         >
           <Form.Item
             label="현재 비밀번호"
@@ -140,7 +140,7 @@ const ProfileModal = () => {
             <Input.Password />
           </Form.Item>
           <Button type="primary" onClick={handleChangePassword}>비밀번호 변경하기</Button>
-          <Button style={{ marginLeft: '8px' }} onClick={() => setShowChangePasswordForm(false)}>취소</Button>
+          <Button className={styles.cancelButton} onClick={() => setShowChangePasswordForm(false)}>취소</Button>
         </Form>
       )}
       <div>
@@ -148,7 +148,7 @@ const ProfileModal = () => {
         <Button type="primary" danger onClick={handleLogout}>
           Logout
         </Button>
-        <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
+        <div className={styles.buttonGroup}>
           <Button onClick={() => setShowChangePasswordForm(!showChangePasswordForm)}>비밀번호 변경</Button>
           <Button type="danger" onClick={() => setShowDeleteAccountConfirm(true)}>회원 탈퇴</Button>
         </div>
@@ -164,7 +164,7 @@ const ProfileModal = () => {
       >
         <p>정말로 탈퇴하시겠습니까? 이 작업은 되돌릴 수 없습니다.</p>
         <p>모든 데이터(채팅 기록, 다이어그램 등)가 삭제됩니다.</p>
-        <Form form={deleteAccountForm} layout="vertical" style={{ marginTop: '15px' }}>
+        <Form form={deleteAccountForm} layout="vertical" className={styles.deleteForm}>
           <Form.Item
             label="비밀번호 확인"
             name="passwordConfirm"

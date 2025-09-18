@@ -96,7 +96,7 @@ const GuideModal = ({ isOpen, onClose }) => {
           </div>
           <div className={styles.footerRight}>
             {currentStep > 0 && (
-              <Button style={{ marginRight: 8 }} onClick={handlePrev}>
+              <Button className={styles.prevButton} onClick={handlePrev}>
                 이전
               </Button>
             )}
