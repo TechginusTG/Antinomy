@@ -108,8 +108,9 @@ const ChatSider = ({
   const sendMessage = (message) => {
     const userMessage = {
       id: Date.now(),
-      content: message,
-      sender: "user",
+      content: message.text,
+      sender: 'user',
+      options: message.options,
     };
     const newChatLog = [...messages, userMessage];
     setMessages(newChatLog);

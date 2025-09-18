@@ -71,7 +71,7 @@ class ChatService {
     }
   }
 
-  sendMessage(payload, chatLog = [], conversationId, sendDiagram) {
+  sendMessage(payload, chatLog = [], conversationId) {
     if (this.socket) {
       const currentMode = useFlowStore.getState().mode || "worry";
       const userNote = useUserStore.getState().userNote; // 2. userNote 가져오기
@@ -90,6 +90,11 @@ class ChatService {
           userNote,
           conversationId,
         };
+        if (payload.options && payload.options.attachDiagram) {
+          const { nodes, edges, viewport } = useFlowStore.getState();
+          const diagramData = { nodes, edges, viewport };
+          msgPayload.diagramData = diagramData;
+        }
       } else {
         msgPayload = {
           text: String(payload),

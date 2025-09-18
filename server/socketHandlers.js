@@ -77,7 +77,7 @@ function buildSystemPrompt(socketId) {
   return promptParts.join("\n\n");
 }
 
-function convertToGeminiHistory(chatHistory, socketId) {
+function convertToGeminiHistory(chatHistory, socketId, diagramData = null) {
   const system = buildSystemPrompt(socketId);
   const history = [];
   history.push({ role: "user", parts: [{ text: `Please follow these instructions for our entire conversation: ${system}` }] });
@@ -91,10 +91,18 @@ function convertToGeminiHistory(chatHistory, socketId) {
     });
   });
 
+  if (diagramData && history.length > 0) {
+    const lastMessage = history[history.length - 1];
+    if (lastMessage.role === 'user') {
+      const diagramText = `\n\n[The user has attached the following diagram to this message:\n${JSON.stringify(diagramData, null, 2)}\n]`;
+      lastMessage.parts[0].text += diagramText;
+    }
+  }
+
   return history;
 }
 
-async function callGemini(socket, chatLog, conversationId, userMessageDbId = null, aiMessageIdToUpdate = null) { // userMessageDbId 추가
+async function callGemini(socket, chatLog, conversationId, userMessageDbId = null, aiMessageIdToUpdate = null, diagramData = null) { // userMessageDbId 추가
   if (!genAI) {
     console.error("Gemini client is not initialized. Check your GEMINI_API_KEY.");
     socket.emit("chat message", { message: "AI 서비스가 설정되지 않았습니다. 💀" });
@@ -102,7 +110,7 @@ async function callGemini(socket, chatLog, conversationId, userMessageDbId = nul
   }
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
-    const history = convertToGeminiHistory(chatLog, socket.id);
+    const history = convertToGeminiHistory(chatLog, socket.id, diagramData);
     
     if(history.length > 0 && history[history.length - 1].role === 'model') {
         history.push({ role: "user", parts: [{ text: "..." }] });
@@ -176,12 +184,13 @@ export function registerSocketHandlers(io) {
       const mode = msgPayload.mode ?? "basic";
       const userNote = msgPayload.userNote ?? "";
       const conversationId = msgPayload.conversationId;
+      const diagramData = msgPayload.diagramData;
 
       let dbGeneratedId = null; 
 
       if (socket.userId && conversationId && text) {
         try {
-          const [id] = await db("chats").insert({ 
+          const [id] = await db("chats").insert({
             user_id: socket.userId,
             conversation_id: conversationId,
             sender: "user",
@@ -194,11 +203,27 @@ export function registerSocketHandlers(io) {
         }
       }
 
+      if (diagramData && socket.userId && conversationId) {
+        try {
+          await db('diagrams')
+            .insert({
+              user_id: socket.userId,
+              chat_room_id: conversationId,
+              diagram_data: JSON.stringify(diagramData),
+            })
+            .onConflict(['user_id', 'chat_room_id'])
+            .merge();
+          console.log(`[DB] Diagram saved for conversation: ${conversationId}`);
+        } catch (error) {
+          console.error('[DB] Error saving diagram:', error);
+        }
+      }
+
       if (!userSpecial[socket.id]) userSpecial[socket.id] = {};
       userSpecial[socket.id].mode = mode;
       userSpecial[socket.id].userNote = userNote;
 
-      const success = await callGemini(socket, chatLog, conversationId, dbGeneratedId, null);
+      const success = await callGemini(socket, chatLog, conversationId, dbGeneratedId, null, diagramData);
 
       if (success) {
         await grantExp(socket, socket.userId, EXP_REWARDS.CHAT);
