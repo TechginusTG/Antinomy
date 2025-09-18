@@ -123,6 +123,37 @@ class ChatService {
     }
   }
 
+  async unlikeMessage(chatId) {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.error('Authentication token not found.');
+      return false;
+    }
+
+    try {
+      const response = await fetch(`/api/feedback/${chatId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        console.log(`Message ${chatId} unliked successfully.`);
+        return true;
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to unlike message:', errorData.message);
+        alert(`Error: ${errorData.message}`);
+        return false;
+      }
+    } catch (error) {
+      console.error('Error unliking message:', error);
+      alert('A network error occurred. Please try again.');
+      return false;
+    }
+  }
+
   makeDiagram(payload, callback) {
     if (this.socket) {
       this.socket.emit("make diagram", payload, (response) => {
