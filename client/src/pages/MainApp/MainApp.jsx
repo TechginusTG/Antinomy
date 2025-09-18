@@ -715,6 +715,18 @@ const MainApp = () => {
     }
   }, []);
 
+  const handleUnlikeMessage = async (chatId) => {
+    const success = await chatService.unlikeMessage(chatId);
+    if (success) {
+      setLikedChatIds(prevIds => {
+        const newIds = new Set(prevIds);
+        newIds.delete(chatId);
+        return newIds;
+      });
+    }
+    return success;
+  };
+
   const handleLogout = () => {
     localStorage.removeItem('authToken');
     setAuthStatus('loggedOut');
@@ -891,7 +903,7 @@ const MainApp = () => {
               onRecommendationClick={onRecommendationClick}
             />
             <ProfileModal />
-            <LikedMessagesModal />
+            <LikedMessagesModal onUnlike={handleUnlikeMessage} />
           </Content>
         </Layout>
       </Layout>
