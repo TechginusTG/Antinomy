@@ -11,8 +11,6 @@ const SettingsModal = () => {
     setTheme,
     chatWidth,
     setChatWidth,
-    chatFontSize,
-    setChatFontSize,
     isSettingsOpen,
     setIsSettingsOpen,
     customThemeColors,
@@ -237,19 +235,6 @@ const SettingsModal = () => {
             </>
           )}
           
-          <div className={styles.fontSizeContainer}>
-            <p>
-              채팅 글자 크기: 
-            </p>
-            <InputNumber
-              min={10}
-              max={24}
-              value={chatFontSize}
-              onChange={(value) => setChatFontSize(value || 10)}
-            />
-            <p>px</p>
-          </div>
-
           {/* 모드 선택 버튼 */}
           <div
             className={styles.modeContainer}

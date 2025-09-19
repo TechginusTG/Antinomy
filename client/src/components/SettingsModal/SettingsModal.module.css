@@ -56,11 +56,6 @@
 .slider {
   width: 200px;
 }
-.fontSizeContainer {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 .modeContainer {
   margin-top: 12px;
   display: flex;
