@@ -421,6 +421,15 @@ const MainApp = () => {
     chatService.onChatHistoryLoaded(handleChatHistoryLoaded);
     chatService.onNewRecommendations(handleNewRecommendations);
 
+    const handleUserMessageSaved = ({ tempId, realId }) => {
+      setChatLog(prevChatLog =>
+        prevChatLog.map(msg =>
+          msg.id === tempId ? { ...msg, id: realId } : msg
+        )
+      );
+    };
+    chatService.onUserMessageSaved(handleUserMessageSaved);
+
     const handleMessagesDeleted = ({ messageId }) => {
       setChatLog((prevChatLog) => {
         const messageIndex = prevChatLog.findIndex(
@@ -437,6 +446,7 @@ const MainApp = () => {
     return () => {
       chatService.offChatHistoryLoaded(handleChatHistoryLoaded);
       chatService.offNewRecommendations(handleNewRecommendations);
+      chatService.offUserMessageSaved(handleUserMessageSaved);
       chatService.offMessagesDeleted(handleMessagesDeleted);
       chatService.disconnect();
     };

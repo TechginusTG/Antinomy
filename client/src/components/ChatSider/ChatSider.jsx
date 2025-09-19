@@ -114,7 +114,7 @@ const ChatSider = ({
     };
     const newChatLog = [...messages, userMessage];
     setMessages(newChatLog);
-    chatService.sendMessage(message, newChatLog, activeChatRoomId);
+    chatService.sendMessage(userMessage, newChatLog, activeChatRoomId);
     setIsTyping(true);
   };
 

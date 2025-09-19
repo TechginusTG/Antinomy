@@ -251,6 +251,12 @@ export function registerSocketHandlers(io) {
             })
             .returning("id");
           dbGeneratedId = idObject.id;
+          if (msgPayload.tempId) {
+            socket.emit("user-message-saved", {
+              tempId: msgPayload.tempId,
+              realId: dbGeneratedId,
+            });
+          }
           console.log(
             `[DB] User message saved for user: ${socket.userId}, conversation: ${conversationId}, ID: ${dbGeneratedId}`
           );

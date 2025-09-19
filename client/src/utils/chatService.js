@@ -75,8 +75,9 @@ class ChatService {
     if (this.socket) {
       const currentMode = useFlowStore.getState().mode || "worry";
       const aiProvider = useFlowStore.getState().aiProvider || "gemini";
-      const userNote = useUserStore.getState().userNote; // 2. userNote 가져오기
+      const userNote = useUserStore.getState().userNote;
       let msgPayload;
+
       if (typeof payload === "string") {
         msgPayload = {
           text: payload,
@@ -87,7 +88,9 @@ class ChatService {
         };
       } else if (payload && typeof payload === "object") {
         msgPayload = {
-          ...payload,
+          tempId: payload.id, // Pass the temporary ID
+          text: payload.content,
+          options: payload.options,
           mode: payload.mode || currentMode,
           userNote,
           conversationId,
@@ -102,7 +105,6 @@ class ChatService {
           aiProvider,
         };
       }
-      // Emit both the message payload and the full chat log
       this.socket.emit("chat message", { msgPayload, chatLog });
     }
   }
@@ -199,6 +201,18 @@ class ChatService {
   offMessagesDeleted(callback) {
     if (this.socket) {
       this.socket.off("msg deleted", callback);
+    }
+  }
+
+  onUserMessageSaved(callback) {
+    if (this.socket) {
+      this.socket.on("user-message-saved", callback);
+    }
+  }
+
+  offUserMessageSaved(callback) {
+    if (this.socket) {
+      this.socket.off("user-message-saved", callback);
     }
   }
 
