@@ -64,6 +64,7 @@ async function handleAiResponse(socket, reply, conversationId, userMessageDbId =
 
 function buildSystemPrompt(socketId) {
   const { mode = "basic", userNote = "" } = userSpecial[socketId] || {};
+  console.log(`[DEBUG] Building prompt for socket ${socketId} with mode: ${mode}`);
   const selectedModePrompt = prompts[mode] || prompts.basic;
 
   if (mode === 'Rotten_brain') {
@@ -211,8 +212,6 @@ export function registerSocketHandlers(io) {
 
   io.on("connection", (socket) => {
     socket.emit("ready");
-
-    const userSpecial = {};
 
     socket.on("chat message", async ({ msgPayload = {}, chatLog }) => {
       const text = msgPayload.text ?? "";
@@ -431,6 +430,7 @@ export function registerSocketHandlers(io) {
     });
 
     socket.on("disconnect", () => {
+      delete userSpecial[socket.id];
     });
   });
 }
