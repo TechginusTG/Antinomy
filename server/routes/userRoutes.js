@@ -13,6 +13,7 @@ router.get("/modes", (req, res) => {
     worry: "고민 모드",
     solution: "문제해결 모드",
     Rotten_brain: "질문에 질문으로 답하는 모드",
+    Garbage: "금쪽이 모드",
   };
 
   const preferredOrder = ["basic", "worry", "solution"];
