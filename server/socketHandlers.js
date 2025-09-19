@@ -131,7 +131,9 @@ async function callAiModel(socket, chatLog, conversationId, userMessageDbId = nu
     const history = convertToApiHistory(chatLog, provider, socket.id, diagramData);
 
     if (provider === 'gemini') {
-      const model = client.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+      const modelName = "gemini-1.5-pro";
+      console.log(`[AI] Calling ${provider} with model: ${modelName}`);
+      const model = client.getGenerativeModel({ model: modelName });
       if (history.length > 0 && history[history.length - 1].role === 'model') {
         history.push({ role: "user", parts: [{ text: "..." }] });
       }
@@ -140,9 +142,11 @@ async function callAiModel(socket, chatLog, conversationId, userMessageDbId = nu
       const result = await chat.sendMessage(lastMessage.parts[0].text);
       reply = result.response.text();
     } else {
+      const modelName = "openai/gpt-oss-120b";
+      console.log(`[AI] Calling ${provider} with model: ${modelName}`);
       const result = await client.chat.completions.create({
         messages: history,
-        model: "llama-3.1-8b-instant",
+        model: modelName,
       });
       reply = result.choices[0].message.content;
     }
