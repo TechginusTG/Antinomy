@@ -65,6 +65,12 @@ async function handleAiResponse(socket, reply, conversationId, userMessageDbId =
 function buildSystemPrompt(socketId) {
   const { mode = "basic", userNote = "" } = userSpecial[socketId] || {};
   const selectedModePrompt = prompts[mode] || prompts.basic;
+
+  if (mode === 'Rotten_brain') {
+    // For this special mode, only use its own prompt, ignoring all others.
+    return selectedModePrompt;
+  }
+
   const promptParts = [
     systemPrompt,
     recommendPrompt,

@@ -28,6 +28,7 @@ const SettingsModal = () => {
   const { mode, setMode } = useFlowStore();
   const { settings, updateSetting, lvl } = useUserStore(); // userStore에서 settings와 updateSetting 사용
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [availableModes, setAvailableModes] = useState([]);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -38,6 +39,24 @@ const SettingsModal = () => {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
+  }, []);
+
+  useEffect(() => {
+    const fetchModes = async () => {
+      try {
+        const response = await fetch('/api/user/modes');
+        if (response.ok) {
+          const data = await response.json();
+          setAvailableModes(data);
+        } else {
+          console.error('Failed to fetch modes');
+        }
+      } catch (error) {
+        console.error('Error fetching modes:', error);
+      }
+    };
+
+    fetchModes();
   }, []);
 
   const handleThemeChange = (e) => {
@@ -236,24 +255,15 @@ const SettingsModal = () => {
             className={styles.modeContainer}
           >
             <span className={styles.modeLabel}>모드:</span>
-            <Button
-              type={mode === "basic" ? "primary" : "default"}
-              onClick={() => setMode("basic")}
-            >
-              기본 모드
-            </Button>
-            <Button
-              type={mode === "worry" ? "primary" : "default"}
-              onClick={() => setMode("worry")}
-            >
-              고민 모드
-            </Button>
-            <Button
-              type={mode === "solution" ? "primary" : "default"}
-              onClick={() => setMode("solution")}
-            >
-              문제해결 모드
-            </Button>
+            {availableModes.map((m) => (
+                <Button
+                  key={m.key}
+                  type={mode === m.key ? "primary" : "default"}
+                  onClick={() => setMode(m.key)}
+                >
+                  {m.label}
+                </Button>
+              ))}
           </div>
 
           <div className={styles.modeContainer}>
