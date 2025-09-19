@@ -142,7 +142,7 @@ app.post("/api/register", async (req, res) => {
     await db('chat_rooms').insert({
       id: initialChatRoomId, 
       user_id: newUser.user_id,
-      title: 'ChatRoom 1'
+      title: 'New Conversation'
     });
 
     const token = jwt.sign({ userId: newUser.user_id, name: newUser.name }, process.env.JWT_SECRET || 'your_default_secret', { expiresIn: '1h' });

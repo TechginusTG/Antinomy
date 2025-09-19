@@ -17,13 +17,49 @@ router.get('/', authenticateToken, async (req, res) => {
 });
 
 router.post('/', authenticateToken, async (req, res) => {
-  const { title } = req.body;
-  const newChatRoom = {
-    user_id: req.user.userId,
-    title: title || 'New Chat',
-  };
+  const baseTitle = 'New Conversation';
+  const userId = req.user.userId;
+  let newTitle = baseTitle;
 
   try {
+    const allUserRooms = await db('chat_rooms')
+      .where({ user_id: userId })
+      .select('title');
+
+    let existingNumbers = new Set();
+    let hasBaseTitle = false;
+
+    allUserRooms.forEach(room => {
+      if (room.title === baseTitle) {
+        hasBaseTitle = true;
+      } else {
+        const regexPattern = `^${baseTitle} \\((\\d+)\\)$`;
+        const regex = new RegExp(regexPattern);
+        const match = room.title.match(regex);
+        if (match) {
+          const number = parseInt(match[1], 10);
+          existingNumbers.add(number);
+        }
+      }
+    });
+
+    let nextNumber = 0;
+    if (hasBaseTitle || existingNumbers.size > 0) {
+      while (existingNumbers.has(nextNumber) || (nextNumber === 0 && hasBaseTitle)) {
+        nextNumber++;
+      }
+      if (nextNumber === 0) {
+        newTitle = `${baseTitle} (1)`;
+      } else {
+        newTitle = `${baseTitle} (${nextNumber})`;
+      }
+    }
+
+    const newChatRoom = {
+      user_id: userId,
+      title: newTitle,
+    };
+
     const [createdChatRoom] = await db('chat_rooms').insert(newChatRoom).returning('*');
     res.status(201).json(createdChatRoom);
   } catch (error) {

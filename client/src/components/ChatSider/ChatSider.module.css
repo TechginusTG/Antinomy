@@ -26,7 +26,7 @@
 .chat-log {
   flex-grow: 1; /* Grow to fill available space */
   overflow-y: auto; /* Enable vertical scroll on overflow */
-  padding: 1rem; /* 16px */
+  padding: 0; /* 16px */
   background: var(--background-primary);
   position: relative;
 }
@@ -35,7 +35,16 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding: 0;
+  padding: 1rem;
+}
+
+.chatRoomName {
+  text-align: center;
+  padding: 0.5rem 0;
+  background-color: var(--background-secondary);
+  border-bottom: 1px solid var(--border-color);
+  font-weight: bold;
+  font-size: 0.9rem;
 }
 
 .chat-footer {

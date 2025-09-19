@@ -33,6 +33,7 @@ const ChatSider = ({
   recommendations,
   onRecommendationClick,
   onClearRecommendations,
+  chatRoomName,
 }) => {
   const {
     chatWidth,
@@ -139,6 +140,7 @@ const ChatSider = ({
           </Button>
         </div>
         <div className={styles["chat-log"]} ref={chatLogRef}>
+          {chatRoomName && <h3 className={styles.chatRoomName}>{chatRoomName}</h3>}
           <ul>
             {messages.filter(Boolean).map((msg) => (
               <Bubble

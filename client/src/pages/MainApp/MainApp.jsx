@@ -829,6 +829,9 @@ const MainApp = () => {
     }
   }
 
+  const activeChatRoom = chatRooms.find(room => room.id === activeChatRoomId);
+
+
   return (
     <Layout style={{ height: "100dvh" }}>
       <Helmet>
@@ -872,6 +875,7 @@ const MainApp = () => {
           onLike={handleLikeMessage}
           likedChatIds={likedChatIds}
           activeChatRoomId={activeChatRoomId}
+          chatRoomName={activeChatRoom ? activeChatRoom.title : ""}
           recommendations={recommendations}
           onRecommendationClick={onRecommendationClick}
           onClearRecommendations={clearRecommendations}
