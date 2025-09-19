@@ -72,6 +72,7 @@ const MainApp = () => {
     setIsTyping,
     setChatFontSize, // setter 추가
     setMode, // setter 추가
+    setAiProvider, // setter 추가
     setAllCustomThemeColors, // setter 추가
   } = useFlowStore();
   const { setUserSettings } = useUserStore(); // userStore에서 setter 추가
@@ -322,6 +323,7 @@ const MainApp = () => {
               if (settings.chatWidth) setChatWidth(settings.chatWidth);
               if (settings.chatFontSize) setChatFontSize(settings.chatFontSize);
               if (settings.mode) setMode(settings.mode);
+              if (settings.aiProvider) setAiProvider(settings.aiProvider);
               // TODO: customThemeColors 전체를 설정하는 함수를 flowStore에 추가해야 함
             }
           } catch (error) {

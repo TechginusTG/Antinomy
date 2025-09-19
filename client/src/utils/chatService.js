@@ -74,6 +74,7 @@ class ChatService {
   sendMessage(payload, chatLog = [], conversationId) {
     if (this.socket) {
       const currentMode = useFlowStore.getState().mode || "worry";
+      const aiProvider = useFlowStore.getState().aiProvider || "gemini";
       const userNote = useUserStore.getState().userNote; // 2. userNote 가져오기
       let msgPayload;
       if (typeof payload === "string") {
@@ -82,6 +83,7 @@ class ChatService {
           mode: currentMode,
           userNote,
           conversationId,
+          aiProvider,
         };
       } else if (payload && typeof payload === "object") {
         msgPayload = {
@@ -89,6 +91,7 @@ class ChatService {
           mode: payload.mode || currentMode,
           userNote,
           conversationId,
+          aiProvider,
         };
       } else {
         msgPayload = {
@@ -96,6 +99,7 @@ class ChatService {
           mode: currentMode,
           userNote,
           conversationId,
+          aiProvider,
         };
       }
       // Emit both the message payload and the full chat log

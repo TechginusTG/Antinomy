@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Modal, Slider, ColorPicker, Button, InputNumber } from "antd";
+import { Modal, Slider, ColorPicker, Button, InputNumber, Select } from "antd";
 import useFlowStore from "../../utils/flowStore";
 import useUserStore from "../../utils/userStore";
 import { themes } from "../../utils/themeManager";
@@ -22,6 +22,8 @@ const SettingsModal = () => {
     saveTheme,
     loadTheme,
     autoSaveSettings, // 자동 저장 함수 추가
+    aiProvider,
+    setAiProvider,
   } = useFlowStore();
   const { mode, setMode } = useFlowStore();
   const { settings, updateSetting, lvl } = useUserStore(); // userStore에서 settings와 updateSetting 사용
@@ -252,6 +254,18 @@ const SettingsModal = () => {
             >
               문제해결 모드
             </Button>
+          </div>
+
+          <div className={styles.modeContainer}>
+            <span className={styles.modeLabel}>AI Provider:</span>
+            <Select
+              value={aiProvider}
+              onChange={setAiProvider}
+              style={{ width: 120 }}
+            >
+              <Select.Option value="gemini">Gemini</Select.Option>
+              <Select.Option value="groq">Groq</Select.Option>
+            </Select>
           </div>
         </div>
         <div className={styles.settingsSection}>

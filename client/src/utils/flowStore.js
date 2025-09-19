@@ -36,6 +36,7 @@ const useFlowStore = create((set, get) => ({
   chatWidth: parseInt(localStorage.getItem("chatWidth"), 10) || 30,
   chatFontSize: parseInt(localStorage.getItem("chatFontSize"), 10) || 14,
   mode: localStorage.getItem("mode") || "basic",
+  aiProvider: localStorage.getItem("aiProvider") || "gemini",
   isSettingsOpen: false,
   isProfileModalOpen: false,
   isQuestOpen: false,
@@ -87,6 +88,13 @@ const useFlowStore = create((set, get) => ({
     set({ mode });
     localStorage.setItem("mode", mode);
     useUserStore.getState().updateSetting("mode", mode);
+    get().autoSaveSettings();
+  },
+
+  setAiProvider: (provider) => {
+    set({ aiProvider: provider });
+    localStorage.setItem("aiProvider", provider);
+    useUserStore.getState().updateSetting("aiProvider", provider);
     get().autoSaveSettings();
   },
 

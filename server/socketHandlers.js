@@ -142,7 +142,7 @@ async function callAiModel(socket, chatLog, conversationId, userMessageDbId = nu
     } else {
       const result = await client.chat.completions.create({
         messages: history,
-        model: "llama3-8b-8192",
+        model: "llama-3.1-8b-instant",
       });
       reply = result.choices[0].message.content;
     }

@@ -18,6 +18,7 @@ const defaultSettings = {
   chatWidth: 30,
   chatFontSize: 14,
   mode: 'basic',
+  aiProvider: 'gemini',
   userNote: "",
 };
 
