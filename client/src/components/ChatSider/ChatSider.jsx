@@ -35,13 +35,8 @@ const ChatSider = ({
   onClearRecommendations,
   chatRoomName,
 }) => {
-  const {
-    chatWidth,
-    setChatWidth,
-    chatFontSize,
-    isTyping,
-    setIsTyping,
-  } = useFlowStore();
+  const { chatWidth, setChatWidth, chatFontSize, isTyping, setIsTyping } =
+    useFlowStore();
   const chatLogRef = useRef(null);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -110,7 +105,7 @@ const ChatSider = ({
     const userMessage = {
       id: Date.now(),
       content: message.text,
-      sender: 'user',
+      sender: "user",
       options: message.options,
     };
     const newChatLog = [...messages, userMessage];
@@ -135,12 +130,14 @@ const ChatSider = ({
     >
       <div className={styles.chat}>
         <div className={styles["chat-header"]}>
+          {chatRoomName && (
+            <h3 className={styles.chatRoomName}>Room : {chatRoomName}</h3>
+          )}
           <Button onClick={onGenerateDiagram} disabled={isDiagramMaking}>
             {isDiagramMaking ? "Making..." : "Make Diagram"}
           </Button>
         </div>
         <div className={styles["chat-log"]} ref={chatLogRef}>
-          {chatRoomName && <h3 className={styles.chatRoomName}>{chatRoomName}</h3>}
           <ul>
             {messages.filter(Boolean).map((msg) => (
               <Bubble
@@ -170,7 +167,9 @@ const ChatSider = ({
                   </motion.div>
                 ) : msg.sender === "ai" ? (
                   <div className={styles.markdownContent}>
-                    <ReactMarkdown>{msg.content.replace(/KEYWORDS:.*/s, '').trim()}</ReactMarkdown>
+                    <ReactMarkdown>
+                      {msg.content.replace(/KEYWORDS:.*/s, "").trim()}
+                    </ReactMarkdown>
                   </div>
                 ) : (
                   msg.content
