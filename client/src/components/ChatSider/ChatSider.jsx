@@ -131,7 +131,7 @@ const ChatSider = ({
       <div className={styles.chat}>
         <div className={styles["chat-header"]}>
           {chatRoomName && (
-            <h3 className={styles.chatRoomName}>Room : {chatRoomName}</h3>
+            <h3 className={styles.chatRoomName}>{chatRoomName}</h3>
           )}
           <Button onClick={onGenerateDiagram} disabled={isDiagramMaking}>
             {isDiagramMaking ? "Making..." : "Make Diagram"}
