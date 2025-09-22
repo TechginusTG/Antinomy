@@ -1,0 +1,17 @@
+.notification-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.dot {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background-color: red;
+  border-radius: 50%;
+  border: 1px solid white;
+  transform: translate(50%, -50%);
+  pointer-events: none;
+}
