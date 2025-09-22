@@ -30,6 +30,7 @@ import ProfileModal from "../../components/ProfileModal/ProfileModal";
 import LikedMessagesModal from "../../components/LikedMessagesModal/LikedMessagesModal";
 import Login from "../Login/Login";
 import Register from "../Register/Register";
+import NotificationDot from "../../components/NotificationDot/NotificationDot";
 
 import "reactflow/dist/style.css";
 import styles from "./MainApp.module.css";
@@ -87,6 +88,11 @@ const MainApp = () => {
   const [quests, setQuests] = useState(() => {
     const saved = localStorage.getItem("quests");
     return saved ? JSON.parse(saved) : [];
+  });
+
+  const [hasNewQuests, setHasNewQuests] = useState(false);
+  const [seenQuestsCount, setSeenQuestsCount] = useState(() => {
+    return parseInt(localStorage.getItem("seenQuestsCount") || "0", 10);
   });
 
   const [isSiderVisible, setIsSiderVisible] = useState(false);
