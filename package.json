@@ -55,6 +55,7 @@
     "@vitejs/plugin-react": "^4.3.1",
     "concurrently": "^8.2.2",
     "nodemon": "^3.1.10",
+    "rollup-plugin-visualizer": "^6.0.3",
     "vite": "^7.1.2",
     "vite-plugin-sitemap": "^0.8.2"
   }

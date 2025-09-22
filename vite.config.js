@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import sitemap from 'vite-plugin-sitemap'
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -9,17 +10,30 @@ export default defineConfig({
     sitemap({
       hostname: 'https://syncro.tg-antinomy.kro.kr',
     }),
+    visualizer({ filename: './dist/stats.html' })
   ],
   root: 'client',
   build: {
     outDir: '../dist',
+    emptyOutDir: true,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom'],
-          'antd-vendor': ['antd'],
-          'reactflow-vendor': ['reactflow'],
-          'vendor': ['react-router-dom', 'zustand', 'dagre']
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('@ant-design/icons')) {
+              return 'vendor_ant-icons';
+            }
+            if (id.includes('antd')) {
+              return 'vendor_antd';
+            }
+            if (id.includes('reactflow')) {
+                return 'vendor_reactflow';
+            }
+            if (id.includes('react') || id.includes('react-dom')) {
+                return 'vendor_react';
+            }
+            return 'vendor_others';
+          }
         }
       }
     }

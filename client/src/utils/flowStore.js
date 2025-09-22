@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { addEdge, applyNodeChanges, applyEdgeChanges } from "reactflow";
-import pako from "pako";
+
 import chatService from "./chatService";
 import useUserStore from "./userStore";
 
@@ -193,6 +193,7 @@ const useFlowStore = create((set, get) => ({
     const token = localStorage.getItem("authToken");
     if (!token || !activeRoomId) return;
 
+    const pako = await import('pako');
     const diagramData = { nodes: nodes(), edges: edges() };
 
     const jsonString = JSON.stringify(diagramData);
@@ -377,6 +378,7 @@ const useFlowStore = create((set, get) => ({
 
       if (response.ok && response.status !== 204) {
         const { diagram_data } = await response.json();
+        const pako = await import('pako');
         const safeEncodedData = diagram_data;
         let base64 = safeEncodedData.replace(/-/g, "+").replace(/_/g, "/");
         while (base64.length % 4) {
