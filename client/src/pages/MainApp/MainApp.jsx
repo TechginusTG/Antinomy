@@ -1014,11 +1014,13 @@ const MainApp = () => {
                 icon={<SettingFilled />}
                 onClick={() => setIsSettingsOpen(true)}
               />
-              <Button
-                type="default"
-                icon={<BulbOutlined />}
-                onClick={() => setIsQuestOpen(true)}
-              />
+              <NotificationDot show={hasNewQuests}>
+                <Button
+                  type="default"
+                  icon={<BulbOutlined />}
+                  onClick={handleOpenQuestModal}
+                />
+              </NotificationDot>
               <Button
                 type="default"
                 icon={<QuestionCircleOutlined />}
