@@ -91,8 +91,9 @@ const MainApp = () => {
   });
 
   const [hasNewQuests, setHasNewQuests] = useState(false);
-  const [seenQuestsCount, setSeenQuestsCount] = useState(() => {
-    return parseInt(localStorage.getItem("seenQuestsCount") || "0", 10);
+  const [seenQuests, setSeenQuests] = useState(() => {
+    const saved = localStorage.getItem("seenQuests");
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [isSiderVisible, setIsSiderVisible] = useState(false);
@@ -113,12 +114,11 @@ const MainApp = () => {
   const [editingText, setEditingText] = useState("");
 
   useEffect(() => {
-    if (quests.length > seenQuestsCount) {
+    const hasNew = quests.some(q => !seenQuests.includes(q));
+    if (hasNew && quests.length > 0) {
       setHasNewQuests(true);
-    } else {
-      setHasNewQuests(false);
     }
-  }, [quests, seenQuestsCount]);
+  }, [quests, seenQuests]);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -831,8 +831,9 @@ const MainApp = () => {
 
   const handleOpenQuestModal = () => {
     setIsQuestOpen(true);
-    localStorage.setItem("seenQuestsCount", quests.length);
-    setSeenQuestsCount(quests.length);
+    localStorage.setItem("seenQuests", JSON.stringify(quests));
+    setSeenQuests(quests);
+    setHasNewQuests(false);
   };
 
   if (authStatus === "loggedOut") {
