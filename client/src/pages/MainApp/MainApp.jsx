@@ -820,7 +820,12 @@ const MainApp = () => {
       return (
         <Login
           onLoginSuccess={validateToken}
-          onGuestLogin={() => setAuthStatus("guest")}
+          onGuestLogin={() => {
+            setAuthStatus("guest");
+            const guestRoomId = window.crypto.randomUUID();
+            setActiveChatRoomId(guestRoomId);
+            setChatLog([]);
+          }}
           switchToRegister={() => setAuthView("register")}
         />
       );
