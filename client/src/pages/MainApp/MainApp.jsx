@@ -113,6 +113,14 @@ const MainApp = () => {
   const [editingText, setEditingText] = useState("");
 
   useEffect(() => {
+    if (quests.length > seenQuestsCount) {
+      setHasNewQuests(true);
+    } else {
+      setHasNewQuests(false);
+    }
+  }, [quests, seenQuestsCount]);
+
+  useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener("resize", checkMobile);
@@ -819,6 +827,12 @@ const MainApp = () => {
   const handleModalCancel = () => {
     setEditingMessage(null);
     setEditingText("");
+  };
+
+  const handleOpenQuestModal = () => {
+    setIsQuestOpen(true);
+    localStorage.setItem("seenQuestsCount", quests.length);
+    setSeenQuestsCount(quests.length);
   };
 
   if (authStatus === "loggedOut") {
