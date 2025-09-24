@@ -38,29 +38,28 @@ async function handleAiResponse(socket, reply, conversationId, userMessageDbId =
     }
   };
 
-  try {
-    const parsedReply = JSON.parse(reply);
-    const chatMessage = parsedReply.chat_response || reply;
-    const aiMessage = await saveAiMessage(chatMessage);
-
-    if (aiMessage) {
-      socket.emit("chat message", { aiMessage, isEdit: !!aiMessageIdToUpdate });
-    }
-
-    if (parsedReply.recommendations) {
-      socket.emit("new_recommendations", parsedReply.recommendations);
-      console.log(`AI Response (with recommendations) [${socket.id}]:`, parsedReply);
-    } else {
-        console.log(`AI Response [${socket.id}]:`, reply);
-    }
-  } catch (parseError) {
-    const aiMessage = await saveAiMessage(reply);
-     if (aiMessage) {
-      socket.emit("chat message", { aiMessage, isEdit: !!aiMessageIdToUpdate });
-    }
-    console.log(`AI Response [${socket.id}]:`, reply);
-  }
-}
+        try {
+          const parsedReply = JSON.parse(reply);
+          const chatMessage = parsedReply.chat_response;
+          const aiMessage = await saveAiMessage(chatMessage);
+  
+          if (aiMessage) {
+            socket.emit("chat message", { aiMessage, isEdit: !!aiMessageIdToUpdate });
+          }
+  
+          if (parsedReply.recommendations) {
+            socket.emit("new_recommendations", parsedReply.recommendations);
+            console.log(`AI Response (with recommendations) [${socket.id}]:`, parsedReply);
+          } else {
+              console.log(`AI Response [${socket.id}]:`, chatMessage);
+          }
+        } catch (parseError) {
+          const aiMessage = await saveAiMessage(reply);
+           if (aiMessage) {
+            socket.emit("chat message", { aiMessage, isEdit: !!aiMessageIdToUpdate });
+          }
+          console.log(`AI Response [${socket.id}]:`, reply);
+        }}
 
 function buildSystemPrompt(socketId) {
   const { mode = "basic", userNote = "" } = userSpecial[socketId] || {};
@@ -375,7 +374,11 @@ export function registerSocketHandlers(io) {
         );
 
       try {
-        const model = client.getGenerativeModel({ model: "gemini-1.5-flash-latest", generationConfig: { responseMimeType: "application/json" } });
+        const model = client.getGenerativeModel(
+          { 
+            model: "gemini-1.5-flash-latest",
+            generationConfig: { responseMimeType: "application/json"} 
+          });
         const result = await model.generateContent(finalDiagramPrompt);
         const reply = result.response.text();
         console.log(`Gemini Diagram Response [${socket.id}]:`, reply);
