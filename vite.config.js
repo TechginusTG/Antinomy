@@ -1,7 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import sitemap from 'vite-plugin-sitemap'
-import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,10 +9,6 @@ export default defineConfig({
     sitemap({
       hostname: 'https://syncro.tg-antinomy.kro.kr',
     }),
-    visualizer({
-      template: 'raw-data',
-      filename: 'dist/stats.json'
-    })
   ],
   root: 'client',
   build: {
@@ -31,19 +26,10 @@ export default defineConfig({
               return 'vendor_antd';
             }
             if (id.includes('reactflow')) {
-              return 'vendor_reactflow';
+                return 'vendor_reactflow';
             }
             if (id.includes('react') || id.includes('react-dom')) {
-              return 'vendor_react';
-            }
-            if (id.includes('zustand')) {
-              return 'vendor_zustand';
-            }
-            if (id.includes('dagre')) {
-              return 'vendor_dagre';
-            }
-            if (id.includes('react-router-dom')) {
-              return 'vendor_react-router-dom';
+                return 'vendor_react';
             }
             return 'vendor_others';
           }
