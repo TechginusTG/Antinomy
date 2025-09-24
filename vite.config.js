@@ -17,23 +17,6 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('@ant-design/icons')) {
-              return 'vendor_ant-icons';
-            }
-            if (id.includes('antd')) {
-              return 'vendor_antd';
-            }
-            if (id.includes('reactflow')) {
-                return 'vendor_reactflow';
-            }
-            if (id.includes('react') || id.includes('react-dom')) {
-                return 'vendor_react';
-            }
-            return 'vendor_others';
-          }
-        }
       }
     }
   },
