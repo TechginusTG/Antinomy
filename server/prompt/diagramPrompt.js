@@ -6,7 +6,7 @@ export const diagramPrompt = `
         - If the conversation is about brainstorming, exploring ideas, or relationships between concepts, create a **mind map**.
 
         **Flowchart Instructions:**
-        - Use different shapes for different purposes: rectangles for processes, ellipses for start/end points, and **sparingly, diamonds for clear binary decisions (e.g., Yes/No, True/False).** For diamonds, the outgoing edges should be labeled with conditions like "Yes" or "No".
+        - Use different shapes for different purposes: rectangles for processes, ellipses for start/end points, and **sparingly, diamonds for clear binary decisions (e.g., Yes/No, True/False). Diamond nodes MUST have at least two outgoing edges, each labeled with a condition like 'Yes' or 'No'.**
 
         **Mind Map Instructions:**
         - Start with a central topic and branch out with related ideas. Use consistent shapes like rectangles or ellipses.
@@ -28,5 +28,5 @@ export const diagramPrompt = `
         
         Make sure all IDs are unique strings.
         Do not include any explanations, comments, or any text outside of the single JSON object.
-        Example response: {"nodes":[{"id":"1","type":"custom","data":{"label":"Start","shape":"ellipse"}},{"id":"2","type":"custom","data":{"label":"Is it good?","shape":"diamond"}},{"id":"3","type":"custom","data":{"label":"End","shape":"ellipse"}}],"edges":[{"id":"e1-2","source":"1","target":"2"},{"id":"e2-3","source":"2","target":"3","label":"Yes"}],"quests":["Challenge 1", "Challenge 2"]}
+        Example response: {"nodes":[{"id":"1","type":"custom","data":{"label":"Start","shape":"ellipse"}},{"id":"2","type":"custom","data":{"label":"Is it good?","shape":"diamond"}},{"id":"3","type":"custom","data":{"label":"Process Yes","shape":"rectangle"}},{"id":"4","type":"custom","data":{"label":"Process No","shape":"rectangle"}}],"edges":[{"id":"e1-2","source":"1","target":"2"},{"id":"e2-3","source":"2","target":"3","label":"Yes"},{"id":"e2-4","source":"2","target":"4","label":"No"}],"quests":["Challenge 1", "Challenge 2"]}
         `;
