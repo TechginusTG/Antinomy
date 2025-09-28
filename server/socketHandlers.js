@@ -7,6 +7,16 @@ import db from "./db.js";
 import jwt from "jsonwebtoken";
 import pako from "pako";
 
+const MODEL_NAMES = {
+  gemini: {
+    chat: "gemini-1.5-pro",
+    diagram: "gemini-2.5-flash-lite",
+  },
+  openai: {
+    chat: "openai/gpt-oss-120b",
+  },
+};
+
 const EXP_REWARDS = {
   CHAT: 10,
 };
@@ -112,7 +122,11 @@ function convertToApiHistory(chatLog, provider, socketId, diagramData = null) {
   if (diagramData && history.length > 0) {
     const lastMessage = history[history.length - 1];
     if (lastMessage.role === 'user') {
-      const diagramText = `[The user has attached the following diagram to this message:\n${JSON.stringify(diagramData, null, 2)}\n]\n\n`;
+      const diagramText = `[The user has attached the following diagram to this message:
+${JSON.stringify(diagramData, null, 2)}
+]
+
+`;
       if (provider === 'gemini') {
         lastMessage.parts[0].text = diagramText + lastMessage.parts[0].text;
       } else {
@@ -137,7 +151,7 @@ async function callAiModel(socket, chatLog, conversationId, userMessageDbId = nu
     const history = convertToApiHistory(chatLog, provider, socket.id, diagramData);
 
     if (provider === 'gemini') {
-      const modelName = "gemini-1.5-pro";
+      const modelName = MODEL_NAMES.gemini.chat;
       console.log(`[AI] Calling ${provider} with model: ${modelName}`);
       const model = client.getGenerativeModel({ model: modelName });
       if (history.length > 0 && history[history.length - 1].role === 'model') {
@@ -148,7 +162,7 @@ async function callAiModel(socket, chatLog, conversationId, userMessageDbId = nu
       const result = await chat.sendMessage(lastMessage.parts[0].text);
       reply = result.response.text();
     } else {
-      const modelName = "openai/gpt-oss-120b";
+      const modelName = MODEL_NAMES.openai.chat;
       console.log(`[AI] Calling ${provider} with model: ${modelName}`);
       const result = await client.chat.completions.create({
         messages: history,
@@ -375,8 +389,8 @@ export function registerSocketHandlers(io) {
 
       try {
         const model = client.getGenerativeModel(
-          { 
-            model: "gemini-1.5-flash-latest",
+          {
+            model: MODEL_NAMES.gemini.diagram,
             generationConfig: { responseMimeType: "application/json"} 
           });
         const result = await model.generateContent(finalDiagramPrompt);
