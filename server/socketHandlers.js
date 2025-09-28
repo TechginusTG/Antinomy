@@ -9,7 +9,7 @@ import pako from "pako";
 
 const MODEL_NAMES = {
   gemini: {
-    chat: "gemini-1.5-pro",
+    chat: "gemini-2.5-pro",
     diagram: "gemini-2.5-flash-lite",
   },
   openai: {
