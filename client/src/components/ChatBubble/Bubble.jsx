@@ -65,7 +65,6 @@ const Bubble = ({
                                         isActive={isActive}
                                         onHighlight={() => showPopover(cleanedWord, wordId)}
                                         onUnhighlight={hidePopover}
-                                        onAfterSearch={hidePopover}
                                         fontSize={finalFontSize}
                                     />
                                 );

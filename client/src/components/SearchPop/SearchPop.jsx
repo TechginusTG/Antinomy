@@ -25,8 +25,13 @@ const SearchPop = ({
   const iconClass = `${styles.searchIcon} ${isActive ? styles.searchIconVisible : ''}`;
   const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(trimmedKeyword)}`;
 
+  const handleClick = (e) => {
+    e.preventDefault();
+    window.open(searchUrl, '_blank', 'noopener,noreferrer');
+  };
+
   return (
-    <a
+    <div
       href={searchUrl}
       target="_blank"
       rel="noopener noreferrer"
@@ -35,17 +40,12 @@ const SearchPop = ({
       onFocus={onHighlight}
       onMouseLeave={onUnhighlight}
       onBlur={onUnhighlight}
-      onClick={(event) => {
-        event.stopPropagation();
-        if (onAfterSearch) {
-          onAfterSearch();
-        }
-      }}
+      onClick={handleClick}
       aria-label={`${trimmedKeyword} 검색`}
     >
       <span className={styles.wordText}>{word}</span>
       <FaSearch className={iconClass} style={iconStyle} aria-hidden="true" />
-    </a>
+    </div>
   );
 };
 
