@@ -5,9 +5,7 @@ import {
   DownOutlined,
 } from "@ant-design/icons";
 import React, { useState, useEffect, useRef } from "react";
-import ReactMarkdown from "react-markdown";
 
-import { motion } from "framer-motion";
 import Bubble from "../ChatBubble/Bubble";
 import styles from "./ChatSider.module.css";
 import chatService from "../../utils/chatService";
@@ -147,7 +145,9 @@ const ChatSider = ({
                 key={msg.id}
                 id={msg.id}
                 className={`${styles.bubble} ${styles[msg.sender]}`}
-                isUser={msg.sender === "user"}
+                sender={msg.sender}
+                content={msg.content}
+                isLoading={msg.isLoading}
                 onDelete={onDelete}
                 onEdit={() => onEdit(msg)}
                 onLike={onLike}
@@ -155,44 +155,14 @@ const ChatSider = ({
                 chatWidth={chatWidth}
                 isMobile={isMobile}
                 chatFontSize={chatFontSize}
-              >
-                {msg.isLoading ? (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{
-                      duration: 1,
-                      repeat: Infinity,
-                      repeatType: "reverse",
-                    }}
-                  >
-                    AI가 생각중이에요...
-                  </motion.div>
-                ) : msg.sender === "ai" ? (
-                  <div className={styles.markdownContent}>
-                    <ReactMarkdown>
-                      {msg.content.replace(/KEYWORDS:.*/s, "").trim()}
-                    </ReactMarkdown>
-                  </div>
-                ) : (
-                  msg.content
-                )}
-              </Bubble>
+              />
             ))}
             {isTyping && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{
-                  duration: 1,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                }}
-              >
-                <Bubble className={`${styles.bubble} ${styles.ai}`}>
-                  AI가 생각중이에요...
-                </Bubble>
-              </motion.div>
+              <Bubble
+                className={`${styles.bubble} ${styles.ai}`}
+                sender="ai"
+                isLoading={true}
+              />
             )}
           </ul>
         </div>
